@@ -110,7 +110,7 @@ export default function CategoryPage() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axiosInstance.get("/categories", {
+        const response = await axiosInstance.get("/categories/", {
           params: { status_filter: null },
         })
         if (response.data.statusCode === 200) {
@@ -140,7 +140,7 @@ export default function CategoryPage() {
 
     const fetchIndustries = async () => {
       try {
-        const response = await axiosInstance.get("/industries", {
+        const response = await axiosInstance.get("/industries/", {
           params: { is_active: null },
         })
         if (response.data.statusCode === 200) {

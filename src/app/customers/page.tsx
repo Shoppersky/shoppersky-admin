@@ -219,7 +219,7 @@ export default function UsersPage() {
           name: `${user.first_name} ${user.last_name}`.trim(),
           email: user.email,
           role: user.role || "User",
-          status: user.is_active ? "Inactive" : "Active",
+          status: user.status ? "Inactive" : "Active",
           phone_number: user.phone_number,
           created_at: user.created_at,
           last_active: user.last_active || user.created_at,
