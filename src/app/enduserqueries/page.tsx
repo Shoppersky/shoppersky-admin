@@ -5,9 +5,7 @@ import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Search, MessageSquare, Eye, Calendar, Clock } from "lucide-react"
+import { Search, MessageSquare, Calendar, Clock } from "lucide-react"
 import axiosInstance from "@/lib/axiosInstance" // Adjust path as needed
 
 interface Enquiry {
@@ -25,7 +23,6 @@ interface Enquiry {
 export default function EndUserQueries() {
   const [enquiries, setEnquiries] = useState<Enquiry[]>([])
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedEnquiry, setSelectedEnquiry] = useState<Enquiry | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 

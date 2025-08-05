@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import {
   Dialog,
   DialogContent,
@@ -34,7 +35,6 @@ import {
   Trash2,
   Folder,
   FolderOpen,
-  Package,
   TrendingUp,
   CheckCircle,
   XCircle,
@@ -44,7 +44,6 @@ import {
   Globe,
   Calendar,
   DollarSign,
-  Activity,
   Sparkles,
   Filter,
   Grid3X3,
@@ -812,7 +811,7 @@ export default function CategoriesPage() {
                   <div className="relative">
                     <div className="aspect-video bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 flex items-center justify-center">
                       {category.image ? (
-                        <img
+                        <Image
                           src={category.image || "/placeholder.svg"}
                           alt={category.name}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -1591,7 +1590,7 @@ export default function CategoriesPage() {
                                   <div className="relative">
                                     <div className="aspect-video bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30 flex items-center justify-center">
                                       {sub.subcategory_img_thumbnail ? (
-                                        <img
+                                        <Image
                                           src={
                                             sub.subcategory_img_thumbnail ||
                                             "/placeholder.svg"

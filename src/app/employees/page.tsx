@@ -44,7 +44,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import {
   Plus,
-  Eye,
   Pencil,
   Trash2,
   Search,
@@ -65,7 +64,6 @@ import {
   Info,
   Store,
   Sparkles,
-  Activity,
   Grid3X3,
   List,
   RotateCcw,

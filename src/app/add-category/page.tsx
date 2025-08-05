@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image";
 import type React from "react"
 import { useEffect, useState } from "react"
 import {
@@ -425,7 +426,7 @@ export default function CategoryPage() {
                     >
                       {image ? (
                         <div className="relative w-full h-full group">
-                          <img
+                          <Image
                             src={URL.createObjectURL(image) || "/placeholder.svg"}
                             alt="Preview"
                             className="w-full h-full object-cover rounded-3xl"

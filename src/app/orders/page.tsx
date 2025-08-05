@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, AreaChart, Area } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, PieChart, Pie, Cell, AreaChart, Area } from 'recharts'
 import { 
   ShoppingBag, 
   Search, 
@@ -23,21 +23,11 @@ import {
   Clock,
   DollarSign,
   TrendingUp,
-  Users,
   Store,
-  Calendar,
   MapPin,
-  Phone,
-  Mail,
-  Star,
-  AlertTriangle,
   RefreshCw,
   Download,
-  MoreVertical,
   Edit,
-  Trash2,
-  ArrowUpRight,
-  ArrowDownRight,
   Activity,
   BarChart3,
   PieChart as PieChartIcon,

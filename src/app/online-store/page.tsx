@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { ShoppingCart, Star, Heart, User, Search, Menu, X, Filter, Edit3, Save, Camera, Settings, Eye, EyeOff, ArrowLeft, BoxIcon, Home } from 'lucide-react';
+import { ShoppingCart, Star, Heart, User, X, Filter, Edit3, Save, Camera, Settings, Eye, EyeOff, ArrowLeft, Home } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface Product {
   id: number;

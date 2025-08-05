@@ -20,7 +20,6 @@ import {
   Plus,
   Search,
   Download,
-  Eye,
   Pencil,
   Trash2,
   Building2,
@@ -96,7 +95,7 @@ function IndustryCard({
   onEdit,
   onDelete,
   onRestore,
-  onView,
+
 }: {
   industry: Industry
   onEdit: (industry: Industry) => void

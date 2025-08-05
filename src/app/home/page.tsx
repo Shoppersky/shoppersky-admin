@@ -4,46 +4,36 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
+
 import { 
   DollarSign, 
   Users, 
   ShoppingCart, 
   Store, 
-  TrendingUp, 
-  TrendingDown,
+
   ArrowUpRight,
-  ArrowDownRight,
-  Activity,
+
   Package,
-  CreditCard,
-  Eye,
-  MoreHorizontal,
+
   Calendar,
   Clock,
-  Target,
-  Zap,
+
   AlertTriangle,
   CheckCircle,
   XCircle,
-  RefreshCw,
+
   BarChart3,
-  PieChart,
-  LineChart,
+
   Bell,
-  Settings,
-  Filter,
-  Download,
+
   Plus,
   Star,
   Flag,
-  Search,
-  UserPlus,
+
   ShoppingBag,
-  Truck,
+
   FileText,
-  Inbox,
-  MessageSquare,
+
   ChevronRight
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -66,7 +56,6 @@ import Image from 'next/image';
 
 const AdminDashboard = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [selectedPeriod, setSelectedPeriod] = useState('today');
   const [activeTab, setActiveTab] = useState('orders');
 
   // Update time every minute

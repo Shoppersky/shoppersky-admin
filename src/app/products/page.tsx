@@ -6,6 +6,7 @@ import { useState, useEffect, useMemo } from "react"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import Image from "next/image";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
   Package,
@@ -211,7 +212,7 @@ function ProductCard({ product }: { product: Product }) {
   return (
     <Card className="group overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-[1.02] bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800 border-0 shadow-lg">
       <div className="relative overflow-hidden">
-        <img
+        <Image
           src={product.image || "/placeholder.svg"}
           alt={product.name}
           className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
@@ -620,7 +621,7 @@ export default function ProductsView() {
                     {filteredProducts.map((product) => (
                       <TableRow key={product.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
                         <TableCell>
-                          <img
+                          <Image
                             src={product.image || "/placeholder.svg"}
                             alt={product.name}
                             className="w-12 h-12 object-cover rounded-lg"
