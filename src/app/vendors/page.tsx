@@ -951,6 +951,14 @@ const VendorManagement = () => {
                                 <>
                                   <DropdownMenuSeparator />
                                   {vendor.isActive ? (
+                                     <DropdownMenuItem
+                                      className="text-green-600"
+                                      onClick={() => handleRestoreVendor(vendor)}
+                                    >
+                                      <RotateCcw className="w-4 h-4 mr-2" />
+                                      Restore
+                                    </DropdownMenuItem>
+                                  ) : (
                                     <DropdownMenuItem
                                       className="text-red-600"
                                       onClick={() => handleDeleteVendor(vendor)}
@@ -958,14 +966,7 @@ const VendorManagement = () => {
                                       <Trash2 className="w-4 h-4 mr-2" />
                                       Deactivate
                                     </DropdownMenuItem>
-                                  ) : (
-                                    <DropdownMenuItem
-                                      className="text-green-600"
-                                      onClick={() => handleRestoreVendor(vendor)}
-                                    >
-                                      <RotateCcw className="w-4 h-4 mr-2" />
-                                      Restore
-                                    </DropdownMenuItem>
+                                   
                                   )}
                                 </>
                               )}
@@ -1425,20 +1426,21 @@ const VendorManagement = () => {
                         {selectedVendor.isActive ? (
                           <Button
                             variant="outline"
-                            className="flex items-center justify-center gap-2 hover:bg-red-50 hover:border-red-200 dark:hover:bg-red-950/50 bg-transparent"
-                            onClick={() => handleDeleteVendor(selectedVendor)}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                            Deactivate
-                          </Button>
-                        ) : (
-                          <Button
-                            variant="outline"
                             className="flex items-center justify-center gap-2 hover:bg-green-50 hover:border-green-200 dark:hover:bg-green-950/50 bg-transparent"
                             onClick={() => handleRestoreVendor(selectedVendor)}
                           >
                             <RotateCcw className="w-4 h-4" />
                             Restore
+                          </Button>
+                          
+                        ) : (
+                          <Button
+                            variant="outline"
+                            className="flex items-center justify-center gap-2 hover:bg-red-50 hover:border-red-200 dark:hover:bg-red-950/50 bg-transparent"
+                            onClick={() => handleDeleteVendor(selectedVendor)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                            Deactivate
                           </Button>
                         )}
                       </>
