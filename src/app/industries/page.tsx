@@ -213,7 +213,7 @@ export default function IndustriesPage() {
           params.is_active = true
         }
         // When statusFilter is "all", omit is_active to fetch all industries
-        const response = await axiosInstance.get("/industries", { params })
+        const response = await axiosInstance.get("/industries/", { params })
         if (response.data.statusCode === 200) {
           const fetchedIndustries: Industry[] = response.data.data.map((ind: any) => ({
             id: ind.industry_id,
@@ -282,7 +282,7 @@ export default function IndustriesPage() {
       if (editingIndustry) {
         response = await axiosInstance.put(`/industries/${editingIndustry.id}`, payload)
       } else {
-        response = await axiosInstance.post("/industries", payload)
+        response = await axiosInstance.post("/industries/", payload)
       }
 
       if (response.data.statusCode === 200 || response.data.statusCode === 201) {

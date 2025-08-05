@@ -48,12 +48,13 @@ interface ProductResponse {
 }
 
 interface Product {
-  id: string
-  name: string
-  image: string
-  category: string
-  subcategory: string | null
-  storeName: string | null
+  id: string;
+  name: string;
+  image: string;
+  category: string;
+  subcategory: string | null;
+  storeName: string | null;
+  vendorId: string; // Add this to link products to vendors
 }
 
 interface Vendor {
@@ -332,47 +333,58 @@ export default function ProductsView() {
   const [searchTerm, setSearchTerm] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("all")
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true)
-      try {
-        const response = await axiosInstance.get<ApiResponse>(`/admin/products/all?page=1&per_page=100`)
-        const mappedProducts: Product[] = response.data.products.map((product) => ({
-          id: product.product_id,
-          name: product.product_name,
-          image: product.product_image.replace(/\\/g, "/") || "/placeholder.svg?height=192&width=300",
-          category: product.category_name,
-          subcategory: product.subcategory_name,
-          storeName: product.store_name,
-        }))
+ useEffect(() => {
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const response = await axiosInstance.get<ApiResponse>(`/admin/products/all?page=1&per_page=100`);
+      console.log("API response:", response.data);
 
-        // Group products by vendor
-        const vendorMap = response.data.products.reduce(
-          (acc, product) => {
-            const vendorId = product.vendor_id
-            const storeName = product.store_name || "Unnamed Store"
-            if (!acc[vendorId]) {
-              acc[vendorId] = { id: vendorId, storeName, productCount: 0 }
-            }
-            acc[vendorId].productCount += 1
-            return acc
-          },
-          {} as Record<string, Vendor>,
-        )
-
-        setVendors(Object.values(vendorMap))
-        setProducts(mappedProducts)
-        setError(null)
-      } catch (err) {
-        setError("Failed to fetch products.")
-        console.error(err)
-      } finally {
-        setLoading(false)
+      if (!response.data?.products || !Array.isArray(response.data.products)) {
+        setVendors([]);
+        setProducts([]);
+        setError("No products available.");
+        setLoading(false);
+        return;
       }
-    }
 
-    fetchProducts()
-  }, [])
+      const mappedProducts: Product[] = response.data.products.map((product) => ({
+        id: product.product_id,
+        name: product.product_name,
+        image: product.product_image.replace(/\\/g, "/") || "/placeholder.svg?height=192&width=300",
+        category: product.category_name,
+        subcategory: product.subcategory_name,
+        storeName: product.store_name,
+        vendorId: product.vendor_id, // Add vendorId to Product interface
+      }));
+
+      const vendorMap = response.data.products.reduce(
+        (acc, product) => {
+          const vendorId = product.vendor_id;
+          const storeName = product.store_name || "Unnamed Store";
+          if (!acc[vendorId]) {
+            acc[vendorId] = { id: vendorId, storeName, productCount: 0 };
+          }
+          acc[vendorId].productCount += 1;
+          return acc;
+        },
+        {} as Record<string, Vendor>,
+      );
+
+      console.log("Vendors:", Object.values(vendorMap));
+      setVendors([...Object.values(vendorMap)]);
+      setProducts(mappedProducts);
+      setError(null);
+    } catch (err) {
+      setError("Failed to fetch products. Please try again.");
+      console.error("Error fetching products:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchProducts();
+}, []);
 
   const handleVendorClick = (vendorId: string) => {
     setSelectedVendor(vendorId)
@@ -384,27 +396,25 @@ export default function ProductsView() {
     setCategoryFilter("all")
   }
 
-  const filteredProducts = useMemo(() => {
-    if (!selectedVendor) return []
+const filteredProducts = useMemo(() => {
+  if (!selectedVendor) return [];
 
-    let filtered = products.filter(
-      (product) => product.storeName === vendors.find((v) => v.id === selectedVendor)?.storeName,
-    )
+  let filtered = products.filter((product) => product.vendorId === selectedVendor);
 
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (product) =>
-          product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          product.category.toLowerCase().includes(searchTerm.toLowerCase()),
-      )
-    }
+  if (searchTerm) {
+    filtered = filtered.filter(
+      (product) =>
+        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.category.toLowerCase().includes(searchTerm.toLowerCase()),
+    );
+  }
 
-    if (categoryFilter !== "all") {
-      filtered = filtered.filter((product) => product.category.toLowerCase() === categoryFilter.toLowerCase())
-    }
+  if (categoryFilter !== "all") {
+    filtered = filtered.filter((product) => product.category.toLowerCase() === categoryFilter.toLowerCase());
+  }
 
-    return filtered
-  }, [selectedVendor, products, vendors, searchTerm, categoryFilter])
+  return filtered;
+}, [selectedVendor, products, searchTerm, categoryFilter]);
 
   const categories = useMemo(() => {
     const cats = new Set(products.map((p) => p.category))
