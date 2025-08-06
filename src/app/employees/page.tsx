@@ -152,9 +152,7 @@ function UserCard({
               <p className="text-sm text-slate-500 dark:text-slate-400 truncate">
                 {user.email}
               </p>
-              <p className="text-xs text-slate-400 dark:text-slate-500">
-                ID: {user.id}
-              </p>
+              
             </div>
           </div>
           <DropdownMenu>
@@ -551,8 +549,8 @@ export default function UsersPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950">
-      <div className="container mx-auto max-w-7xl p-4 lg:p-8 space-y-6 lg:space-y-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 lg:py-6 space-y-4 sm:space-y-6">
         {error && (
           <div className="bg-red-100 text-red-800 p-4 rounded-xl">{error}</div>
         )}
@@ -563,8 +561,8 @@ export default function UsersPage() {
               <Sparkles className="w-6 h-6 md:w-8 md:h-8 text-white" />
             </div>
             <div className="text-left">
-              <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                User Management
+              <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent p-2">
+                Employee Management
               </h1>
               <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 font-medium">
                 Manage users, roles, and permissions
@@ -952,9 +950,7 @@ export default function UsersPage() {
                               <p className="font-semibold text-slate-900 dark:text-slate-100 truncate text-sm md:text-base">
                                 {user.name}
                               </p>
-                              <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 truncate">
-                                ID: {user.id}
-                              </p>
+                              
                             </div>
                           </div>
                         </td>

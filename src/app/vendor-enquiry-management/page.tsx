@@ -481,8 +481,8 @@ export default function AdminEnquiryManagement() {
 
   if (currentView === "details" && selectedQuery) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-violet-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-        <div className="container mx-auto p-6 lg:p-8 max-w-5xl">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 lg:py-6 space-y-4 sm:space-y-6 max-w-5xl">
           {/* Header */}
           <div className="flex items-center gap-4 mb-8">
             <Button
@@ -788,26 +788,28 @@ export default function AdminEnquiryManagement() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-violet-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-      <div className="container mx-auto p-6 lg:p-8 space-y-8">
-        {/* Header */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
-          <div>
-            <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-slate-900 via-violet-700 to-blue-700 bg-clip-text text-transparent">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 lg:py-6 space-y-4 sm:space-y-6">
+        {/* Page Header */}
+        <div className="relative z-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-slate-800/50 dark:to-slate-700/50 p-3 sm:p-4 lg:p-6 rounded-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20 shadow-lg">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
               Query Management
             </h1>
-            <p className="text-muted-foreground mt-2">Manage and respond to vendor queries efficiently</p>
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-1">
+              Manage and respond to vendor queries efficiently
+            </p>
           </div>
-          <div className="flex items-center gap-3">
-            <Button variant="outline" className="bg-transparent">
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Refresh
+          <div className="flex items-center justify-end gap-3 sm:gap-4">
+            <Button variant="outline" className="flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition-all duration-300">
+              <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Refresh</span>
             </Button>
           </div>
         </div>
 
         {/* Statistics */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 lg:gap-6">
           <StatCard
             title="Total Queries"
             value={stats.total}

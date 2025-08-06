@@ -303,8 +303,8 @@ export default function CategoryPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950 p-4 lg:p-8">
-        <div className="container mx-auto max-w-7xl space-y-8">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 lg:py-6 space-y-4 sm:space-y-6">
           <div className="text-center space-y-4">
             <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-slate-700/50">
               <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl animate-pulse" />
@@ -328,8 +328,8 @@ export default function CategoryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950">
-      <div className="container mx-auto max-w-7xl p-4 lg:p-8 space-y-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 lg:py-6 space-y-4 sm:space-y-6">
         {/* Error Message */}
         {error && (
           <Card className="border-red-200/50 bg-gradient-to-br from-red-50/90 to-rose-100/90 backdrop-blur-sm dark:border-red-800/50 dark:from-red-950/40 dark:to-rose-950/40 shadow-lg">

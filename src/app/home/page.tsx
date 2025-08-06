@@ -57,6 +57,8 @@ import Image from 'next/image';
 const AdminDashboard = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [activeTab, setActiveTab] = useState('orders');
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showAllNotifications, setShowAllNotifications] = useState(false);
 
   // Update time every minute
   useEffect(() => {
@@ -65,6 +67,22 @@ const AdminDashboard = () => {
     }, 60000);
     return () => clearInterval(timer);
   }, []);
+
+  // Close notifications dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (showNotifications && !target.closest('.notifications-dropdown')) {
+        setShowNotifications(false);
+        setShowAllNotifications(false); // Reset when closing
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showNotifications]);
 
 
   // Mock data for dashboard
@@ -265,6 +283,34 @@ const formatIndianRupee = (amount: number): string => {
       message: '3 new vendor applications pending review',
       time: '2 hours ago',
       action: 'Review Applications'
+    },
+    {
+      type: 'success',
+      title: 'Order Delivered',
+      message: 'Order #ORD-2024-001 has been delivered successfully',
+      time: '3 hours ago',
+      action: 'View Order'
+    },
+    {
+      type: 'warning',
+      title: 'Server Load High',
+      message: 'Server CPU usage is above 85%',
+      time: '4 hours ago',
+      action: 'Check Server'
+    },
+    {
+      type: 'info',
+      title: 'New Customer Registration',
+      message: '15 new customers registered today',
+      time: '5 hours ago',
+      action: 'View Customers'
+    },
+    {
+      type: 'error',
+      title: 'Failed Login Attempts',
+      message: 'Multiple failed login attempts detected',
+      time: '6 hours ago',
+      action: 'Security Check'
     }
   ];
 
@@ -359,12 +405,39 @@ const handleDownloadReport = (reportType: string) => {
   toast.success(`Downloading ${reportType} report...`);
 };
 
+// Handler for bell icon (notifications)
+const handleNotificationClick = () => {
+  setShowNotifications(!showNotifications);
+  if (!showNotifications) {
+    setShowAllNotifications(false); // Reset to show limited notifications when opening
+  }
+  toast.info('Notifications panel toggled');
+};
+
+// Handler for View All buttons
+const handleViewAll = (section: string) => {
+  toast.info(`Navigating to ${section} page...`);
+  // Here you would typically navigate to the respective page
+  // For example: router.push(`/${section.toLowerCase().replace(' ', '-')}`);
+};
+
+// Handler for customer review actions
+const handleReviewAction = (action: string, reviewId: number) => {
+  toast.success(`${action} action performed for review #${reviewId}`);
+};
+
+// Handler for View All Notifications button
+const handleViewAllNotifications = () => {
+  setShowAllNotifications(!showAllNotifications);
+  toast.info(showAllNotifications ? 'Showing recent notifications' : 'Showing all notifications');
+};
+
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 lg:py-6 space-y-4 sm:space-y-6">
         {/* 1. Dashboard Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-slate-800/50 dark:to-slate-700/50 p-3 sm:p-4 lg:p-6 rounded-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20 shadow-lg">
+        <div className="relative z-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-slate-800/50 dark:to-slate-700/50 p-3 sm:p-4 lg:p-6 rounded-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20 shadow-lg">
           <div className="flex-1 min-w-0">
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
               Welcome back, Admin
@@ -385,9 +458,58 @@ const handleDownloadReport = (reportType: string) => {
             </div>
           </div>
           <div className="flex items-center justify-end gap-3 sm:gap-4">
-            <div className="relative">
-              <Bell className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600 dark:text-gray-400 cursor-pointer hover:text-purple-600 dark:hover:text-purple-400 transition-colors" />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-3 h-3 sm:w-4 sm:h-4 rounded-full flex items-center justify-center text-[10px] sm:text-xs">3</span>
+            <div className="relative notifications-dropdown">
+              <Bell 
+                className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600 dark:text-gray-400 cursor-pointer hover:text-purple-600 dark:hover:text-purple-400 transition-colors" 
+                onClick={handleNotificationClick}
+              />
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-3 h-3 sm:w-4 sm:h-4 rounded-full flex items-center justify-center text-[10px] sm:text-xs">{systemAlerts.length}</span>
+              
+              {/* Notifications Dropdown */}
+              {showNotifications && (
+                <div className={`absolute top-full right-0 mt-2 w-80 bg-white dark:bg-slate-800 rounded-lg shadow-2xl border border-gray-200 dark:border-slate-700 z-[99999] overflow-y-auto transition-all duration-300 ${
+                  showAllNotifications ? 'max-h-[500px]' : 'max-h-96'
+                }`}>
+
+                  <div className="p-4 border-b border-gray-200 dark:border-slate-700">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-semibold text-gray-900 dark:text-white">Notifications</h3>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        {showAllNotifications ? `${systemAlerts.length} total` : `${Math.min(3, systemAlerts.length)} recent`}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="p-2">
+                    {(showAllNotifications ? systemAlerts : systemAlerts.slice(0, 3)).map((alert, index) => (
+                      <div key={index} className="p-3 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-md cursor-pointer transition-colors duration-200">
+                        <div className="flex items-start gap-3">
+                          <div className={`p-1 rounded-full flex-shrink-0 ${
+                            alert.type === 'warning' ? 'bg-yellow-100 dark:bg-yellow-900/30' :
+                            alert.type === 'error' ? 'bg-red-100 dark:bg-red-900/30' :
+                            alert.type === 'success' ? 'bg-green-100 dark:bg-green-900/30' :
+                            'bg-blue-100 dark:bg-blue-900/30'
+                          }`}>
+                            {getAlertIcon(alert.type)}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-900 dark:text-white">{alert.title}</p>
+                            <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">{alert.message}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{alert.time}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    <div className="p-3 text-center border-t border-gray-200 dark:border-slate-700 mt-2">
+                      <button 
+                        className="text-sm text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 transition-colors duration-200"
+                        onClick={handleViewAllNotifications}
+                      >
+                        {showAllNotifications ? 'Show Less' : 'View All Notifications'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
             <div className="relative group">
               <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold cursor-pointer text-sm sm:text-base">
@@ -412,7 +534,7 @@ const handleDownloadReport = (reportType: string) => {
        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
 
           {/* Total Orders */}
-          <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/20 hover:scale-105 cursor-pointer group">
+          <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl relative overflow-visible transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/20 hover:scale-105 cursor-pointer group">
             <CardContent className="p-3 sm:p-4 lg:p-5">
               <div className="flex items-center justify-between gap-2 sm:gap-3">
                 <div className="min-w-0 flex-1">
@@ -638,7 +760,12 @@ const handleDownloadReport = (reportType: string) => {
                 <CardTitle className="text-base sm:text-lg font-semibold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
                   Recent Orders
                 </CardTitle>
-                <Button variant="ghost" size="sm" className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 text-xs sm:text-sm px-2 sm:px-3">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 text-xs sm:text-sm px-2 sm:px-3"
+                  onClick={() => handleViewAll('Recent Orders')}
+                >
                   View All <ChevronRight className="ml-1 h-3 w-3 sm:h-4 sm:w-4" />
                 </Button>
               </CardHeader>
@@ -683,7 +810,12 @@ const handleDownloadReport = (reportType: string) => {
                 <CardTitle className="text-base sm:text-lg font-semibold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
                   Top Vendors
                 </CardTitle>
-                <Button variant="ghost" size="sm" className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 text-xs sm:text-sm px-2 sm:px-3">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 text-xs sm:text-sm px-2 sm:px-3"
+                  onClick={() => handleViewAll('Top Vendors')}
+                >
                   View All <ChevronRight className="ml-1 h-3 w-3 sm:h-4 sm:w-4" />
                 </Button>
               </CardHeader>
@@ -745,7 +877,10 @@ const handleDownloadReport = (reportType: string) => {
                           <span className="text-xs text-gray-500 dark:text-gray-400 ml-2 flex-shrink-0">{alert.time}</span>
                         </div>
                         <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mt-1">{alert.message}</p>
-                        <button className="text-xs font-medium text-blue-600 dark:text-blue-400 mt-2 hover:text-blue-800 dark:hover:text-blue-300">
+                        <button 
+                          className="text-xs font-medium text-blue-600 dark:text-blue-400 mt-2 hover:text-blue-800 dark:hover:text-blue-300"
+                          onClick={() => handleQuickAction(alert.action)}
+                        >
                           {alert.action}
                         </button>
                       </div>
@@ -755,13 +890,64 @@ const handleDownloadReport = (reportType: string) => {
               </CardContent>
             </Card>
 
-            {/* Top Products */}
+          
+          </div>
+        </div>
+
+        {/* Bottom Section - Balanced 2-Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 lg:gap-6">
+          {/* Quick Actions Section */}
+          <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/20 ">
+            <CardHeader className="pb-1 px-3 sm:px-6 pt-4 sm:pt-6">
+              <CardTitle className="text-base sm:text-lg font-semibold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
+                Quick Actions
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="px-3 sm:px-6 pb-4 sm:pb-6  ">
+              <div className="grid grid-cols-2 gap-6  ">
+                <Button 
+                  onClick={() => handleQuickAction('Add Product')}
+                  className="flex flex-col  justify-center h-40  bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-100 dark:border-blue-800/30 hover:bg-gradient-to-br hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-900/30 dark:hover:to-indigo-900/30 text-blue-700 dark:text-blue-400"
+                >
+                  <Plus className="h-4 w-4 sm:h-5 sm:w-5 mb-1" />
+                  <span className="text-xs sm:text-sm">Add Product</span>
+                </Button>
+                <Button 
+                  onClick={() => handleQuickAction('Add Order')}
+                  className="flex flex-col items-center justify-center h-40  bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-100 dark:border-green-800/30 hover:bg-gradient-to-br hover:from-green-100 hover:to-emerald-100 dark:hover:from-green-900/30 dark:hover:to-emerald-900/30 text-green-700 dark:text-green-400"
+                >
+                  <ShoppingBag className="h-4 w-4 sm:h-5 sm:w-5 mb-1" />
+                  <span className="text-xs sm:text-sm">Add Order</span>
+                </Button>
+                <Button 
+                  onClick={() => handleQuickAction('View All Orders')}
+                  className="flex flex-col items-center justify-center h-40  bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 border border-purple-100 dark:border-purple-800/30 hover:bg-gradient-to-br hover:from-purple-100 hover:to-violet-100 dark:hover:from-purple-900/30 dark:hover:to-violet-900/30 text-purple-700 dark:text-purple-400"
+                >
+                  <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5 mb-1" />
+                  <span className="text-xs sm:text-sm">View Orders</span>
+                </Button>
+                <Button 
+                  onClick={() => handleQuickAction('Manage Vendors')}
+                  className="flex flex-col items-center justify-center h-40 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 border border-orange-100 dark:border-orange-800/30 hover:bg-gradient-to-br hover:from-orange-100 hover:to-amber-100 dark:hover:from-orange-900/30 dark:hover:to-amber-900/30 text-orange-700 dark:text-orange-400"
+                >
+                  <Store className="h-4 w-4 sm:h-5 sm:w-5 mb-1" />
+                  <span className="text-xs sm:text-sm">Manage Vendors</span>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+  {/* Top Products */}
             <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-green-500/20">
               <CardHeader className="pb-2 px-3 sm:px-6 pt-4 sm:pt-6 flex flex-row items-center justify-between">
                 <CardTitle className="text-base sm:text-lg font-semibold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
                   Top Products
                 </CardTitle>
-                <Button variant="ghost" size="sm" className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 text-xs sm:text-sm px-2 sm:px-3">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 text-xs sm:text-sm px-2 sm:px-3"
+                  onClick={() => handleViewAll('Top Products')}
+                >
                   View All <ChevronRight className="ml-1 h-3 w-3 sm:h-4 sm:w-4" />
                 </Button>
               </CardHeader>
@@ -790,98 +976,52 @@ const handleDownloadReport = (reportType: string) => {
                   ))}
                 </div>
               </CardContent>
-            </Card>
-          </div>
-        </div>
-
-        {/* Bottom Section - Balanced 2-Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 lg:gap-6">
-          {/* Quick Actions Section */}
-          <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/20">
-            <CardHeader className="pb-2 px-3 sm:px-6 pt-4 sm:pt-6">
-              <CardTitle className="text-base sm:text-lg font-semibold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
-                Quick Actions
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="px-3 sm:px-6 pb-4 sm:pb-6">
-              <div className="grid grid-cols-2 gap-2 sm:gap-3">
-                <Button 
-                  onClick={() => handleQuickAction('Add Product')}
-                  className="flex flex-col items-center justify-center h-16 sm:h-20 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-100 dark:border-blue-800/30 hover:bg-gradient-to-br hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-900/30 dark:hover:to-indigo-900/30 text-blue-700 dark:text-blue-400"
-                >
-                  <Plus className="h-4 w-4 sm:h-5 sm:w-5 mb-1" />
-                  <span className="text-xs sm:text-sm">Add Product</span>
-                </Button>
-                <Button 
-                  onClick={() => handleQuickAction('Add Order')}
-                  className="flex flex-col items-center justify-center h-16 sm:h-20 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-100 dark:border-green-800/30 hover:bg-gradient-to-br hover:from-green-100 hover:to-emerald-100 dark:hover:from-green-900/30 dark:hover:to-emerald-900/30 text-green-700 dark:text-green-400"
-                >
-                  <ShoppingBag className="h-4 w-4 sm:h-5 sm:w-5 mb-1" />
-                  <span className="text-xs sm:text-sm">Add Order</span>
-                </Button>
-                <Button 
-                  onClick={() => handleQuickAction('View All Orders')}
-                  className="flex flex-col items-center justify-center h-16 sm:h-20 bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 border border-purple-100 dark:border-purple-800/30 hover:bg-gradient-to-br hover:from-purple-100 hover:to-violet-100 dark:hover:from-purple-900/30 dark:hover:to-violet-900/30 text-purple-700 dark:text-purple-400"
-                >
-                  <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5 mb-1" />
-                  <span className="text-xs sm:text-sm">View Orders</span>
-                </Button>
-                <Button 
-                  onClick={() => handleQuickAction('Manage Vendors')}
-                  className="flex flex-col items-center justify-center h-16 sm:h-20 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 border border-orange-100 dark:border-orange-800/30 hover:bg-gradient-to-br hover:from-orange-100 hover:to-amber-100 dark:hover:from-orange-900/30 dark:hover:to-amber-900/30 text-orange-700 dark:text-orange-400"
-                >
-                  <Store className="h-4 w-4 sm:h-5 sm:w-5 mb-1" />
-                  <span className="text-xs sm:text-sm">Manage Vendors</span>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
+            </Card></div>
           {/* Download Reports */}
-          <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/20">
+          <Card className=" w-full backdrop-blur-xl  bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/20">
             <CardHeader className="pb-2 px-3 sm:px-6 pt-4 sm:pt-6">
               <CardTitle className="text-base sm:text-lg font-semibold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
                 Download Reports
               </CardTitle>
             </CardHeader>
             <CardContent className="px-3 sm:px-6 pb-4 sm:pb-6">
-              <div className="grid grid-cols-2 gap-2 sm:gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
                 <Button 
                   variant="outline"
                   onClick={() => handleDownloadReport('Orders')}
-                  className="flex items-center justify-start h-10 sm:h-12 border-dashed hover:bg-gray-50 dark:hover:bg-gray-800/50 px-2 sm:px-3"
+                  className="flex flex-col items-center justify-center h-16 sm:h-20 border-dashed hover:bg-gray-50 dark:hover:bg-gray-800/50 px-2 sm:px-3 gap-1 sm:gap-2"
                 >
-                  <FileText className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                  <span className="text-xs sm:text-sm">Orders Report</span>
+                  <FileText className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <span className="text-xs sm:text-sm text-center leading-tight">Orders Report</span>
                 </Button>
                 <Button 
                   variant="outline"
                   onClick={() => handleDownloadReport('Sales')}
-                  className="flex items-center justify-start h-10 sm:h-12 border-dashed hover:bg-gray-50 dark:hover:bg-gray-800/50 px-2 sm:px-3"
+                  className="flex flex-col items-center justify-center h-16 sm:h-20 border-dashed hover:bg-gray-50 dark:hover:bg-gray-800/50 px-2 sm:px-3 gap-1 sm:gap-2"
                 >
-                  <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                  <span className="text-xs sm:text-sm">Sales Report</span>
+                  <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <span className="text-xs sm:text-sm text-center leading-tight">Sales Report</span>
                 </Button>
                 <Button 
                   variant="outline"
                   onClick={() => handleDownloadReport('Vendors')}
-                  className="flex items-center justify-start h-10 sm:h-12 border-dashed hover:bg-gray-50 dark:hover:bg-gray-800/50 px-2 sm:px-3"
+                  className="flex flex-col items-center justify-center h-16 sm:h-20 border-dashed hover:bg-gray-50 dark:hover:bg-gray-800/50 px-2 sm:px-3 gap-1 sm:gap-2"
                 >
-                  <Store className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                  <span className="text-xs sm:text-sm">Vendors Report</span>
+                  <Store className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <span className="text-xs sm:text-sm text-center leading-tight">Vendors Report</span>
                 </Button>
                 <Button 
                   variant="outline"
                   onClick={() => handleDownloadReport('Products')}
-                  className="flex items-center justify-start h-10 sm:h-12 border-dashed hover:bg-gray-50 dark:hover:bg-gray-800/50 px-2 sm:px-3"
+                  className="flex flex-col items-center justify-center h-16 sm:h-20 border-dashed hover:bg-gray-50 dark:hover:bg-gray-800/50 px-2 sm:px-3 gap-1 sm:gap-2"
                 >
-                  <Package className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                  <span className="text-xs sm:text-sm">Products Report</span>
+                  <Package className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <span className="text-xs sm:text-sm text-center leading-tight">Products Report</span>
                 </Button>
               </div>
             </CardContent>
           </Card>
-        </div>
+       
 
         {/* Customer Reviews / Feedback */}
         <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-pink-500/20">
@@ -889,7 +1029,12 @@ const handleDownloadReport = (reportType: string) => {
             <CardTitle className="text-base sm:text-lg font-semibold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
               Recent Customer Reviews
             </CardTitle>
-            <Button variant="ghost" size="sm" className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 text-xs sm:text-sm px-2 sm:px-3">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 text-xs sm:text-sm px-2 sm:px-3"
+              onClick={() => handleViewAll('Customer Reviews')}
+            >
               View All <ChevronRight className="ml-1 h-3 w-3 sm:h-4 sm:w-4" />
             </Button>
           </CardHeader>
@@ -928,15 +1073,30 @@ const handleDownloadReport = (reportType: string) => {
                   </div>
                   <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 mt-2 line-clamp-3">{review.comment}</p>
                   <div className="flex justify-end mt-3 space-x-1 sm:space-x-2">
-                    <Button variant="ghost" size="sm" className="h-6 sm:h-8 px-1 sm:px-2 text-xs">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-6 sm:h-8 px-1 sm:px-2 text-xs"
+                      onClick={() => handleReviewAction('Reply', review.id)}
+                    >
                       Reply
                     </Button>
                     {review.flagged ? (
-                      <Button variant="ghost" size="sm" className="h-6 sm:h-8 px-1 sm:px-2 text-xs text-green-600 hover:text-green-700 dark:text-green-500 dark:hover:text-green-400">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-6 sm:h-8 px-1 sm:px-2 text-xs text-green-600 hover:text-green-700 dark:text-green-500 dark:hover:text-green-400"
+                        onClick={() => handleReviewAction('Approve', review.id)}
+                      >
                         Approve
                       </Button>
                     ) : (
-                      <Button variant="ghost" size="sm" className="h-6 sm:h-8 px-1 sm:px-2 text-xs text-red-600 hover:text-red-700 dark:text-red-500 dark:hover:text-red-400">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-6 sm:h-8 px-1 sm:px-2 text-xs text-red-600 hover:text-red-700 dark:text-red-500 dark:hover:text-red-400"
+                        onClick={() => handleReviewAction('Flag', review.id)}
+                      >
                         Flag
                       </Button>
                     )}

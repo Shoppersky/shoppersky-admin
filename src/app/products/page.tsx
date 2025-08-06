@@ -440,19 +440,12 @@ const filteredProducts = useMemo(() => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-violet-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-        <div className="container mx-auto p-6 lg:p-8">
-          <div className="space-y-8">
-            <div className="h-12 w-96 animate-pulse rounded-lg bg-muted/50" />
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="h-32 animate-pulse rounded-xl bg-muted/30" />
-              ))}
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <VendorSkeleton key={i} />
-              ))}
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 lg:py-6 space-y-4 sm:space-y-6">
+          <div className="flex items-center justify-center py-20">
+            <div className="relative">
+              <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
+              <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-blue-600 rounded-full animate-spin animation-delay-150"></div>
             </div>
           </div>
         </div>
@@ -461,8 +454,8 @@ const filteredProducts = useMemo(() => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-violet-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-      <div className="container mx-auto p-6 lg:p-8 space-y-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 lg:py-6 space-y-4 sm:space-y-6">
         {error && (
           <Card className="border-rose-200 bg-rose-50 dark:bg-rose-900/20">
             <CardContent className="p-4">
@@ -471,29 +464,31 @@ const filteredProducts = useMemo(() => {
           </Card>
         )}
 
-        {/* Header */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
-          <div className="flex items-center gap-4">
-            {selectedVendor && (
-              <Button variant="outline" onClick={handleBackClick} size="icon" className="shrink-0 bg-transparent">
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
-            )}
-            <div>
-              <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-slate-900 via-violet-700 to-blue-700 bg-clip-text text-transparent">
-                {selectedVendor
-                  ? `${vendors.find((v) => v.id === selectedVendor)?.storeName || "Vendor"} Products`
-                  : "Vendor Management"}
-              </h1>
-              <p className="text-muted-foreground mt-2">
-                {selectedVendor ? `Browse products from this vendor` : "Manage your vendors and their product catalogs"}
-              </p>
+        {/* Page Header */}
+        <div className="relative z-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-slate-800/50 dark:to-slate-700/50 p-3 sm:p-4 lg:p-6 rounded-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20 shadow-lg">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-3">
+              {selectedVendor && (
+                <Button variant="outline" onClick={handleBackClick} size="sm" className="shrink-0 bg-white/80 dark:bg-slate-800/80">
+                  <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
+                </Button>
+              )}
+              <div className="min-w-0 flex-1">
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
+                  {selectedVendor
+                    ? `${vendors.find((v) => v.id === selectedVendor)?.storeName || "Vendor"} Products`
+                    : "Product Management"}
+                </h1>
+                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-1">
+                  {selectedVendor ? `Browse products from this vendor` : "Manage your vendors and their product catalogs"}
+                </p>
+              </div>
             </div>
           </div>
 
-          {selectedVendor && (
-            <div className="flex items-center gap-3">
-              <div className="flex items-center border rounded-lg p-1 bg-white dark:bg-slate-800">
+          <div className="flex items-center justify-end gap-3 sm:gap-4">
+            {selectedVendor && (
+              <div className="flex items-center border rounded-lg p-1 bg-white/80 dark:bg-slate-800/80">
                 <Button
                   variant={viewMode === "cards" ? "default" : "ghost"}
                   size="sm"
@@ -511,13 +506,13 @@ const filteredProducts = useMemo(() => {
                   <Table className="h-4 w-4" />
                 </Button>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         {/* Statistics */}
         {!selectedVendor && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
             <StatCard
               title="Total Products"
               value={stats.totalProducts}

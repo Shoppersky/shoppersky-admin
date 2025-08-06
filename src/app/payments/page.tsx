@@ -173,25 +173,29 @@ export default function AdminPaymentsPage() {
   };
 
   return (
-    <div className="container mx-auto p-4 lg:p-6 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
-            Admin Payment Dashboard
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Monitor payments and commissions from all stores
-          </p>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 lg:py-6 space-y-4 sm:space-y-6">
+        {/* Page Header */}
+        <div className="relative z-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-slate-800/50 dark:to-slate-700/50 p-3 sm:p-4 lg:p-6 rounded-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20 shadow-lg">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
+              Payment Dashboard
+            </h1>
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-1">
+              Monitor payments and commissions from all stores
+            </p>
+          </div>
+          <div className="flex items-center justify-end gap-3 sm:gap-4">
+            <Button onClick={handleExportPayments} variant="outline" className="flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition-all duration-300">
+              <Download className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Export All Payments</span>
+              <span className="sm:hidden">Export</span>
+            </Button>
+          </div>
         </div>
-        <Button onClick={handleExportPayments} variant="outline" className="backdrop-blur-sm bg-white/20 dark:bg-slate-800/20 border-white/30 dark:border-slate-600/30">
-          <Download className="w-4 h-4 mr-2" />
-          Export All Payments
-        </Button>
-      </div>
 
-      {/* Admin Analytics Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+        {/* Admin Analytics Cards */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
         <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-2xl hover:shadow-2xl hover:shadow-green-500/20 hover:scale-105 transition-all duration-300">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -369,6 +373,7 @@ export default function AdminPaymentsPage() {
           </div>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }

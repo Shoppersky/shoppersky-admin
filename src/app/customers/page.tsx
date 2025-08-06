@@ -270,7 +270,7 @@ export default function UsersPage() {
       active: activeUsers,
       inactive: inactiveUsers,
       admin: adminUsers,
-      manager: managerUsers,
+      customers: managerUsers,
       employee: employeeUsers,
       vendor: vendorUsers,
       revenue: totalRevenue,
@@ -336,15 +336,15 @@ export default function UsersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-violet-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-      <div className="container mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
-        {/* Enhanced Header */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-          <div className="space-y-2">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-slate-900 via-violet-700 to-blue-700 bg-clip-text text-transparent">
-              User Management
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 lg:py-6 space-y-4 sm:space-y-6">
+        {/* Page Header */}
+        <div className="relative z-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-slate-800/50 dark:to-slate-700/50 p-3 sm:p-4 lg:p-6 rounded-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20 shadow-lg">
+          <div className="flex-1 min-w-0 ">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
+              Customer Management
             </h1>
-            <p className="text-muted-foreground text-sm sm:text-base">
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-1">
               View and manage customer accounts
             </p>
           </div>
@@ -362,19 +362,17 @@ export default function UsersPage() {
         </div>
 
         {/* Enhanced Statistics Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8 gap-4">
-          <div className="col-span-2 sm:col-span-1">
-            <StatCard
-              title="Total Users"
-              value={stats.total.toString()}
-              icon={<Users className="w-6 h-6" />}
-              color="slate"
-              trend="up"
-              trendValue="+12%"
-            />
-          </div>
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
           <StatCard
-            title="Active"
+            title="Total Users"
+            value={stats.total.toString()}
+            icon={<Users className="w-6 h-6" />}
+            color="slate"
+            trend="up"
+            trendValue="+12%"
+          />
+          <StatCard
+            title="Active Users"
             value={stats.active.toString()}
             icon={<UserCheck className="w-6 h-6" />}
             color="emerald"
@@ -382,37 +380,16 @@ export default function UsersPage() {
             trendValue="+5%"
           />
           <StatCard
-            title="Inactive"
+            title="Inactive Users"
             value={stats.inactive.toString()}
             icon={<UserX className="w-6 h-6" />}
             color="red"
           />
-          <StatCard title="Admins" value={stats.admin.toString()} icon={<Crown className="w-6 h-6" />} color="amber" />
           <StatCard
-            title="Managers"
-            value={stats.manager.toString()}
-            icon={<Shield className="w-6 h-6" />}
-            color="blue"
-          />
-          <StatCard
-            title="Employees"
-            value={stats.employee.toString()}
+            title="New Users"
+            value={stats.customers.toString()}
             icon={<User className="w-6 h-6" />}
-            color="emerald"
-          />
-          <StatCard
-            title="Vendors"
-            value={stats.vendor.toString()}
-            icon={<Store className="w-6 h-6" />}
             color="violet"
-          />
-          <StatCard
-            title="Revenue"
-            value={`$${stats.revenue.toLocaleString()}`}
-            icon={<DollarSign className="w-6 h-6" />}
-            color="cyan"
-            trend="up"
-            trendValue="+23%"
           />
         </div>
 
