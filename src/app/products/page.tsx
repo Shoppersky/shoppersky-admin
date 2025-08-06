@@ -351,7 +351,7 @@ export default function ProductsView() {
       const mappedProducts: Product[] = response.data.products.map((product) => ({
         id: product.product_id,
         name: product.product_name,
-        image: product.product_image.replace(/\\/g, "/") || "/placeholder.svg?height=192&width=300",
+        image: (product.product_image ? product.product_image.replace(/\\/g, "/") : "/placeholder.svg?height=192&width=300"),
         category: product.category_name,
         subcategory: product.subcategory_name,
         storeName: product.store_name,

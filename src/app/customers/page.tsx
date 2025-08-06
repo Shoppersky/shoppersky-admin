@@ -19,7 +19,6 @@ import {
   MoreHorizontal,
   Mail,
   Phone,
-  Calendar,
   Shield,
   Crown,
   User,
@@ -27,10 +26,8 @@ import {
   Grid3X3,
   List,
   TrendingUp,
-  Activity,
   DollarSign,
   Loader2,
-  Eye,
 } from "lucide-react"
 import axiosInstance from "@/lib/axiosInstance"
 
@@ -136,10 +133,7 @@ function UserCard({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>
-                <Eye className="w-4 h-4 mr-2" />
-                View Details
-              </DropdownMenuItem>
+             
               {user.status === "Active" ? (
                 <DropdownMenuItem onClick={() => onDeactivate(user.user_id)} className="text-red-600">
                   <UserX className="w-4 h-4 mr-2" />
@@ -219,7 +213,7 @@ export default function UsersPage() {
           name: `${user.first_name} ${user.last_name}`.trim(),
           email: user.email,
           role: user.role || "User",
-          status: user.status ? "Inactive" : "Active",
+          status: user.is_active ? "Inactive" : "Active",
           phone_number: user.phone_number,
           created_at: user.created_at,
           last_active: user.last_active || user.created_at,

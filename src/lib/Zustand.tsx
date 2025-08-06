@@ -2,28 +2,29 @@
 
 import { create } from "zustand";
 import jwt from "jsonwebtoken";
+
 interface UserData {
-  is_approved: boolean;
-  ref_number?: string;
   [key: string]: any;
 }
 
 interface DecodedToken {
-  userId: string;
-  bprofileId: string;
+  sub: string;
+  username: string;
+  role_id: string;
   exp: number;
 }
 
 interface AuthState {
   userId: string | null;
-  bprofileId: string | null;
-  user: UserData | null;
+  username: string | null;
+  roleId: string | null;
   exp: number | null;
+  user: UserData | null;
   isAuthenticated: boolean;
-  login: (token: string, user: UserData, rememberMe?: boolean) => void;
+  login: (token: string, user: UserData | null, rememberMe?: boolean) => void;
   logout: () => void;
   checkAuth: () => void;
-  switchAccount: (token: string, user?: UserData) => void;
+  switchAccount: (token: string, user?: UserData | null) => void;
 }
 
 const getTabId = (): string => {
@@ -65,12 +66,13 @@ const removeActiveAccount = (tabId: string) => {
 
 const useStore = create<AuthState>((set, get) => ({
   userId: null,
-  bprofileId: null,
-  user: null,
+  username: null,
+  roleId: null,
   exp: null,
+  user: null,
   isAuthenticated: false,
 
-  login: (token: string, user: UserData, rememberMe: boolean = true) => {
+  login: (token: string, user: UserData | null, rememberMe = true) => {
     if (!token) {
       console.error("No token received");
       return;
@@ -79,29 +81,28 @@ const useStore = create<AuthState>((set, get) => ({
     try {
       const decoded = jwt.decode(token) as DecodedToken | null;
 
-      if (decoded?.userId && decoded?.bprofileId) {
+      if (decoded?.sub && decoded?.username && decoded?.role_id) {
         const tabId = getTabId();
 
-        const userData: UserData = {
-          is_approved: user.is_approved,
-          ref_number: user.ref_number || "",
-        };
-
-        set({
-          userId: decoded.userId,
-          bprofileId: decoded.bprofileId,
-          exp: decoded.exp,
-          user: userData,
-          isAuthenticated: true,
-        });
+        const userData: UserData = user || {};
 
         const userInfo = {
-          userId: decoded.userId,
-          bprofileId: decoded.bprofileId,
+          userId: decoded.sub,
+          username: decoded.username,
+          roleId: decoded.role_id,
           exp: decoded.exp,
           token,
           user: userData,
         };
+
+        set({
+          userId: decoded.sub,
+          username: decoded.username,
+          roleId: decoded.role_id,
+          exp: decoded.exp,
+          user: userData,
+          isAuthenticated: true,
+        });
 
         if (rememberMe) {
           localStorage.setItem(`auth_${tabId}`, JSON.stringify(userInfo));
@@ -117,23 +118,19 @@ const useStore = create<AuthState>((set, get) => ({
     }
   },
 
-  switchAccount: (token: string, user?: UserData) => {
+  switchAccount: (token: string, user?: UserData | null) => {
     const tabId = getTabId();
     sessionStorage.removeItem("currentAuth");
     removeActiveAccount(tabId);
 
-    // If user data is not provided, try to retrieve it from activeAccounts
-    let userData: UserData = user || { is_approved: false, ref_number: "" };
+    let userData: UserData = user || {};
     if (!user) {
       const accounts = getActiveAccounts();
       const account = Object.values(accounts).find(
         (acc: any) => acc.token === token
       );
       if (account && account.user) {
-        userData = {
-          is_approved: account.user.is_approved,
-          ref_number: account.user.ref_number || "",
-        };
+        userData = account.user;
       }
     }
 
@@ -144,7 +141,8 @@ const useStore = create<AuthState>((set, get) => ({
     const tabId = getTabId();
     set({
       userId: null,
-      bprofileId: null,
+      username: null,
+      roleId: null,
       exp: null,
       user: null,
       isAuthenticated: false,
@@ -171,7 +169,7 @@ const useStore = create<AuthState>((set, get) => ({
     if (authData) {
       try {
         const parsed = JSON.parse(authData);
-        const { token, userId, bprofileId, exp, user } = parsed;
+        const { token, userId, username, roleId, exp, user } = parsed;
 
         if (exp && exp * 1000 < Date.now()) {
           console.log("Token expired, logging out");
@@ -181,10 +179,16 @@ const useStore = create<AuthState>((set, get) => ({
 
         const decoded = jwt.decode(token) as DecodedToken | null;
 
-        if (decoded && decoded.userId === userId && decoded.bprofileId === bprofileId) {
+        if (
+          decoded &&
+          decoded.sub === userId &&
+          decoded.username === username &&
+          decoded.role_id === roleId
+        ) {
           set({
             userId,
-            bprofileId,
+            username,
+            roleId,
             exp,
             user,
             isAuthenticated: true,
@@ -236,7 +240,8 @@ export const getActiveAccountsList = () => {
   return Object.entries(accounts).map(([tabId, info]: [string, any]) => ({
     tabId,
     userId: info.userId,
-    bprofileId: info.bprofileId,
+    username: info.username,
+    roleId: info.roleId,
     lastActive: info.lastActive,
   }));
 };
@@ -249,6 +254,8 @@ export const switchToAccount = (targetUserId: string) => {
   );
 
   if (targetAccount) {
-    useStore.getState().switchAccount((targetAccount as any).token, (targetAccount as any).user);
+    useStore
+      .getState()
+      .switchAccount((targetAccount as any).token, (targetAccount as any).user);
   }
 };

@@ -369,7 +369,7 @@ export default function UsersPage() {
         name: response.data.data.username,
         email: response.data.data.email,
         role: roles.find((r) => r.id === formData.role_id)?.name || "Unknown",
-        status: response.data.data.is_active ? "Active" : "Inactive",
+        status: response.data.data.is_active ? "Inactive" : "Active",
         joinDate: response.data.data.created_at || new Date().toISOString().split("T")[0],
         lastActive: response.data.data.created_at || new Date().toISOString().split("T")[0],
        

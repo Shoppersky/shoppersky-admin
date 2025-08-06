@@ -12,6 +12,7 @@ import { Eye, EyeOff, Mail, Lock, Sparkles, ArrowRight, Shield, Zap, Users } fro
 import axiosInstance from "@/lib/axiosInstance"
 import useStore from "@/lib/Zustand"
 import { toast } from "sonner"
+import Link from "next/link"
 
 
 interface LoginFormProps extends React.HTMLAttributes<HTMLDivElement> {}
@@ -36,46 +37,49 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
   }, [email])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setIsLoading(true)
+  e.preventDefault();
+  setIsLoading(true);
 
-    if (!emailValid) {
-      toast.error("Please enter a valid email address")
-      setIsLoading(false)
-      return
-    }
+  if (!emailValid) {
+    toast.error("Please enter a valid email address");
+    setIsLoading(false);
+    return;
+  }
 
-    try {
-      const response = await axiosInstance.post("/admin-login/login", {
-        email,
-        password,
-      })
+  try {
+    const response = await axiosInstance.post("/admin-login/login", {
+      email,
+      password,
+    });
 
-      if (response.status === 200) {
-        const { access_token, user } = response.data
+    if (response.status === 200) {
+      const { access_token, user } = response.data;
 
-        if (!access_token) {
-          throw new Error("Invalid response: Missing access token")
-        }
-
-        login(access_token, user || null)
-
-        toast.success("Login successful")
-        router.push("/home")
-
-       
+      if (!access_token) {
+        throw new Error("Invalid response: Missing access token");
       }
-    } catch (error: any) {
+
+      login(access_token, user || null);
+
+      toast.success("Login successful");
+      router.push("/home");
+    }
+  } catch (error: any) {
+    if (error.response?.status === 403) {
+      toast.success("Please change your default password.");
+      router.push(`/changepassword?email=${encodeURIComponent(email)}`);
+    } else {
       const errorMessage =
         error.response?.data?.detail ||
         error.response?.data?.message ||
-        "Something went wrong. Please try again."
+        "Something went wrong. Please try again.";
 
-      toast.error(errorMessage)
-    } finally {
-      setIsLoading(false)
+      toast.error(errorMessage);
     }
+  } finally {
+    setIsLoading(false);
   }
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950 flex items-center justify-center p-4">
@@ -158,6 +162,7 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
 
             {/* Right Side - Login Form */}
             <div className="flex flex-col justify-center p-8 lg:p-12">
+              
               {/* Header */}
               <div className="text-center mb-8">
                 <div className="inline-flex items-center gap-3 mb-6">
@@ -208,12 +213,12 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
                       <Lock className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                       Password
                     </Label>
-                    <button
-                      type="button"
-                      className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors duration-200"
-                    >
-                      Forgot password?
-                    </button>
+                    <Link
+                        href="/forgotpassword"
+                        className="text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
+                      >
+                        Forgot password?
+                      </Link>
                   </div>
                   <div className="relative">
                     <Input

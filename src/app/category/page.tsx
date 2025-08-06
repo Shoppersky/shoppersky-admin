@@ -1224,9 +1224,7 @@ export default function CategoriesPage() {
                           </div>
                           <div className="space-y-4">
                             <div className="bg-white/80 dark:bg-slate-800/80 rounded-xl p-4">
-                              <Label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                                Category ID
-                              </Label>
+                              
                               <p className="text-lg font-mono text-gray-900 dark:text-white mt-1">
                                 {editingCategory.id}
                               </p>
@@ -1647,30 +1645,7 @@ export default function CategoriesPage() {
                                         {sub.subcategory_description ||
                                           "No description provided"}
                                       </p>
-                                      {/* <div className="grid grid-cols-2 gap-4 py-4 border-t border-gray-100 dark:border-gray-800">
-                                      <div className="text-center">
-                                        <div className="flex items-center justify-center gap-1 text-blue-600 dark:text-blue-400">
-                                          <Package className="w-4 h-4" />
-                                          <span className="font-bold text-lg">
-                                            {sub.productCount}
-                                          </span>
-                                        </div>
-                                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                                          Products
-                                        </p>
-                                      </div>
-                                      <div className="text-center">
-                                        <div className="flex items-center justify-center gap-1 text-green-600 dark:text-green-400">
-                                          <DollarSign className="w-4 h-4" />
-                                          <span className="font-bold text-lg">
-                                            {sub.totalRevenue}
-                                          </span>
-                                        </div>
-                                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                                          Revenue
-                                        </p>
-                                      </div>
-                                    </div> */}
+                                     
                                       <div className="space-y-2">
                                         <div className="flex items-center justify-between">
                                           <div className="flex items-center gap-2">
@@ -1884,3 +1859,6 @@ export default function CategoriesPage() {
     </div>
   );
 }
+
+
+

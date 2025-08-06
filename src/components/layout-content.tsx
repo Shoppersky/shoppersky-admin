@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { usePathname } from "next/navigation"
 import Sidebar from "@/components/ui/sidebar"
 
@@ -12,11 +11,14 @@ interface LayoutContentProps {
 export function LayoutContent({ children }: LayoutContentProps) {
   const pathname = usePathname()
 
-  // Hide sidebar on login page (root path)
+  // Hide sidebar on login and change password pages
   const isLoginPage = pathname === "/"
+  const isChangePasswordPage = pathname === "/changepassword"
+  const isForgotPassword = pathname === "/forgotpassword"
+    const isResetPassword = pathname === "/resetpassword"
 
-  if (isLoginPage) {
-    // Render without sidebar for login page with full-screen layout
+  if (isLoginPage || isChangePasswordPage || isForgotPassword || isResetPassword) {
+    // Render without sidebar for login or change password pages
     return <div className="min-h-screen">{children}</div>
   }
 
