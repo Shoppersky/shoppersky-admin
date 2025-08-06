@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
@@ -265,7 +264,8 @@ export default function CategoriesPage() {
                 subcategory_meta_title: sub.subcategory_meta_title || "",
                 subcategory_meta_description:
                   sub.subcategory_meta_description || "",
-                subcategory_img_thumbnail: sub.subcategory_img_thumbnail || null,
+                subcategory_img_thumbnail:
+                  sub.subcategory_img_thumbnail || null,
                 show_in_menu: sub.show_in_menu,
                 featured_subcategory: sub.featured_subcategory,
                 subcategory_status: sub.subcategory_status,
@@ -323,7 +323,9 @@ export default function CategoriesPage() {
             sub.subcategory_description
               .toLowerCase()
               .includes(searchTerm.toLowerCase()) ||
-            sub.subcategory_slug.toLowerCase().includes(searchTerm.toLowerCase())
+            sub.subcategory_slug
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase())
         );
       const matchesStatus =
         statusFilter === "all" ||
@@ -591,9 +593,7 @@ export default function CategoriesPage() {
         category.metaTitle,
         category.metaDescription,
         category.showInMenu.toString(),
-        category.subcategories
-          .map((sub) => sub.subcategory_name)
-          .join(";"),
+        category.subcategories.map((sub) => sub.subcategory_name).join(";"),
       ]),
     ]
       .map((row) => row.join(","))
@@ -624,12 +624,12 @@ export default function CategoriesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950">
-        <div className="container mx-auto p-6 space-y-8">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 lg:py-6 space-y-4 sm:space-y-6">
           <div className="flex items-center justify-center py-20">
             <div className="relative">
-              <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
-              <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-purple-600 rounded-full animate-spin animation-delay-150"></div>
+              <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
+              <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-blue-600 rounded-full animate-spin animation-delay-150"></div>
             </div>
           </div>
         </div>
@@ -638,8 +638,8 @@ export default function CategoriesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950">
-      <div className="container mx-auto p-6 space-y-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 lg:py-6 space-y-4 sm:space-y-6">
         {/* Error Message */}
         {error && (
           <Card className="border-red-200/50 bg-gradient-to-br from-red-50/80 to-rose-100/80 backdrop-blur-sm dark:border-red-800/50 dark:from-red-950/30 dark:to-rose-950/30">
@@ -669,14 +669,15 @@ export default function CategoriesPage() {
 
         {/* Header */}
         <div className="text-center space-y-4">
-          <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-full border border-indigo-200/50 dark:border-indigo-800/50">
+          <div className="inline-flex items-center gap-3 px-6 py-2 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-full border border-indigo-200/50 dark:border-indigo-800/50">
             <Sparkles className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
-            <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent p-1">
               Category Management
             </h1>
           </div>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Organize your products into categories and subcategories, and track performance metrics
+            Organize your products into categories and subcategories, and track
+            performance metrics
           </p>
         </div>
 
@@ -814,6 +815,8 @@ export default function CategoriesPage() {
                         <Image
                           src={category.image || "/placeholder.svg"}
                           alt={category.name}
+                          width={400} // Adjust based on your design (e.g., 400px for a typical card width)
+                          height={225} // Adjust to maintain aspect ratio (e.g., 16:9 for aspect-video)
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       ) : (
@@ -1581,66 +1584,70 @@ export default function CategoriesPage() {
                           </div>
                           {editingCategory.subcategories.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                              {editingCategory.subcategories.map((sub, index) => (
-                                <Card
-                                  key={sub.subcategory_id}
-                                  className="group backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border-0 shadow-lg rounded-xl hover:shadow-xl transition-all duration-300"
-                                  style={{ animationDelay: `${index * 100}ms` }}
-                                >
-                                  <div className="relative">
-                                    <div className="aspect-video bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30 flex items-center justify-center">
-                                      {sub.subcategory_img_thumbnail ? (
-                                        <Image
-                                          src={
-                                            sub.subcategory_img_thumbnail ||
-                                            "/placeholder.svg"
-                                          }
-                                          alt={sub.subcategory_name}
-                                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                        />
-                                      ) : (
-                                        <Tag className="w-12 h-12 text-blue-400" />
-                                      )}
+                              {editingCategory.subcategories.map(
+                                (sub, index) => (
+                                  <Card
+                                    key={sub.subcategory_id}
+                                    className="group backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border-0 shadow-lg rounded-xl hover:shadow-xl transition-all duration-300"
+                                    style={{
+                                      animationDelay: `${index * 100}ms`,
+                                    }}
+                                  >
+                                    <div className="relative">
+                                      <div className="aspect-video bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30 flex items-center justify-center">
+                                        {sub.subcategory_img_thumbnail ? (
+                                          <Image
+                                            src={
+                                              sub.subcategory_img_thumbnail ||
+                                              "/placeholder.svg"
+                                            }
+                                            alt={sub.subcategory_name}
+                                            width={400} // Adjust based on your design (e.g., 400px for a typical card width)
+                                            height={225} // Adjust to maintain aspect ratio (e.g., 16:9 for aspect-video)
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                          />
+                                        ) : (
+                                          <Tag className="w-12 h-12 text-blue-400" />
+                                        )}
+                                      </div>
                                     </div>
-                                  </div>
-                                  <CardContent className="p-4 space-y-4">
-                                    <div className="space-y-2">
-                                      <div className="flex items-center gap-3">
-                                        <h5 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                                          {sub.subcategory_name}
-                                        </h5>
+                                    <CardContent className="p-4 space-y-4">
+                                      <div className="space-y-2">
+                                        <div className="flex items-center gap-3">
+                                          <h5 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                            {sub.subcategory_name}
+                                          </h5>
+                                          <Badge
+                                            className={`shadow-lg ${
+                                              sub.subcategory_status
+                                                ? "bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800"
+                                                : "bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800"
+                                            }`}
+                                          >
+                                            {sub.subcategory_status ? (
+                                              <CheckCircle className="w-3 h-3 mr-1" />
+                                            ) : (
+                                              <XCircle className="w-3 h-3 mr-1" />
+                                            )}
+                                            {sub.subcategory_status
+                                              ? "Inactive"
+                                              : "Active"}
+                                          </Badge>
+                                        </div>
                                         <Badge
-                                          className={`shadow-lg ${
-                                            sub.subcategory_status
-                                              ? "bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800"
-                                              : 
-                                               "bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800"
-                                          }`}
+                                          variant="outline"
+                                          className="text-blue-600 border-blue-200 dark:text-blue-400 dark:border-blue-800"
                                         >
-                                          {sub.subcategory_status ? (
-                                            <CheckCircle className="w-3 h-3 mr-1" />
-                                          ) : (
-                                            <XCircle className="w-3 h-3 mr-1" />
-                                          )}
-                                          {sub.subcategory_status
-                                            ? "Inactive"
-                                            : "Active"}
+                                          {sub.featured_subcategory
+                                            ? "Featured"
+                                            : "Standard"}
                                         </Badge>
                                       </div>
-                                      <Badge
-                                        variant="outline"
-                                        className="text-blue-600 border-blue-200 dark:text-blue-400 dark:border-blue-800"
-                                      >
-                                        {sub.featured_subcategory
-                                          ? "Featured"
-                                          : "Standard"}
-                                      </Badge>
-                                    </div>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
-                                      {sub.subcategory_description ||
-                                        "No description provided"}
-                                    </p>
-                                    {/* <div className="grid grid-cols-2 gap-4 py-4 border-t border-gray-100 dark:border-gray-800">
+                                      <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                                        {sub.subcategory_description ||
+                                          "No description provided"}
+                                      </p>
+                                      {/* <div className="grid grid-cols-2 gap-4 py-4 border-t border-gray-100 dark:border-gray-800">
                                       <div className="text-center">
                                         <div className="flex items-center justify-center gap-1 text-blue-600 dark:text-blue-400">
                                           <Package className="w-4 h-4" />
@@ -1664,39 +1671,40 @@ export default function CategoriesPage() {
                                         </p>
                                       </div>
                                     </div> */}
-                                    <div className="space-y-2">
-                                      <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                          <Calendar className="w-4 h-4 text-gray-400" />
-                                          <span className="text-xs text-gray-500 dark:text-gray-400">
-                                            {sub.subcategory_tstamp
-                                              ? new Date(
-                                                  sub.subcategory_tstamp
-                                                ).toLocaleDateString()
-                                              : "N/A"}
-                                          </span>
+                                      <div className="space-y-2">
+                                        <div className="flex items-center justify-between">
+                                          <div className="flex items-center gap-2">
+                                            <Calendar className="w-4 h-4 text-gray-400" />
+                                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                                              {sub.subcategory_tstamp
+                                                ? new Date(
+                                                    sub.subcategory_tstamp
+                                                  ).toLocaleDateString()
+                                                : "N/A"}
+                                            </span>
+                                          </div>
+                                          <Badge
+                                            variant={
+                                              sub.show_in_menu
+                                                ? "default"
+                                                : "outline"
+                                            }
+                                          >
+                                            {sub.show_in_menu
+                                              ? "Menu Visible"
+                                              : "Menu Hidden"}
+                                          </Badge>
                                         </div>
-                                        <Badge
-                                          variant={
-                                            sub.show_in_menu
-                                              ? "default"
-                                              : "outline"
-                                          }
-                                        >
-                                          {sub.show_in_menu
-                                            ? "Menu Visible"
-                                            : "Menu Hidden"}
-                                        </Badge>
+                                        <div className="flex items-center justify-between">
+                                          <p className="text-xs text-gray-500 dark:text-gray-400 font-mono">
+                                            Slug: {sub.subcategory_slug}
+                                          </p>
+                                        </div>
                                       </div>
-                                      <div className="flex items-center justify-between">
-                                        <p className="text-xs text-gray-500 dark:text-gray-400 font-mono">
-                                          Slug: {sub.subcategory_slug}
-                                        </p>
-                                      </div>
-                                    </div>
-                                  </CardContent>
-                                </Card>
-                              ))}
+                                    </CardContent>
+                                  </Card>
+                                )
+                              )}
                             </div>
                           ) : (
                             <div className="text-center space-y-4">
@@ -1774,7 +1782,8 @@ export default function CategoriesPage() {
                     Delete Category
                   </AlertDialogTitle>
                   <AlertDialogDescription className="text-gray-600 dark:text-gray-400 mt-1">
-                    This action will soft-delete the category and its subcategories
+                    This action will soft-delete the category and its
+                    subcategories
                   </AlertDialogDescription>
                 </div>
               </div>
@@ -1857,8 +1866,7 @@ export default function CategoriesPage() {
               </div>
             )}
 
-
-                        <AlertDialogFooter className="gap-3">
+            <AlertDialogFooter className="gap-3">
               <AlertDialogCancel className="flex-1 h-12 border-2 border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-slate-800/50 transition-all hover:bg-white hover:scale-105 dark:hover:bg-slate-800 rounded-xl">
                 Cancel
               </AlertDialogCancel>
@@ -1876,4 +1884,3 @@ export default function CategoriesPage() {
     </div>
   );
 }
-

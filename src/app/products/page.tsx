@@ -214,13 +214,13 @@ function ProductCard({ product }: { product: Product }) {
     <Card className="group overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-[1.02] bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800 border-0 shadow-lg">
       <div className="relative overflow-hidden">
         <Image
-          src={product.image || "/placeholder.svg"}
-          alt={product.name}
-          className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
-          onError={(e) => {
-            e.currentTarget.src = "/placeholder.svg?height=192&width=300&text=Product+Image"
-          }}
-        />
+  src={product.image || "/placeholder.svg"}
+  alt={product.name}
+  width={300} // Add width
+  height={192} // Matches h-48
+  className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
+  
+/>
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <Button size="icon" variant="secondary" className="h-8 w-8 bg-white/90 hover:bg-white">
@@ -624,21 +624,21 @@ const filteredProducts = useMemo(() => {
                       <TableHead>Category</TableHead>
                       <TableHead>Subcategory</TableHead>
                       <TableHead>Store</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                    
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredProducts.map((product) => (
                       <TableRow key={product.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
                         <TableCell>
-                          <Image
-                            src={product.image || "/placeholder.svg"}
-                            alt={product.name}
-                            className="w-12 h-12 object-cover rounded-lg"
-                            onError={(e) => {
-                              e.currentTarget.src = "/placeholder.svg?height=48&width=48&text=Product"
-                            }}
-                          />
+                         <Image
+  src={product.image || "/placeholder.svg"}
+  alt={product.name}
+  width={48} // Matches w-12
+  height={48} // Matches h-12
+  className="w-12 h-12 object-cover rounded-lg"
+  
+/>
                         </TableCell>
                         <TableCell className="font-medium">{product.name}</TableCell>
                         <TableCell className="text-muted-foreground">{product.id}</TableCell>
@@ -653,25 +653,7 @@ const filteredProducts = useMemo(() => {
                           )}
                         </TableCell>
                         <TableCell>{product.storeName}</TableCell>
-                        <TableCell className="text-right">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-8 w-8">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem>
-                                <Eye className="w-4 h-4 mr-2" />
-                                View Details
-                              </DropdownMenuItem>
-                              <DropdownMenuItem>
-                                <BarChart3 className="w-4 h-4 mr-2" />
-                                Analytics
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
+                      
                       </TableRow>
                     ))}
                   </TableBody>
