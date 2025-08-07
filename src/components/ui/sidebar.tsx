@@ -66,11 +66,7 @@ export default function Sidebar() {
     { label: "End User Queries", icon: BadgeQuestionMark , path: "/enduserqueries" },
   ];
 
-  const handleLogout = () => {
-    // Clear auth tokens or session data here
-    localStorage.clear(); // example
-    router.push("/"); // redirect to login page
-  };
+ 
 
   return (
     <>
@@ -95,7 +91,7 @@ export default function Sidebar() {
       {/* Sidebar */}
       <aside
         id="mobile-sidebar"
-        className={`fixed top-0 left-0 h-screen bg-gradient-to-b from-white to-gray-50/50 dark:from-zinc-900 dark:to-zinc-950/50 border-r border-gray-200/60 dark:border-zinc-800/60 backdrop-blur-xl shadow-2xl dark:shadow-black/20 flex flex-col z-50 transition-all duration-300 
+        className={`lg:sticky lg:top-0 fixed top-0 left-0 h-screen bg-gradient-to-b from-white to-gray-50/50 dark:from-zinc-900 dark:to-zinc-950/50 border-r border-gray-200/60 dark:border-zinc-800/60 backdrop-blur-xl shadow-2xl dark:shadow-black/20 flex flex-col z-50 transition-all duration-300 
           ${
             isMobileMenuOpen
               ? "w-64 translate-x-0"
@@ -185,32 +181,7 @@ export default function Sidebar() {
             })}
           </div>
 
-          {/* Enhanced Divider */}
-          <div className="relative my-4 sm:my-6 lg:my-8">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gradient-to-r from-transparent via-gray-300 dark:via-zinc-700 to-transparent" />
-            </div>
-            <div className="relative flex justify-center">
-              <div className="bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900/50 dark:to-blue-900/50 px-2 sm:px-3 py-1 rounded-full">
-                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gradient-to-r from-purple-400 to-blue-400 rounded-full animate-pulse" />
-              </div>
-            </div>
-          </div>
-
-          {/* Logout Button */}
-          <div className="relative mt-6 px-2 sm:px-3">
-            <button
-              onClick={() => {
-                // Your logout logic here
-                localStorage.clear(); // or any auth logout method
-                router.push("/");
-              }}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950 transition-all duration-300 group"
-            >
-              <X className="w-5 h-5 text-red-500 dark:text-red-400 group-hover:scale-110 transition-transform duration-200" />
-              <span>Logout</span>
-            </button>
-          </div>
+          
         </nav>
       </aside>
     </>

@@ -132,12 +132,12 @@ function UserCard({
 }) {
   return (
     <Card className="bg-white/80 dark:bg-slate-900/80 border-0 shadow-lg rounded-2xl hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-3 flex-1 min-w-0">
-            <Avatar className="w-12 h-12 shadow-sm flex-shrink-0">
+      <CardContent className="p-3 sm:p-4">
+        <div className="flex items-start justify-between mb-3 sm:mb-4">
+          <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+            <Avatar className="w-10 h-10 sm:w-12 sm:h-12 shadow-sm flex-shrink-0">
               <AvatarImage src={user.avatar || "/placeholder.svg"} />
-              <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-500 text-white font-semibold text-sm">
+              <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-500 text-white font-semibold text-xs sm:text-sm">
                 {user.name
                   .split(" ")
                   .map((n) => n[0])
@@ -146,10 +146,10 @@ function UserCard({
               </AvatarFallback>
             </Avatar>
             <div className="min-w-0 flex-1">
-              <h3 className="font-semibold text-slate-900 dark:text-slate-100 truncate">
+              <h3 className="font-semibold text-slate-900 dark:text-slate-100 truncate text-sm sm:text-base">
                 {user.name}
               </h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400 truncate">
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 truncate">
                 {user.email}
               </p>
               
@@ -160,9 +160,9 @@ function UserCard({
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 w-8 p-0 hover:bg-slate-100 dark:hover:bg-slate-800"
+                className="h-7 w-7 sm:h-8 sm:w-8 p-0 hover:bg-slate-100 dark:hover:bg-slate-800"
               >
-                <MoreVertical className="w-4 h-4" />
+                <MoreVertical className="w-3 h-3 sm:w-4 sm:h-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -196,21 +196,21 @@ function UserCard({
           </DropdownMenu>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-2 sm:space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-slate-600 dark:text-slate-400">
+            <span className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
               Role
             </span>
             {getRoleBadge(user.role)}
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sm text-slate-600 dark:text-slate-400">
+            <span className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
               Status
             </span>
             {getStatusBadge(user.status)}
           </div>
           {user.phone && (
-            <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
               <Phone className="w-3 h-3" />
               <span className="truncate">{user.phone}</span>
             </div>
@@ -550,21 +550,21 @@ export default function UsersPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 lg:py-6 space-y-4 sm:space-y-6">
+      <div className="container mx-auto px-2 sm:px-4 lg:px-6 py-3 sm:py-4 lg:py-6 space-y-3 sm:space-y-4 lg:space-y-6">
         {error && (
           <div className="bg-red-100 text-red-800 p-4 rounded-xl">{error}</div>
         )}
         {/* Header */}
-        <div className="text-center space-y-4 md:space-y-6">
-          <div className="inline-flex items-center gap-2 md:gap-4 px-4 md:px-8 py-3 md:py-4 bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl rounded-2xl md:rounded-3xl border border-slate-200/50 dark:border-slate-700/50 shadow-lg">
-            <div className="p-2 md:p-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl md:rounded-2xl shadow-lg">
-              <Sparkles className="w-6 h-6 md:w-8 md:h-8 text-white" />
+        <div className="text-center space-y-3 sm:space-y-4 md:space-y-6">
+          <div className="inline-flex items-center gap-2 sm:gap-3 md:gap-4 px-3 sm:px-4 md:px-8 py-2 sm:py-3 md:py-4 bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl rounded-xl sm:rounded-2xl md:rounded-3xl border border-slate-200/50 dark:border-slate-700/50 shadow-lg">
+            <div className="p-1.5 sm:p-2 md:p-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg sm:rounded-xl md:rounded-2xl shadow-lg">
+              <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-white" />
             </div>
             <div className="text-left">
-              <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent p-2">
+              <h1 className="text-lg sm:text-2xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent p-1 sm:p-2">
                 Employee Management
               </h1>
-              <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 font-medium">
+              <p className="text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-400 font-medium">
                 Manage users, roles, and permissions
               </p>
             </div>
@@ -572,11 +572,11 @@ export default function UsersPage() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 px-4 sm:px-0">
+        <div className="flex flex-col xs:flex-row items-stretch xs:items-center justify-center gap-2 sm:gap-3 lg:gap-4 px-2 sm:px-4 lg:px-0">
           <Button
             variant="outline"
             onClick={handleExportUsers}
-            className="flex items-center justify-center gap-2 px-4 md:px-6 py-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-300 text-sm md:text-base"
+            className="flex items-center justify-center gap-2 px-3 sm:px-4 md:px-6 py-2 sm:py-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-300 text-xs sm:text-sm md:text-base"
           >
             <Download className="w-4 h-4" />
             Export Data
@@ -584,7 +584,7 @@ export default function UsersPage() {
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button
-                className="flex items-center justify-center gap-2 px-4 md:px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 text-sm md:text-base"
+                className="flex items-center justify-center gap-2 px-3 sm:px-4 md:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 text-xs sm:text-sm md:text-base"
                 onClick={() => {
                   setEditingUser(null);
                   setFormData({
@@ -776,7 +776,7 @@ export default function UsersPage() {
         </div>
 
         {/* Statistics Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+        <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
           <StatCard
             title="Total Users"
             value={stats.total.toString()}
@@ -880,7 +880,7 @@ export default function UsersPage() {
 
         {/* Users Display */}
         {viewMode === "cards" ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
             {filteredUsers.map((user) => (
               <UserCard
                 key={user.id}
@@ -902,26 +902,26 @@ export default function UsersPage() {
             </CardHeader>
             <CardContent className="p-0">
               <div className="overflow-x-auto">
-                <table className="w-full min-w-[600px]">
+                <table className="w-full min-w-[700px]">
                   <thead className="bg-slate-50/80 dark:bg-slate-800/80 border-b border-slate-200/50 dark:border-slate-700/50">
                     <tr>
-                      <th className="text-left p-3 md:p-4 font-semibold text-slate-700 dark:text-slate-300 text-sm md:text-base">
+                      <th className="text-left p-2 sm:p-3 md:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm md:text-base">
                         User
                       </th>
-                      <th className="text-left p-3 md:p-4 font-semibold text-slate-700 dark:text-slate-300 hidden md:table-cell text-sm md:text-base">
+                      <th className="text-left p-2 sm:p-3 md:p-4 font-semibold text-slate-700 dark:text-slate-300 hidden md:table-cell text-xs sm:text-sm md:text-base">
                         Contact
                       </th>
-                      <th className="text-left p-3 md:p-4 font-semibold text-slate-700 dark:text-slate-300 text-sm md:text-base">
+                      <th className="text-left p-2 sm:p-3 md:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm md:text-base">
                         Role
                       </th>
-                      <th className="text-left p-3 md:p-4 font-semibold text-slate-700 dark:text-slate-300 text-sm md:text-base">
+                      <th className="text-left p-2 sm:p-3 md:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm md:text-base">
                         Status
                       </th>
-                      <th className="text-left p-3 md:p-4 font-semibold text-slate-700 dark:text-slate-300 hidden lg:table-cell text-sm md:text-base">
+                      <th className="text-left p-2 sm:p-3 md:p-4 font-semibold text-slate-700 dark:text-slate-300 hidden lg:table-cell text-xs sm:text-sm md:text-base">
                         Activity
                       </th>
                       
-                      <th className="text-left p-3 md:p-4 font-semibold text-slate-700 dark:text-slate-300 text-sm md:text-base">
+                      <th className="text-left p-2 sm:p-3 md:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm md:text-base">
                         Actions
                       </th>
                     </tr>
@@ -932,13 +932,13 @@ export default function UsersPage() {
                         key={user.id}
                         className="border-b border-slate-200/50 dark:border-slate-700/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-all duration-200"
                       >
-                        <td className="p-3 md:p-4">
-                          <div className="flex items-center gap-3">
-                            <Avatar className="w-8 h-8 md:w-10 md:h-10 shadow-sm flex-shrink-0">
+                        <td className="p-2 sm:p-3 md:p-4">
+                          <div className="flex items-center gap-2 sm:gap-3">
+                            <Avatar className="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 shadow-sm flex-shrink-0">
                               <AvatarImage
                                 src={user.avatar || "/placeholder.svg"}
                               />
-                              <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-500 text-white font-semibold text-xs md:text-sm">
+                              <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-500 text-white font-semibold text-xs">
                                 {user.name
                                   .split(" ")
                                   .map((n) => n[0])
@@ -947,36 +947,38 @@ export default function UsersPage() {
                               </AvatarFallback>
                             </Avatar>
                             <div className="min-w-0 flex-1">
-                              <p className="font-semibold text-slate-900 dark:text-slate-100 truncate text-sm md:text-base">
+                              <p className="font-semibold text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm md:text-base">
                                 {user.name}
                               </p>
-                              
+                              <p className="text-xs text-slate-500 dark:text-slate-400 truncate md:hidden">
+                                {user.email}
+                              </p>
                             </div>
                           </div>
                         </td>
-                        <td className="p-3 md:p-4 hidden md:table-cell">
+                        <td className="p-2 sm:p-3 md:p-4 hidden md:table-cell">
                           <div className="space-y-1">
-                            <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                            <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
                               <Mail className="w-3 h-3 flex-shrink-0" />
                               <span className="truncate">{user.email}</span>
                             </div>
                             {user.phone && (
-                              <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                              <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
                                 <Phone className="w-3 h-3 flex-shrink-0" />
                                 {user.phone}
                               </div>
                             )}
                           </div>
                         </td>
-                        <td className="p-3 md:p-4">
+                        <td className="p-2 sm:p-3 md:p-4">
                           {getRoleBadge(user.role)}
                         </td>
-                        <td className="p-3 md:p-4">
+                        <td className="p-2 sm:p-3 md:p-4">
                           {getStatusBadge(user.status)}
                         </td>
-                        <td className="p-3 md:p-4 hidden lg:table-cell">
+                        <td className="p-2 sm:p-3 md:p-4 hidden lg:table-cell">
                           <div className="space-y-1">
-                            <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                            <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
                               <Calendar className="w-3 h-3 flex-shrink-0" />
                               Joined:{" "}
                               {new Date(user.joinDate).toLocaleDateString()}
@@ -988,23 +990,16 @@ export default function UsersPage() {
                           </div>
                         </td>
                        
-                        <td className="p-3 md:p-4">
-                          <div className="flex items-center gap-1 md:gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-7 md:h-8 px-2 md:px-3 hover:bg-blue-50 dark:hover:bg-blue-950/50 text-xs md:text-sm"
-                            >
-                              
-                            </Button>
+                        <td className="p-2 sm:p-3 md:p-4">
+                          <div className="flex items-center gap-1">
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  className="h-7 w-7 md:h-8 md:w-8 p-0 hover:bg-slate-100 dark:hover:bg-slate-800"
+                                  className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 p-0 hover:bg-slate-100 dark:hover:bg-slate-800"
                                 >
-                                  <MoreVertical className="w-3 h-3 md:w-4 md:h-4" />
+                                  <MoreVertical className="w-3 h-3 sm:w-4 sm:h-4" />
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
@@ -1046,12 +1041,12 @@ export default function UsersPage() {
               </div>
 
               {filteredUsers.length === 0 && (
-                <div className="text-center py-12 md:py-16">
-                  <Users className="w-12 h-12 md:w-16 md:h-16 text-slate-400 mx-auto mb-4" />
-                  <h3 className="text-lg md:text-xl font-semibold text-slate-600 dark:text-slate-300 mb-2">
+                <div className="text-center py-8 sm:py-12 md:py-16">
+                  <Users className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 text-slate-400 mx-auto mb-3 sm:mb-4" />
+                  <h3 className="text-base sm:text-lg md:text-xl font-semibold text-slate-600 dark:text-slate-300 mb-2">
                     No Users Found
                   </h3>
-                  <p className="text-sm md:text-base text-slate-500 dark:text-slate-400 text-center mb-6 max-w-md mx-auto px-4">
+                  <p className="text-xs sm:text-sm md:text-base text-slate-500 dark:text-slate-400 text-center mb-4 sm:mb-6 max-w-md mx-auto px-4">
                     {searchTerm ||
                     statusFilter !== "all" ||
                     roleFilter !== "all"
@@ -1060,9 +1055,9 @@ export default function UsersPage() {
                   </p>
                   <Button
                     onClick={() => setOpen(true)}
-                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-xs sm:text-sm md:text-base px-3 sm:px-4 py-2 sm:py-3"
                   >
-                    <Plus className="w-4 h-4 mr-2" />
+                    <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                     Add Your First User
                   </Button>
                 </div>

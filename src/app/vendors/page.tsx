@@ -671,11 +671,11 @@ const VendorManagement = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 lg:py-6 space-y-4 sm:space-y-6">
-          <div className="flex items-center justify-center py-20">
+        <div className="container mx-auto px-2 sm:px-4 lg:px-6 py-3 sm:py-4 lg:py-6 space-y-3 sm:space-y-4 lg:space-y-6">
+          <div className="flex items-center justify-center py-12 sm:py-16 lg:py-20">
             <div className="relative">
-              <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
-              <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-blue-600 rounded-full animate-spin animation-delay-150"></div>
+              <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 border-3 sm:border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
+              <div className="absolute inset-0 w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 border-3 sm:border-4 border-transparent border-t-blue-600 rounded-full animate-spin animation-delay-150"></div>
             </div>
           </div>
         </div>
@@ -685,25 +685,25 @@ const VendorManagement = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 lg:py-6 space-y-4 sm:space-y-6">
+      <div className="container mx-auto px-2 sm:px-4 lg:px-6 py-3 sm:py-4 lg:py-6 space-y-3 sm:space-y-4 lg:space-y-6">
         {error && (
           <Card className="border-red-200/50 bg-gradient-to-br from-red-50/80 to-rose-100/80 backdrop-blur-sm dark:border-red-800/50 dark:from-red-950/30 dark:to-rose-950/30">
-            <CardContent className="flex items-center gap-4 p-6">
-              <div className="rounded-full bg-red-100 p-3 dark:bg-red-900/30">
-                <XCircle className="h-8 w-8 text-red-600 dark:text-red-400" />
+            <CardContent className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 lg:p-6">
+              <div className="rounded-full bg-red-100 p-2 sm:p-3 dark:bg-red-900/30 flex-shrink-0">
+                <XCircle className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8 text-red-600 dark:text-red-400" />
               </div>
-              <div>
-                <h3 className="font-semibold text-red-900 dark:text-red-100">
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-red-900 dark:text-red-100 text-sm sm:text-base">
                   Error Loading Data
                 </h3>
-                <p className="text-sm text-red-700 dark:text-red-300">
+                <p className="text-xs sm:text-sm text-red-700 dark:text-red-300 mt-1">
                   {error}
                 </p>
                 <Button
                   onClick={() => window.location.reload()}
                   variant="outline"
                   size="sm"
-                  className="mt-3 border-red-200 text-red-700 hover:bg-red-50 dark:border-red-800 dark:text-red-300 dark:hover:bg-red-900/20"
+                  className="mt-2 sm:mt-3 border-red-200 text-red-700 hover:bg-red-50 dark:border-red-800 dark:text-red-300 dark:hover:bg-red-900/20 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2"
                 >
                   Try Again
                 </Button>
@@ -713,20 +713,20 @@ const VendorManagement = () => {
         )}
 
         {/* Page Header */}
-        <div className="relative z-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-slate-800/50 dark:to-slate-700/50 p-3 sm:p-4 lg:p-6 rounded-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20 shadow-lg">
+        <div className="relative z-50 flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2 sm:gap-3 lg:gap-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-slate-800/50 dark:to-slate-700/50 p-2 sm:p-3 lg:p-6 rounded-lg sm:rounded-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20 shadow-lg">
           <div className="flex-1 min-w-0">
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
+            <h1 className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
               Vendor Management
             </h1>
-            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-1">
+            <p className="text-xs sm:text-sm lg:text-base text-gray-600 dark:text-gray-400 mt-0.5 sm:mt-1">
               Manage vendor registrations and business details
             </p>
           </div>
-          <div className="flex items-center justify-end gap-3 sm:gap-4">
+          <div className="flex items-center justify-end gap-2 sm:gap-3 lg:gap-4">
             <Button
               variant="outline"
               onClick={handleExportVendors}
-              className="flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition-all duration-300"
+              className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2 text-xs sm:text-sm bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition-all duration-300"
             >
               <Download className="w-3 h-3 sm:w-4 sm:h-4" />
               <span className="hidden sm:inline">Export Data</span>
@@ -738,7 +738,7 @@ const VendorManagement = () => {
 
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-6">
+        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3 lg:gap-4 xl:gap-6">
           <StatCard
             title="Total Vendors"
             value={stats.total.toString()}
@@ -771,23 +771,23 @@ const VendorManagement = () => {
           />
         </div>
 
-        <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl">
-          <CardContent className="p-3 sm:p-4 lg:p-6">
-            <div className="flex flex-col gap-4">
+        <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-lg sm:rounded-xl lg:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl">
+          <CardContent className="p-2 sm:p-3 lg:p-6">
+            <div className="flex flex-col gap-3 sm:gap-4">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-3 h-3 sm:w-4 sm:h-4" />
                 <Input
                   placeholder="Search vendors by name, email, or industry..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 h-12 bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="pl-8 sm:pl-10 h-10 sm:h-12 bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 rounded-lg sm:rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                 />
               </div>
-              <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-                <div className="flex flex-col xs:flex-row gap-3 w-full sm:w-auto">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 items-start sm:items-center justify-between">
+                <div className="flex flex-col xs:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-full xs:w-40 h-12 bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 rounded-xl">
-                      <Filter className="w-4 h-4 mr-2" />
+                    <SelectTrigger className="w-full xs:w-36 sm:w-40 h-9 sm:h-10 lg:h-12 bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 rounded-lg sm:rounded-xl text-xs sm:text-sm">
+                      <Filter className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                       <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
@@ -802,7 +802,7 @@ const VendorManagement = () => {
                     </SelectContent>
                   </Select>
                   <Select value={roleFilter} onValueChange={setRoleFilter}>
-                    <SelectTrigger className="w-full xs:w-40 h-12 bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 rounded-xl">
+                    <SelectTrigger className="w-full xs:w-36 sm:w-40 h-9 sm:h-10 lg:h-12 bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 rounded-lg sm:rounded-xl text-xs sm:text-sm">
                       <SelectValue placeholder="Role" />
                     </SelectTrigger>
                     <SelectContent>
@@ -815,7 +815,7 @@ const VendorManagement = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                <span className="text-slate-500 text-sm">
+                <span className="text-slate-500 text-xs sm:text-sm">
                   {filteredVendors.length} of {vendors.length}
                 </span>
               </div>
@@ -823,33 +823,33 @@ const VendorManagement = () => {
           </CardContent>
         </Card>
 
-        <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl">
-          <CardHeader className="pb-2 px-3 sm:px-6 pt-4 sm:pt-6">
-            <CardTitle className="text-base sm:text-lg font-semibold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
+        <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-lg sm:rounded-xl lg:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl">
+          <CardHeader className="pb-2 px-2 sm:px-3 lg:px-6 pt-3 sm:pt-4 lg:pt-6">
+            <CardTitle className="text-sm sm:text-base lg:text-lg font-semibold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
               Vendors ({filteredVendors.length})
             </CardTitle>
           </CardHeader>
-          <CardContent className="px-3 sm:px-6 pb-4 sm:pb-6">
+          <CardContent className="px-2 sm:px-3 lg:px-6 pb-3 sm:pb-4 lg:pb-6">
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[600px]">
+              <table className="w-full min-w-[700px]">
                 <thead className="bg-slate-50/80 dark:bg-slate-800/80 border-b border-slate-200/50 dark:border-slate-700/50">
                   <tr>
-                    <th className="text-left p-4 font-semibold text-slate-700 dark:text-slate-300">
+                    <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
                       Vendor's Email
                     </th>
-                    <th className="text-left p-4 font-semibold text-slate-700 dark:text-slate-300 hidden sm:table-cell">
+                    <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 hidden sm:table-cell text-xs sm:text-sm">
                       Location
                     </th>
-                    <th className="text-left p-4 font-semibold text-slate-700 dark:text-slate-300 hidden md:table-cell">
+                    <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 hidden md:table-cell text-xs sm:text-sm">
                       Industry
                     </th>
-                    <th className="text-left p-4 font-semibold text-slate-700 dark:text-slate-300">
+                    <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
                       Status
                     </th>
-                    <th className="text-left p-4 font-semibold text-slate-700 dark:text-slate-300 hidden lg:table-cell">
+                    <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 hidden lg:table-cell text-xs sm:text-sm">
                       Role
                     </th>
-                    <th className="text-left p-4 font-semibold text-slate-700 dark:text-slate-300">
+                    <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
                       Actions
                     </th>
                   </tr>
@@ -860,13 +860,13 @@ const VendorManagement = () => {
                       key={vendor.id}
                       className="border-b border-slate-200/50 dark:border-slate-700/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/50"
                     >
-                      <td className="p-4">
-                        <div className="flex items-center gap-3">
-                          <Avatar className="w-10 h-10 shadow-sm flex-shrink-0">
+                      <td className="p-2 sm:p-3 lg:p-4">
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <Avatar className="w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 shadow-sm flex-shrink-0">
                             <AvatarImage
                               src={vendor.avatar || "/placeholder.svg"}
                             />
-                            <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-500 text-white font-semibold">
+                            <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-500 text-white font-semibold text-xs">
                               {vendor.storeName
                                 .split(" ")
                                 .map((n) => n[0])
@@ -874,35 +874,38 @@ const VendorManagement = () => {
                             </AvatarFallback>
                           </Avatar>
                           <div className="min-w-0 flex-1">
-                            <p className="font-semibold text-slate-900 dark:text-slate-100 truncate">
+                            <p className="font-semibold text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm">
                               {vendor.email}
+                            </p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 truncate sm:hidden">
+                              {vendor.location}
                             </p>
                           </div>
                         </div>
                       </td>
-                      <td className="p-4 hidden sm:table-cell">
-                        <p className="font-medium text-slate-900 dark:text-slate-100 truncate">
+                      <td className="p-2 sm:p-3 lg:p-4 hidden sm:table-cell">
+                        <p className="font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm">
                           {vendor.location}
                         </p>
                       </td>
-                      <td className="p-4 hidden md:table-cell">
-                        <p className="text-slate-900 dark:text-slate-100">
+                      <td className="p-2 sm:p-3 lg:p-4 hidden md:table-cell">
+                        <p className="text-slate-900 dark:text-slate-100 text-xs sm:text-sm">
                           {vendor.industryName}
                         </p>
                       </td>
-                      <td className="p-4">{getStatusBadge(vendor.status)}</td>
-                      <td className="p-4 hidden lg:table-cell">
+                      <td className="p-2 sm:p-3 lg:p-4">{getStatusBadge(vendor.status)}</td>
+                      <td className="p-2 sm:p-3 lg:p-4 hidden lg:table-cell">
                         {getRoleBadge(vendor.role)}
                       </td>
-                      <td className="p-4">
-                        <div className="flex items-center gap-2">
+                      <td className="p-2 sm:p-3 lg:p-4">
+                        <div className="flex items-center gap-1 sm:gap-2">
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => setSelectedVendor(vendor)}
-                            className="h-8 px-3 hover:bg-blue-50 dark:hover:bg-blue-950/50"
+                            className="h-6 sm:h-7 lg:h-8 px-1 sm:px-2 lg:px-3 hover:bg-blue-50 dark:hover:bg-blue-950/50 text-xs sm:text-sm"
                           >
-                            <Eye className="w-4 h-4 mr-1" />
+                            <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-0 sm:mr-1" />
                             <span className="hidden sm:inline">View</span>
                           </Button>
                           <DropdownMenu>
@@ -910,9 +913,9 @@ const VendorManagement = () => {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="h-8 w-8 p-0 hover:bg-slate-100 dark:hover:bg-slate-800"
+                                className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8 p-0 hover:bg-slate-100 dark:hover:bg-slate-800"
                               >
-                                <MoreVertical className="w-4 h-4" />
+                                <MoreVertical className="w-3 h-3 sm:w-4 sm:h-4" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
@@ -984,13 +987,13 @@ const VendorManagement = () => {
         </Card>
 
         {filteredVendors.length === 0 && !loading && (
-          <Card className="backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border-0 shadow-xl rounded-2xl">
-            <CardContent className="flex flex-col items-center justify-center py-16">
-              <Users className="w-16 h-16 text-slate-400 mb-4" />
-              <h3 className="text-xl font-semibold text-slate-600 dark:text-slate-300 mb-2">
+          <Card className="backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border-0 shadow-xl rounded-lg sm:rounded-xl lg:rounded-2xl">
+            <CardContent className="flex flex-col items-center justify-center py-8 sm:py-12 lg:py-16">
+              <Users className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 text-slate-400 mb-3 sm:mb-4" />
+              <h3 className="text-lg sm:text-xl font-semibold text-slate-600 dark:text-slate-300 mb-2">
                 No Vendors Found
               </h3>
-              <p className="text-slate-500 dark:text-slate-400 text-center mb-6 max-w-md">
+              <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 text-center mb-4 sm:mb-6 max-w-md px-4">
                 {searchTerm || statusFilter !== "all" || roleFilter !== "all"
                   ? "No vendors match your current filters. Try adjusting your search criteria."
                   : "Get started by adding your first vendor to manage business partnerships."}
@@ -1004,16 +1007,16 @@ const VendorManagement = () => {
             open={!!selectedVendor}
             onOpenChange={() => setSelectedVendor(null)}
           >
-            <DialogContent className="max-w-[95vw] sm:max-w-3xl lg:max-w-5xl max-h-[95vh] overflow-hidden p-0 bg-white/95 dark:bg-slate-900/95 border border-slate-200/50 dark:border-slate-700/50 shadow-2xl backdrop-blur-sm m-2 sm:m-4">
+            <DialogContent className="max-w-[95vw] sm:max-w-3xl lg:max-w-5xl max-h-[95vh] overflow-hidden p-0 bg-white/95 dark:bg-slate-900/95 border border-slate-200/50 dark:border-slate-700/50 shadow-2xl backdrop-blur-sm m-1 sm:m-2 lg:m-4 overflow-y-auto">
               <div className="flex flex-col h-full">
-                <div className="bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-purple-500/10 border-b border-slate-200 dark:border-slate-700 p-4 md:p-6">
+                <div className="bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-purple-500/10 border-b border-slate-200 dark:border-slate-700 p-3 sm:p-4 lg:p-6">
                   <DialogHeader>
-                    <div className="flex items-center gap-4">
-                      <Avatar className="w-12 h-12 md:w-16 md:h-16 border-4 border-white/20 shadow-lg flex-shrink-0">
+                    <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
+                      <Avatar className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 border-2 sm:border-4 border-white/20 shadow-lg flex-shrink-0">
                         <AvatarImage
                           src={selectedVendor.avatar || "/placeholder.svg"}
                         />
-                        <AvatarFallback className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-lg md:text-xl font-bold">
+                        <AvatarFallback className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-sm sm:text-lg lg:text-xl font-bold">
                           {selectedVendor.storeName
                             .split(" ")
                             .map((n) => n[0])
@@ -1021,13 +1024,13 @@ const VendorManagement = () => {
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <DialogTitle className="text-lg md:text-2xl font-bold text-slate-800 dark:text-slate-100 truncate">
+                        <DialogTitle className="text-base sm:text-lg lg:text-2xl font-bold text-slate-800 dark:text-slate-100 truncate">
                           {selectedVendor.storeName}
                         </DialogTitle>
-                        <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 mt-1 truncate">
+                        <p className="text-xs sm:text-sm lg:text-base text-slate-600 dark:text-slate-400 mt-1 truncate">
                           {selectedVendor.industryName}
                         </p>
-                        <div className="flex items-center gap-2 mt-2 flex-wrap">
+                        <div className="flex items-center gap-1 sm:gap-2 mt-1 sm:mt-2 flex-wrap">
                           {getStatusBadge(selectedVendor.status)}
                           {getRoleBadge(selectedVendor.role)}
                         </div>
@@ -1036,58 +1039,58 @@ const VendorManagement = () => {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 h-8 w-8 md:h-10 md:w-10 p-0 flex-shrink-0"
+                          className="text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 h-7 w-7 sm:h-8 sm:w-8 lg:h-10 lg:w-10 p-0 flex-shrink-0"
                         >
-                          <XCircle className="w-4 h-4 md:w-5 md:h-5" />
+                          <XCircle className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
                         </Button>
                       </DialogClose>
                     </div>
                   </DialogHeader>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-4 md:p-6">
+                <div className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6">
                   <Tabs
                     value={activeTab}
                     onValueChange={setActiveTab}
                     className="w-full"
                   >
-                    <TabsList className="grid w-full grid-cols-4 bg-slate-100/80 dark:bg-slate-700/80 mb-6 md:mb-8 h-12">
+                    <TabsList className="grid w-full grid-cols-4 bg-slate-100/80 dark:bg-slate-700/80 mb-4 sm:mb-6 lg:mb-8 h-10 sm:h-12">
                       <TabsTrigger
                         value="overview"
-                        className="flex items-center gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 text-sm"
+                        className="flex items-center gap-1 sm:gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 text-xs sm:text-sm"
                       >
-                        <Eye className="w-4 h-4" />
+                        <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
                         <span className="hidden xs:inline">Overview</span>
                       </TabsTrigger>
                       <TabsTrigger
                         value="business"
-                        className="flex items-center gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 text-sm"
+                        className="flex items-center gap-1 sm:gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 text-xs sm:text-sm"
                       >
-                        <Building className="w-4 h-4" />
+                        <Building className="w-3 h-3 sm:w-4 sm:h-4" />
                         <span className="hidden xs:inline">Business</span>
                       </TabsTrigger>
                       <TabsTrigger
                         value="abn"
-                        className="flex items-center gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 text-sm"
+                        className="flex items-center gap-1 sm:gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 text-xs sm:text-sm"
                       >
-                        <Shield className="w-4 h-4" />
+                        <Shield className="w-3 h-3 sm:w-4 sm:h-4" />
                         <span className="hidden xs:inline">ABN</span>
                       </TabsTrigger>
                       <TabsTrigger
                         value="activity"
-                        className="flex items-center gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 text-sm"
+                        className="flex items-center gap-1 sm:gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 text-xs sm:text-sm"
                       >
-                        <History className="w-4 h-4" />
+                        <History className="w-3 h-3 sm:w-4 sm:h-4" />
                         <span className="hidden xs:inline">Activity</span>
                       </TabsTrigger>
                     </TabsList>
 
                     <div
-                      className={`space-y-6 ${
+                      className={`space-y-4 sm:space-y-6 ${
                         activeTab === "overview" ? "block" : "hidden"
                       }`}
                     >
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
                         <Card className="bg-white/90 dark:bg-slate-800/90 border border-slate-200/50 dark:border-slate-700/50 shadow-sm">
                           <CardHeader className="pb-3">
                             <CardTitle className="text-lg font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
@@ -1158,7 +1161,7 @@ const VendorManagement = () => {
                           </CardContent>
                         </Card>
 
-                        <Card className="bg-white/90 dark:bg-slate-800/90 border border-slate-200/50 dark:border-slate-700/50 shadow-sm md:col-span-2 lg:col-span-1">
+                        <Card className="bg-white/90 dark:bg-slate-800/90 border border-slate-200/50 dark:border-slate-700/50 shadow-sm sm:col-span-2 lg:col-span-1">
                           <CardHeader className="pb-3">
                             <CardTitle className="text-lg font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
                               <FileText className="w-5 h-5 text-purple-600 dark:text-purple-400" />
@@ -1209,18 +1212,18 @@ const VendorManagement = () => {
                     </div>
 
                     <div
-                      className={`space-y-6 ${
+                      className={`space-y-4 sm:space-y-6 ${
                         activeTab === "business" ? "block" : "hidden"
                       }`}
                     >
                       <Card className="bg-white/90 dark:bg-slate-800/90 border border-slate-200/50 dark:border-slate-700/50 shadow-sm">
                         <CardHeader>
-                          <CardTitle className="text-lg font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                            <Building className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                          <CardTitle className="text-base sm:text-lg font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                            <Building className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400" />
                             Business Information
                           </CardTitle>
                         </CardHeader>
-                        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <CardContent className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
                           <div className="space-y-4">
                             <div>
                               <label className="text-sm font-medium text-slate-600 dark:text-slate-400">

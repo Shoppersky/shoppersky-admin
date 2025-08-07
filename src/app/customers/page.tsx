@@ -74,28 +74,30 @@ function StatCard({
     <Card
       className={`bg-gradient-to-br ${colorClasses[color]} border transition-all duration-300 hover:shadow-lg hover:scale-[1.02] group`}
     >
-      <CardContent className="p-4 sm:p-6">
+      <CardContent className="p-3 sm:p-4 lg:p-6">
         <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <p className="text-sm font-medium text-muted-foreground">{title}</p>
-            <div className="flex items-baseline gap-2">
-              <p className="text-2xl sm:text-3xl font-bold">{value}</p>
+          <div className="space-y-1 flex-1 min-w-0">
+            <p className="text-xs sm:text-sm font-medium text-muted-foreground truncate">{title}</p>
+            <div className="flex items-baseline gap-1 sm:gap-2">
+              <p className="text-lg sm:text-2xl lg:text-3xl font-bold">{value}</p>
               {trend && trendValue && (
                 <div
                   className={`flex items-center text-xs font-medium ${
                     trend === "up" ? "text-emerald-600" : "text-red-600"
                   }`}
                 >
-                  <TrendingUp className={`w-3 h-3 mr-1 ${trend === "down" ? "rotate-180" : ""}`} />
-                  {trendValue}
+                  <TrendingUp className={`w-2 h-2 sm:w-3 sm:h-3 mr-0.5 sm:mr-1 ${trend === "down" ? "rotate-180" : ""}`} />
+                  <span className="hidden sm:inline">{trendValue}</span>
                 </div>
               )}
             </div>
           </div>
           <div
-            className={`p-3 rounded-xl ${iconColors[color]} group-hover:scale-110 transition-transform duration-300`}
+            className={`p-2 sm:p-3 rounded-lg sm:rounded-xl ${iconColors[color]} group-hover:scale-110 transition-transform duration-300 flex-shrink-0`}
           >
-            {icon}
+            <div className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6">
+              {icon}
+            </div>
           </div>
         </div>
       </CardContent>
@@ -111,37 +113,36 @@ function UserCard({
 }: { user: any; onDeactivate: (userId: string) => void; onReactivate: (userId: string) => void }) {
   return (
     <Card className="transition-all duration-300 hover:shadow-md">
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-violet-400 to-blue-400 flex items-center justify-center text-white font-semibold">
+      <CardContent className="p-3 sm:p-4">
+        <div className="flex items-start justify-between mb-2 sm:mb-3">
+          <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-violet-400 to-blue-400 flex items-center justify-center text-white font-semibold text-xs sm:text-sm flex-shrink-0">
               {user.name
                 .split(" ")
                 .map((n: string) => n[0])
                 .join("")
                 .toUpperCase()}
             </div>
-            <div>
-              <h3 className="font-semibold text-sm">{user.name}</h3>
-              <p className="text-xs text-muted-foreground">ID: {user.user_id}</p>
+            <div className="min-w-0 flex-1">
+              <h3 className="font-semibold text-xs sm:text-sm truncate">{user.name}</h3>
+              <p className="text-xs text-muted-foreground truncate">ID: {user.user_id}</p>
             </div>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <MoreHorizontal className="w-4 h-4" />
+              <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0">
+                <MoreHorizontal className="w-3 h-3 sm:w-4 sm:h-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-             
+            <DropdownMenuContent align="end" className="w-40">
               {user.status === "Active" ? (
-                <DropdownMenuItem onClick={() => onDeactivate(user.user_id)} className="text-red-600">
-                  <UserX className="w-4 h-4 mr-2" />
+                <DropdownMenuItem onClick={() => onDeactivate(user.user_id)} className="text-red-600 text-sm">
+                  <UserX className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                   Deactivate
                 </DropdownMenuItem>
               ) : (
-                <DropdownMenuItem onClick={() => onReactivate(user.user_id)} className="text-emerald-600">
-                  <UserCheck className="w-4 h-4 mr-2" />
+                <DropdownMenuItem onClick={() => onReactivate(user.user_id)} className="text-emerald-600 text-sm">
+                  <UserCheck className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
                   Reactivate
                 </DropdownMenuItem>
               )}
@@ -149,27 +150,27 @@ function UserCard({
           </DropdownMenu>
         </div>
 
-        <div className="space-y-2 mb-3">
+        <div className="space-y-1 sm:space-y-2 mb-2 sm:mb-3">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Mail className="w-3 h-3" />
+            <Mail className="w-3 h-3 flex-shrink-0" />
             <span className="truncate">{user.email}</span>
           </div>
           {user.phone_number && (
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Phone className="w-3 h-3" />
-              {user.phone_number}
+              <Phone className="w-3 h-3 flex-shrink-0" />
+              <span className="truncate">{user.phone_number}</span>
             </div>
           )}
         </div>
 
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Badge variant={user.status === "Active" ? "default" : "secondary"} className="text-xs">
+          <div className="flex items-center gap-1 sm:gap-2 flex-1 min-w-0">
+            <Badge variant={user.status === "Active" ? "default" : "secondary"} className="text-xs flex-shrink-0">
               {user.status}
             </Badge>
-            <span className="text-xs font-medium">{user.role}</span>
+            <span className="text-xs font-medium truncate">{user.role}</span>
           </div>
-          <div className="text-right">
+          <div className="text-right flex-shrink-0">
             <div className="text-xs font-semibold">{user.totalOrders || 0} orders</div>
             <div className="text-xs text-muted-foreground">{user.totalSpent || "$0"}</div>
           </div>
@@ -331,36 +332,37 @@ export default function UsersPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 lg:py-6 space-y-4 sm:space-y-6">
+      <div className="container mx-auto px-2 sm:px-4 lg:px-6 py-3 sm:py-4 lg:py-6 space-y-3 sm:space-y-4 lg:space-y-6">
         {/* Page Header */}
-        <div className="relative z-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-slate-800/50 dark:to-slate-700/50 p-3 sm:p-4 lg:p-6 rounded-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20 shadow-lg">
-          <div className="flex-1 min-w-0 ">
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
+        <div className="relative z-50 flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2 sm:gap-3 lg:gap-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-slate-800/50 dark:to-slate-700/50 p-2 sm:p-3 lg:p-6 rounded-lg sm:rounded-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20 shadow-lg">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
               Customer Management
             </h1>
-            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-1">
+            <p className="text-xs sm:text-sm lg:text-base text-gray-600 dark:text-gray-400 mt-0.5 sm:mt-1">
               View and manage customer accounts
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
+          <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2 sm:gap-3 w-full xs:w-auto">
             <Button
               variant="outline"
               onClick={handleExportUsers}
-              className="flex items-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-300 bg-transparent"
+              className="flex items-center gap-1 sm:gap-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-300 bg-transparent px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm"
             >
-              <Download className="w-4 h-4" />
+              <Download className="w-3 h-3 sm:w-4 sm:h-4" />
               <span className="hidden sm:inline">Export</span>
+              <span className="sm:hidden">Export</span>
             </Button>
           </div>
         </div>
 
         {/* Enhanced Statistics Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+        <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4 xl:gap-6">
           <StatCard
             title="Total Users"
             value={stats.total.toString()}
-            icon={<Users className="w-6 h-6" />}
+            icon={<Users />}
             color="slate"
             trend="up"
             trendValue="+12%"
@@ -368,7 +370,7 @@ export default function UsersPage() {
           <StatCard
             title="Active Users"
             value={stats.active.toString()}
-            icon={<UserCheck className="w-6 h-6" />}
+            icon={<UserCheck />}
             color="emerald"
             trend="up"
             trendValue="+5%"
@@ -376,36 +378,36 @@ export default function UsersPage() {
           <StatCard
             title="Inactive Users"
             value={stats.inactive.toString()}
-            icon={<UserX className="w-6 h-6" />}
+            icon={<UserX />}
             color="red"
           />
           <StatCard
             title="New Users"
             value={stats.customers.toString()}
-            icon={<User className="w-6 h-6" />}
+            icon={<User />}
             color="violet"
           />
         </div>
 
         {/* Enhanced Filters and Search */}
         <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
-          <CardContent className="p-4 sm:p-6">
-            <div className="flex flex-col lg:flex-row gap-4">
+          <CardContent className="p-3 sm:p-4 lg:p-6">
+            <div className="flex flex-col lg:flex-row gap-3 sm:gap-4">
               {/* Search */}
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-3 h-3 sm:w-4 sm:h-4" />
                 <Input
                   placeholder="Search users by name or email..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 transition-all duration-300 focus:ring-2 focus:ring-violet-500/20"
+                  className="pl-8 sm:pl-10 h-9 sm:h-10 lg:h-11 transition-all duration-300 focus:ring-2 focus:ring-violet-500/20 text-sm"
                 />
               </div>
 
               {/* Desktop Filters */}
-              <div className="hidden lg:flex items-center gap-3">
+              <div className="hidden lg:flex items-center gap-2 sm:gap-3">
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-40">
+                  <SelectTrigger className="w-36 sm:w-40 h-9 sm:h-10 lg:h-11 text-sm">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -416,7 +418,7 @@ export default function UsersPage() {
                 </Select>
 
                 <Select value={roleFilter} onValueChange={setRoleFilter}>
-                  <SelectTrigger className="w-40">
+                  <SelectTrigger className="w-36 sm:w-40 h-9 sm:h-10 lg:h-11 text-sm">
                     <SelectValue placeholder="Role" />
                   </SelectTrigger>
                   <SelectContent>
@@ -428,53 +430,53 @@ export default function UsersPage() {
                   </SelectContent>
                 </Select>
 
-                <div className="flex items-center border rounded-lg p-1">
+                <div className="flex items-center border rounded-lg p-0.5 sm:p-1">
                   <Button
                     variant={viewMode === "table" ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setViewMode("table")}
-                    className="h-8 w-8 p-0"
+                    className="h-7 w-7 sm:h-8 sm:w-8 p-0"
                   >
-                    <List className="w-4 h-4" />
+                    <List className="w-3 h-3 sm:w-4 sm:h-4" />
                   </Button>
                   <Button
                     variant={viewMode === "grid" ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setViewMode("grid")}
-                    className="h-8 w-8 p-0"
+                    className="h-7 w-7 sm:h-8 sm:w-8 p-0"
                   >
-                    <Grid3X3 className="w-4 h-4" />
+                    <Grid3X3 className="w-3 h-3 sm:w-4 sm:h-4" />
                   </Button>
                 </div>
               </div>
 
               {/* Mobile Filters Toggle */}
-              <div className="flex lg:hidden items-center gap-3">
+              <div className="flex lg:hidden items-center gap-2 sm:gap-3">
                 <Button
                   variant="outline"
                   onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm h-9 sm:h-10"
                 >
-                  <Filter className="w-4 h-4" />
+                  <Filter className="w-3 h-3 sm:w-4 sm:h-4" />
                   Filters
                 </Button>
 
-                <div className="flex items-center border rounded-lg p-1">
+                <div className="flex items-center border rounded-lg p-0.5 sm:p-1">
                   <Button
                     variant={viewMode === "table" ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setViewMode("table")}
-                    className="h-8 w-8 p-0"
+                    className="h-7 w-7 sm:h-8 sm:w-8 p-0"
                   >
-                    <List className="w-4 h-4" />
+                    <List className="w-3 h-3 sm:w-4 sm:h-4" />
                   </Button>
                   <Button
                     variant={viewMode === "grid" ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setViewMode("grid")}
-                    className="h-8 w-8 p-0"
+                    className="h-7 w-7 sm:h-8 sm:w-8 p-0"
                   >
-                    <Grid3X3 className="w-4 h-4" />
+                    <Grid3X3 className="w-3 h-3 sm:w-4 sm:h-4" />
                   </Button>
                 </div>
               </div>
@@ -482,9 +484,9 @@ export default function UsersPage() {
 
             {/* Mobile Filters */}
             {mobileFiltersOpen && (
-              <div className="lg:hidden mt-4 pt-4 border-t grid grid-cols-2 gap-3">
+              <div className="lg:hidden mt-3 sm:mt-4 pt-3 sm:pt-4 border-t grid grid-cols-2 gap-2 sm:gap-3">
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger>
+                  <SelectTrigger className="h-9 sm:h-10 text-sm">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -495,7 +497,7 @@ export default function UsersPage() {
                 </Select>
 
                 <Select value={roleFilter} onValueChange={setRoleFilter}>
-                  <SelectTrigger>
+                  <SelectTrigger className="h-9 sm:h-10 text-sm">
                     <SelectValue placeholder="Role" />
                   </SelectTrigger>
                   <SelectContent>
@@ -513,13 +515,13 @@ export default function UsersPage() {
 
         {/* Users Display */}
         <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm overflow-hidden">
-          <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-violet-50 dark:from-slate-800 dark:to-violet-900/20">
+          <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-violet-50 dark:from-slate-800 dark:to-violet-900/20 p-3 sm:p-4 lg:p-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Users className="w-5 h-5 text-violet-600" />
-                <h3 className="text-lg font-semibold">Users ({filteredUsers.length})</h3>
+                <Users className="w-4 h-4 sm:w-5 sm:h-5 text-violet-600" />
+                <h3 className="text-base sm:text-lg font-semibold">Users ({filteredUsers.length})</h3>
               </div>
-              <Badge variant="secondary" className="hidden sm:inline-flex">
+              <Badge variant="secondary" className="hidden sm:inline-flex text-xs">
                 {filteredUsers.length} of {users.length}
               </Badge>
             </div>
@@ -527,23 +529,23 @@ export default function UsersPage() {
 
           <CardContent className="p-0">
             {isLoading ? (
-              <div className="flex justify-center items-center py-12">
-                <Loader2 className="w-8 h-8 animate-spin text-violet-600" />
+              <div className="flex justify-center items-center py-8 sm:py-12">
+                <Loader2 className="w-6 h-6 sm:w-8 sm:h-8 animate-spin text-violet-600" />
               </div>
             ) : error ? (
-              <div className="text-center py-12">
-                <h3 className="text-lg font-semibold text-red-600 mb-2">{error}</h3>
+              <div className="text-center py-8 sm:py-12 px-4">
+                <h3 className="text-base sm:text-lg font-semibold text-red-600 mb-2">{error}</h3>
                 <Button
                   variant="outline"
                   onClick={() => window.location.reload()}
-                  className="mt-4"
+                  className="mt-3 sm:mt-4 text-sm px-3 py-2"
                 >
                   Retry
                 </Button>
               </div>
             ) : viewMode === "grid" ? (
-              <div className="p-4 sm:p-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              <div className="p-3 sm:p-4 lg:p-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4">
                   {filteredUsers.map((user) => (
                     <UserCard
                       key={user.user_id}
@@ -561,13 +563,11 @@ export default function UsersPage() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>User</TableHead>
-                        <TableHead>Contact</TableHead>
-                        <TableHead>Role</TableHead>
-                        <TableHead>Status</TableHead>
-                        {/* <TableHead>Activity</TableHead>
-                        <TableHead>Performance</TableHead> */}
-                        <TableHead className="text-right">Actions</TableHead>
+                        <TableHead className="text-sm font-semibold">User</TableHead>
+                        <TableHead className="text-sm font-semibold">Contact</TableHead>
+                        <TableHead className="text-sm font-semibold">Role</TableHead>
+                        <TableHead className="text-sm font-semibold">Status</TableHead>
+                        <TableHead className="text-right text-sm font-semibold">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -576,52 +576,51 @@ export default function UsersPage() {
                           key={user.user_id}
                           className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
                         >
-                          <TableCell>
+                          <TableCell className="py-3">
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-400 to-blue-400 flex items-center justify-center text-white font-semibold text-sm">
+                              <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-full bg-gradient-to-br from-violet-400 to-blue-400 flex items-center justify-center text-white font-semibold text-xs lg:text-sm flex-shrink-0">
                                 {user.name
                                   .split(" ")
                                   .map((n: string) => n[0])
                                   .join("")
                                   .toUpperCase()}
                               </div>
-                              <div>
-                                <div className="font-semibold">{user.name}</div>
-                                {/* <div className="text-xs text-muted-foreground">ID: {user.user_id}</div> */}
+                              <div className="min-w-0 flex-1">
+                                <div className="font-semibold text-sm lg:text-base truncate">{user.name}</div>
                               </div>
                             </div>
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="py-3">
                             <div className="space-y-1">
-                              <div className="flex items-center gap-2 text-sm">
-                                <Mail className="w-3 h-3 text-muted-foreground" />
-                                <span className="truncate max-w-[200px]">{user.email}</span>
+                              <div className="flex items-center gap-2 text-xs lg:text-sm">
+                                <Mail className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+                                <span className="truncate max-w-[150px] lg:max-w-[200px]">{user.email}</span>
                               </div>
                               {user.phone_number && (
-                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                  <Phone className="w-3 h-3" />
-                                  {user.phone_number}
+                                <div className="flex items-center gap-2 text-xs lg:text-sm text-muted-foreground">
+                                  <Phone className="w-3 h-3 flex-shrink-0" />
+                                  <span className="truncate">{user.phone_number}</span>
                                 </div>
                               )}
                             </div>
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="py-3">
                             <div className="flex items-center gap-2">
-                              {user.role === "Admin" && <Crown className="w-4 h-4 text-amber-600" />}
-                              {user.role === "Manager" && <Shield className="w-4 h-4 text-blue-600" />}
-                              {user.role === "Employee" && <User className="w-4 h-4 text-emerald-600" />}
-                              {user.role === "Vendor" && <Store className="w-4 h-4 text-violet-600" />}
-                              <span className="font-medium">{user.role}</span>
+                              {user.role === "Admin" && <Crown className="w-3 h-3 lg:w-4 lg:h-4 text-amber-600 flex-shrink-0" />}
+                              {user.role === "Manager" && <Shield className="w-3 h-3 lg:w-4 lg:h-4 text-blue-600 flex-shrink-0" />}
+                              {user.role === "Employee" && <User className="w-3 h-3 lg:w-4 lg:h-4 text-emerald-600 flex-shrink-0" />}
+                              {user.role === "Vendor" && <Store className="w-3 h-3 lg:w-4 lg:h-4 text-violet-600 flex-shrink-0" />}
+                              <span className="font-medium text-sm lg:text-base">{user.role}</span>
                             </div>
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="py-3">
                             <Badge
                               variant={user.status === "Active" ? "default" : "secondary"}
-                              className={
+                              className={`text-xs ${
                                 user.status === "Active"
                                   ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400"
                                   : "bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400"
-                              }
+                              }`}
                             >
                               {user.status}
                             </Badge>
@@ -645,26 +644,25 @@ export default function UsersPage() {
                               <div className="text-sm font-medium text-emerald-600">{user.totalSpent || "$0"}</div>
                             </div>
                           </TableCell> */}
-                          <TableCell>
+                          <TableCell className="py-3">
                             <div className="flex justify-end gap-1">
-                             
                               {user.status === "Active" ? (
                                 <Button
                                   size="icon"
                                   variant="ghost"
                                   onClick={() => handleDeactivateUser(user.user_id)}
-                                  className="h-8 w-8 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30"
+                                  className="h-7 w-7 lg:h-8 lg:w-8 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30"
                                 >
-                                  <UserX className="w-4 h-4" />
+                                  <UserX className="w-3 h-3 lg:w-4 lg:h-4" />
                                 </Button>
                               ) : (
                                 <Button
                                   size="icon"
                                   variant="ghost"
                                   onClick={() => handleReactivateUser(user.user_id)}
-                                  className="h-8 w-8 hover:bg-emerald-50 hover:text-emerald-600 dark:hover:bg-emerald-900/30"
+                                  className="h-7 w-7 lg:h-8 lg:w-8 hover:bg-emerald-50 hover:text-emerald-600 dark:hover:bg-emerald-900/30"
                                 >
-                                  <UserCheck className="w-4 h-4" />
+                                  <UserCheck className="w-3 h-3 lg:w-4 lg:h-4" />
                                 </Button>
                               )}
                             </div>
@@ -676,7 +674,7 @@ export default function UsersPage() {
                 </div>
 
                 {/* Mobile Cards */}
-                <div className="lg:hidden p-4 space-y-4">
+                <div className="lg:hidden p-3 sm:p-4 space-y-3 sm:space-y-4">
                   {filteredUsers.map((user) => (
                     <UserCard
                       key={user.user_id}
@@ -690,10 +688,10 @@ export default function UsersPage() {
             )}
 
             {filteredUsers.length === 0 && !isLoading && !error && (
-              <div className="text-center py-12">
-                <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-muted-foreground mb-2">No users found</h3>
-                <p className="text-muted-foreground">Try adjusting your search or filter criteria</p>
+              <div className="text-center py-8 sm:py-12 px-4">
+                <Users className="w-10 h-10 sm:w-12 sm:h-12 text-muted-foreground mx-auto mb-3 sm:mb-4" />
+                <h3 className="text-base sm:text-lg font-semibold text-muted-foreground mb-2">No users found</h3>
+                <p className="text-sm sm:text-base text-muted-foreground">Try adjusting your search or filter criteria</p>
               </div>
             )}
           </CardContent>

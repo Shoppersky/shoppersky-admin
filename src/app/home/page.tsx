@@ -57,8 +57,7 @@ import Image from 'next/image';
 const AdminDashboard = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [activeTab, setActiveTab] = useState('orders');
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [showAllNotifications, setShowAllNotifications] = useState(false);
+
 
   // Update time every minute
   useEffect(() => {
@@ -68,21 +67,7 @@ const AdminDashboard = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // Close notifications dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Element;
-      if (showNotifications && !target.closest('.notifications-dropdown')) {
-        setShowNotifications(false);
-        setShowAllNotifications(false); // Reset when closing
-      }
-    };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showNotifications]);
 
 
   // Mock data for dashboard
@@ -405,14 +390,7 @@ const handleDownloadReport = (reportType: string) => {
   toast.success(`Downloading ${reportType} report...`);
 };
 
-// Handler for bell icon (notifications)
-const handleNotificationClick = () => {
-  setShowNotifications(!showNotifications);
-  if (!showNotifications) {
-    setShowAllNotifications(false); // Reset to show limited notifications when opening
-  }
-  toast.info('Notifications panel toggled');
-};
+
 
 // Handler for View All buttons
 const handleViewAll = (section: string) => {
@@ -426,16 +404,12 @@ const handleReviewAction = (action: string, reviewId: number) => {
   toast.success(`${action} action performed for review #${reviewId}`);
 };
 
-// Handler for View All Notifications button
-const handleViewAllNotifications = () => {
-  setShowAllNotifications(!showAllNotifications);
-  toast.info(showAllNotifications ? 'Showing recent notifications' : 'Showing all notifications');
-};
+
 
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 lg:py-6 space-y-4 sm:space-y-6">
+      <div className="container mx-auto px-2 sm:px-4 lg:px-6 py-3 sm:py-4 lg:py-6 space-y-3 sm:space-y-4 lg:space-y-6">
         {/* 1. Dashboard Header */}
         <div className="relative z-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-slate-800/50 dark:to-slate-700/50 p-3 sm:p-4 lg:p-6 rounded-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20 shadow-lg">
           <div className="flex-1 min-w-0">
@@ -457,81 +431,10 @@ const handleViewAllNotifications = () => {
               </div>
             </div>
           </div>
-          <div className="flex items-center justify-end gap-3 sm:gap-4">
-            <div className="relative notifications-dropdown">
-              <Bell 
-                className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600 dark:text-gray-400 cursor-pointer hover:text-purple-600 dark:hover:text-purple-400 transition-colors" 
-                onClick={handleNotificationClick}
-              />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-3 h-3 sm:w-4 sm:h-4 rounded-full flex items-center justify-center text-[10px] sm:text-xs">{systemAlerts.length}</span>
-              
-              {/* Notifications Dropdown */}
-              {showNotifications && (
-                <div className={`absolute top-full right-0 mt-2 w-80 bg-white dark:bg-slate-800 rounded-lg shadow-2xl border border-gray-200 dark:border-slate-700 z-[99999] overflow-y-auto transition-all duration-300 ${
-                  showAllNotifications ? 'max-h-[500px]' : 'max-h-96'
-                }`}>
-
-                  <div className="p-4 border-b border-gray-200 dark:border-slate-700">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-semibold text-gray-900 dark:text-white">Notifications</h3>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
-                        {showAllNotifications ? `${systemAlerts.length} total` : `${Math.min(3, systemAlerts.length)} recent`}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="p-2">
-                    {(showAllNotifications ? systemAlerts : systemAlerts.slice(0, 3)).map((alert, index) => (
-                      <div key={index} className="p-3 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-md cursor-pointer transition-colors duration-200">
-                        <div className="flex items-start gap-3">
-                          <div className={`p-1 rounded-full flex-shrink-0 ${
-                            alert.type === 'warning' ? 'bg-yellow-100 dark:bg-yellow-900/30' :
-                            alert.type === 'error' ? 'bg-red-100 dark:bg-red-900/30' :
-                            alert.type === 'success' ? 'bg-green-100 dark:bg-green-900/30' :
-                            'bg-blue-100 dark:bg-blue-900/30'
-                          }`}>
-                            {getAlertIcon(alert.type)}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 dark:text-white">{alert.title}</p>
-                            <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">{alert.message}</p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{alert.time}</p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                    <div className="p-3 text-center border-t border-gray-200 dark:border-slate-700 mt-2">
-                      <button 
-                        className="text-sm text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 transition-colors duration-200"
-                        onClick={handleViewAllNotifications}
-                      >
-                        {showAllNotifications ? 'Show Less' : 'View All Notifications'}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="relative group">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold cursor-pointer text-sm sm:text-base">
-                A
-              </div>
-              <div className="absolute top-full right-0 mt-2 w-44 sm:w-48 bg-white dark:bg-slate-800 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border border-gray-200 dark:border-slate-700">
-                <div className="p-3 border-b border-gray-200 dark:border-slate-700">
-                  <p className="font-medium text-gray-900 dark:text-white text-sm">Admin User</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">admin@example.com</p>
-                </div>
-                <div className="p-2">
-                  <button className="w-full text-left px-3 py-2 text-xs sm:text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md">Profile Settings</button>
-                  <button className="w-full text-left px-3 py-2 text-xs sm:text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md">Account Settings</button>
-                  <button className="w-full text-left px-3 py-2 text-xs sm:text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md">Logout</button>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* 2. Quick Stats / Summary Cards */}
-       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+       <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
 
           {/* Total Orders */}
           <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl relative overflow-visible transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/20 hover:scale-105 cursor-pointer group">
@@ -658,7 +561,7 @@ const handleViewAllNotifications = () => {
           </CardHeader>
           <CardContent className="pt-2 sm:pt-4 px-3 sm:px-6 pb-4 sm:pb-6">
             {activeTab === 'revenue' && (
-              <div className="h-64 sm:h-80">
+              <div className="h-48 sm:h-64 lg:h-80">
                 <ResponsiveContainer width="100%" height="100%">
                 <ReLineChart
                   data={revenueData}
@@ -695,7 +598,7 @@ const handleViewAllNotifications = () => {
           )}
 
             {activeTab === 'orders' && (
-              <div className="h-64 sm:h-80">
+              <div className="h-48 sm:h-64 lg:h-80">
                 <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={ordersByCategoryData}
@@ -722,19 +625,19 @@ const handleViewAllNotifications = () => {
           )}
 
             {activeTab === 'payment' && (
-              <div className="h-64 sm:h-80 flex items-center justify-center">
-                <div className="w-full max-w-xs sm:max-w-sm">
-                  <ResponsiveContainer width="100%" height={250}>
+              <div className="h-48 sm:h-64 lg:h-80 flex items-center justify-center">
+                <div className="w-full max-w-xs sm:max-w-sm lg:max-w-md">
+                  <ResponsiveContainer width="100%" height="100%">
                   <RePieChart>
                     <Pie
                       data={paymentMethodsData}
                       cx="50%"
                       cy="50%"
                       labelLine={false}
-                      outerRadius={100}
+                      outerRadius={80}
                       fill="#8884d8"
                       dataKey="value"
-                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      label={({ name, percent }) => window.innerWidth < 640 ? `${(percent * 100).toFixed(0)}%` : `${name} ${(percent * 100).toFixed(0)}%`}
                     >
                       {paymentMethodsData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -751,7 +654,7 @@ const handleViewAllNotifications = () => {
       </Card>
 
         {/* Main Content Grid - Balanced 2-Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 lg:gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-5 lg:gap-6">
           {/* Left Column */}
           <div className="space-y-4 sm:space-y-6">
             {/* Recent Orders Table */}
@@ -774,28 +677,28 @@ const handleViewAllNotifications = () => {
                   <table className="w-full text-xs sm:text-sm">
                     <thead>
                       <tr className="border-b border-gray-200 dark:border-gray-700">
-                        <th className="px-2 sm:px-3 py-2 sm:py-3 text-left font-medium text-gray-500 dark:text-gray-400">Order ID</th>
-                        <th className="px-2 sm:px-3 py-2 sm:py-3 text-left font-medium text-gray-500 dark:text-gray-400 hidden sm:table-cell">Customer</th>
-                        <th className="px-2 sm:px-3 py-2 sm:py-3 text-left font-medium text-gray-500 dark:text-gray-400">Amount</th>
-                        <th className="px-2 sm:px-3 py-2 sm:py-3 text-left font-medium text-gray-500 dark:text-gray-400">Status</th>
-                        <th className="px-2 sm:px-3 py-2 sm:py-3 text-left font-medium text-gray-500 dark:text-gray-400 hidden md:table-cell">Date</th>
+                        <th className="px-1 sm:px-2 lg:px-3 py-2 sm:py-3 text-left font-medium text-gray-500 dark:text-gray-400">Order ID</th>
+                        <th className="px-1 sm:px-2 lg:px-3 py-2 sm:py-3 text-left font-medium text-gray-500 dark:text-gray-400 hidden sm:table-cell">Customer</th>
+                        <th className="px-1 sm:px-2 lg:px-3 py-2 sm:py-3 text-left font-medium text-gray-500 dark:text-gray-400">Amount</th>
+                        <th className="px-1 sm:px-2 lg:px-3 py-2 sm:py-3 text-left font-medium text-gray-500 dark:text-gray-400">Status</th>
+                        <th className="px-1 sm:px-2 lg:px-3 py-2 sm:py-3 text-left font-medium text-gray-500 dark:text-gray-400 hidden md:table-cell">Date</th>
                       </tr>
                     </thead>
                     <tbody>
                       {recentOrders.map((order) => (
                         <tr key={order.id} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50/50 dark:hover:bg-gray-800/50">
-                          <td className="px-2 sm:px-3 py-2 sm:py-3 font-medium text-gray-900 dark:text-white">
-                            <div className="truncate max-w-[80px] sm:max-w-none">{order.id}</div>
-                            <div className="sm:hidden text-xs text-gray-500 dark:text-gray-400">{order.customer}</div>
+                          <td className="px-1 sm:px-2 lg:px-3 py-2 sm:py-3 font-medium text-gray-900 dark:text-white">
+                            <div className="truncate max-w-[70px] xs:max-w-[80px] sm:max-w-none">{order.id}</div>
+                            <div className="sm:hidden text-xs text-gray-500 dark:text-gray-400 truncate">{order.customer}</div>
                           </td>
-                          <td className="px-2 sm:px-3 py-2 sm:py-3 text-gray-700 dark:text-gray-300 hidden sm:table-cell">{order.customer}</td>
-                          <td className="px-2 sm:px-3 py-2 sm:py-3 text-gray-700 dark:text-gray-300">₹{order.amount}</td>
-                          <td className="px-2 sm:px-3 py-2 sm:py-3">
-                            <span className={`inline-flex items-center px-1.5 sm:px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                              {order.status}
+                          <td className="px-1 sm:px-2 lg:px-3 py-2 sm:py-3 text-gray-700 dark:text-gray-300 hidden sm:table-cell">{order.customer}</td>
+                          <td className="px-1 sm:px-2 lg:px-3 py-2 sm:py-3 text-gray-700 dark:text-gray-300">₹{order.amount}</td>
+                          <td className="px-1 sm:px-2 lg:px-3 py-2 sm:py-3">
+                            <span className={`inline-flex items-center px-1 xs:px-1.5 sm:px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                              <span className="truncate">{order.status}</span>
                             </span>
                           </td>
-                          <td className="px-2 sm:px-3 py-2 sm:py-3 text-gray-500 dark:text-gray-400 hidden md:table-cell">{order.date}</td>
+                          <td className="px-1 sm:px-2 lg:px-3 py-2 sm:py-3 text-gray-500 dark:text-gray-400 hidden md:table-cell">{order.date}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -895,7 +798,7 @@ const handleViewAllNotifications = () => {
         </div>
 
         {/* Bottom Section - Balanced 2-Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 lg:gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-5 lg:gap-6">
           {/* Quick Actions Section */}
           <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/20 ">
             <CardHeader className="pb-1 px-3 sm:px-6 pt-4 sm:pt-6">
@@ -903,35 +806,35 @@ const handleViewAllNotifications = () => {
                 Quick Actions
               </CardTitle>
             </CardHeader>
-            <CardContent className="px-3 sm:px-6 pb-4 sm:pb-6  ">
-              <div className="grid grid-cols-2 gap-6  ">
+            <CardContent className="px-3 sm:px-6 pb-4 sm:pb-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
                 <Button 
                   onClick={() => handleQuickAction('Add Product')}
-                  className="flex flex-col  justify-center h-40  bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-100 dark:border-blue-800/30 hover:bg-gradient-to-br hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-900/30 dark:hover:to-indigo-900/30 text-blue-700 dark:text-blue-400"
+                  className="flex flex-col items-center justify-center h-24 sm:h-32 lg:h-40 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-100 dark:border-blue-800/30 hover:bg-gradient-to-br hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-900/30 dark:hover:to-indigo-900/30 text-blue-700 dark:text-blue-400"
                 >
-                  <Plus className="h-4 w-4 sm:h-5 sm:w-5 mb-1" />
-                  <span className="text-xs sm:text-sm">Add Product</span>
+                  <Plus className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 mb-1 sm:mb-2" />
+                  <span className="text-xs sm:text-sm lg:text-base font-medium">Add Product</span>
                 </Button>
                 <Button 
                   onClick={() => handleQuickAction('Add Order')}
-                  className="flex flex-col items-center justify-center h-40  bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-100 dark:border-green-800/30 hover:bg-gradient-to-br hover:from-green-100 hover:to-emerald-100 dark:hover:from-green-900/30 dark:hover:to-emerald-900/30 text-green-700 dark:text-green-400"
+                  className="flex flex-col items-center justify-center h-24 sm:h-32 lg:h-40 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-100 dark:border-green-800/30 hover:bg-gradient-to-br hover:from-green-100 hover:to-emerald-100 dark:hover:from-green-900/30 dark:hover:to-emerald-900/30 text-green-700 dark:text-green-400"
                 >
-                  <ShoppingBag className="h-4 w-4 sm:h-5 sm:w-5 mb-1" />
-                  <span className="text-xs sm:text-sm">Add Order</span>
+                  <ShoppingBag className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 mb-1 sm:mb-2" />
+                  <span className="text-xs sm:text-sm lg:text-base font-medium">Add Order</span>
                 </Button>
                 <Button 
                   onClick={() => handleQuickAction('View All Orders')}
-                  className="flex flex-col items-center justify-center h-40  bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 border border-purple-100 dark:border-purple-800/30 hover:bg-gradient-to-br hover:from-purple-100 hover:to-violet-100 dark:hover:from-purple-900/30 dark:hover:to-violet-900/30 text-purple-700 dark:text-purple-400"
+                  className="flex flex-col items-center justify-center h-24 sm:h-32 lg:h-40 bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 border border-purple-100 dark:border-purple-800/30 hover:bg-gradient-to-br hover:from-purple-100 hover:to-violet-100 dark:hover:from-purple-900/30 dark:hover:to-violet-900/30 text-purple-700 dark:text-purple-400"
                 >
-                  <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5 mb-1" />
-                  <span className="text-xs sm:text-sm">View Orders</span>
+                  <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 mb-1 sm:mb-2" />
+                  <span className="text-xs sm:text-sm lg:text-base font-medium">View Orders</span>
                 </Button>
                 <Button 
                   onClick={() => handleQuickAction('Manage Vendors')}
-                  className="flex flex-col items-center justify-center h-40 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 border border-orange-100 dark:border-orange-800/30 hover:bg-gradient-to-br hover:from-orange-100 hover:to-amber-100 dark:hover:from-orange-900/30 dark:hover:to-amber-900/30 text-orange-700 dark:text-orange-400"
+                  className="flex flex-col items-center justify-center h-24 sm:h-32 lg:h-40 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 border border-orange-100 dark:border-orange-800/30 hover:bg-gradient-to-br hover:from-orange-100 hover:to-amber-100 dark:hover:from-orange-900/30 dark:hover:to-amber-900/30 text-orange-700 dark:text-orange-400"
                 >
-                  <Store className="h-4 w-4 sm:h-5 sm:w-5 mb-1" />
-                  <span className="text-xs sm:text-sm">Manage Vendors</span>
+                  <Store className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 mb-1 sm:mb-2" />
+                  <span className="text-xs sm:text-sm lg:text-base font-medium">Manage Vendors</span>
                 </Button>
               </div>
             </CardContent>
@@ -985,7 +888,7 @@ const handleViewAllNotifications = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="px-3 sm:px-6 pb-4 sm:pb-6">
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+              <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
                 <Button 
                   variant="outline"
                   onClick={() => handleDownloadReport('Orders')}
@@ -1039,7 +942,7 @@ const handleViewAllNotifications = () => {
             </Button>
           </CardHeader>
           <CardContent className="px-3 sm:px-6 pb-4 sm:pb-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-3 sm:gap-4">
               {customerReviews.map((review) => (
                 <div 
                   key={review.id} 

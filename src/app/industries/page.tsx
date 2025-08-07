@@ -476,16 +476,16 @@ export default function IndustriesPage() {
         )}
 
         {/* Header */}
-        <div className="text-center space-y-6">
-          <div className="inline-flex items-center gap-4 px-8 py-4 bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl rounded-3xl border border-slate-200/50 dark:border-slate-700/50 shadow-lg">
-            <div className="p-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl shadow-lg">
-              <Sparkles className="w-8 h-8 text-white" />
+        <div className="text-center space-y-4 sm:space-y-6">
+          <div className="inline-flex flex-col sm:flex-row items-center gap-3 sm:gap-4 px-4 sm:px-6 lg:px-8 py-4 sm:py-4 bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-slate-200/50 dark:border-slate-700/50 shadow-lg">
+            <div className="p-2 sm:p-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl sm:rounded-2xl shadow-lg">
+              <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
             </div>
-            <div className="text-left">
-              <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent p-2">
+            <div className="text-center sm:text-left">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent px-1 sm:p-2">
                 Industry Management
               </h1>
-              <p className="text-slate-600 dark:text-slate-400 font-medium">Manage your business industries</p>
+              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 font-medium mt-1">Manage your business industries</p>
             </div>
           </div>
         </div>
