@@ -20,7 +20,6 @@ import {
   User,
   Mail,
   Shield,
-  Store,
   Camera,
   Upload,
   X,
@@ -30,7 +29,6 @@ import {
   Check,
   AlertCircle,
   Calendar,
-  Globe,
   Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -167,7 +165,7 @@ export default function ProfilePage() {
       const formData = new FormData();
       formData.append("file", selectedImage);
 
-      const response = await axiosInstance.post(`/vendor/${userId}/profile-picture`, formData, {
+      const response = await axiosInstance.post(`/admin-users/${userId}/profile-picture`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -211,9 +209,9 @@ export default function ProfilePage() {
     }
 
     try {
-      const response = await axiosInstance.post(`/vendor/update-password?user_id=${userId}`, {
+      const response = await axiosInstance.post(`/admin/update-password?user_id=${userId}`, {
         user_id: userId,
-        current_password: passwordData.oldPassword,
+        old_password: passwordData.oldPassword,
         new_password: passwordData.newPassword,
       });
 

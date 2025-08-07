@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { Menu, Bell, Search, User, Settings, AlertTriangle, XCircle, CheckCircle } from "lucide-react";
 import { toast } from 'sonner';
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface HeaderProps {
   onMenuClick?: () => void;
@@ -14,6 +16,7 @@ export default function Header({ onMenuClick, isMobile }: HeaderProps) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showAllNotifications, setShowAllNotifications] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+   const router = useRouter();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -22,6 +25,12 @@ export default function Header({ onMenuClick, isMobile }: HeaderProps) {
 
     return () => clearInterval(timer);
   }, []);
+
+  const handleLogout = () => {
+    // Add any logout logic here, then redirect
+    router.push('/'); // Change to your desired route
+  };
+
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -257,15 +266,20 @@ export default function Header({ onMenuClick, isMobile }: HeaderProps) {
                   <p className="text-xs text-gray-500 dark:text-gray-400">admin@example.com</p>
                 </div>
                 <div className="p-2">
-                  <button className="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md">
-                    Profile Settings
-                  </button>
-                  <button className="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md">
+                <Link href="/profile" passHref>
+  <button className="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md">
+    Profile
+  </button>
+</Link>
+                  {/* <button className="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md">
                     Account Settings
-                  </button>
-                  <button className="w-full text-left px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md">
-                    Logout
-                  </button>
+                  </button> */}
+                 <button
+      onClick={handleLogout}
+      className="w-full text-left px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md"
+    >
+      Logout
+    </button>
                 </div>
               </div>
             )}

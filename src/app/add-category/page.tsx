@@ -180,12 +180,12 @@ export default function CategoryPage() {
 
   const handleFileSelection = (file: File) => {
     if (file.size > 5 * 1024 * 1024) {
-      toast.error("Image size should be less than 5MB")
+      toast.info("Image size should be less than 5MB")
       return
     }
 
     if (!file.type.startsWith("image/")) {
-      toast.error("Please select a valid image file")
+      toast.info("Please select a valid image file")
       return
     }
 
@@ -214,19 +214,124 @@ export default function CategoryPage() {
     setFormProgress(0)
   }
 
-  const validateForm = () => {
-    if (!categoryName.trim()) {
-      toast.error("Category name is required")
-      return false
-    }
+ const validateForm = () => {
+  const reservedWords = [
+    "await", "break", "case", "class", "continue", "def", "del", "elif",
+    "else", "except", "False", "finally", "for", "from", "global", "if",
+    "import", "in", "is", "lambda", "None", "nonlocal", "not", "or", "pass",
+    "raise", "return", "True", "try", "while", "with", "yield"
+  ]
 
-    if (parentCategory === "none" && !industry) {
-      toast.error("Please select an industry for main categories")
-      return false
-    }
+  const isReserved = (text: string) => reservedWords.includes(text.trim())
 
-    return true
+  const containsXSS = (text: string) =>
+    /<[^>]*script|on\w+="[^"]*"/i.test(text)
+
+  const containsSQLInjection = (text: string) =>
+    /(['";])+|(--)+|(\b(SELECT|INSERT|DELETE|UPDATE|DROP|UNION|OR|AND)\b)/i.test(text)
+
+  const isValidText = (text: string, pattern: RegExp, maxLen: number) =>
+    pattern.test(text) && text.length <= maxLen
+
+  if (!categoryName.trim()) {
+    toast.info("Category name is required")
+    return false
   }
+
+  if (containsXSS(categoryName) || containsSQLInjection(categoryName)) {
+    toast.info("Category name contains invalid characters")
+    return false
+  }
+
+  if (isReserved(categoryName.trim())) {
+    toast.info("Category name cannot be a Python reserved word")
+    return false
+  }
+
+  if (!isValidText(categoryName.trim(), /^[A-Za-z0-9\s.,()&'"!?:;\-]+$/, 100)) {
+    toast.info("Category name has invalid characters or is too long")
+    return false
+  }
+
+  if (!slug.trim()) {
+    toast.info("Slug is required")
+    return false
+  }
+
+  if (containsXSS(slug) || containsSQLInjection(slug)) {
+    toast.info("Slug contains invalid characters")
+    return false
+  }
+
+  if (isReserved(slug.trim())) {
+    toast.info("Slug cannot be a Python reserved word")
+    return false
+  }
+
+  if (!isValidText(slug.trim(), /^[a-z0-9\-]+$/, 100)) {
+    toast.info("Slug must contain only lowercase letters, numbers, and hyphens")
+    return false
+  }
+
+  if (parentCategory === "none" && !industry) {
+    toast.info("Please select an industry for main categories")
+    return false
+  }
+
+  if (description) {
+    if (containsXSS(description) || containsSQLInjection(description)) {
+      toast.info("Description contains invalid characters")
+      return false
+    }
+
+    if (isReserved(description.trim())) {
+      toast.info("Description cannot be a Python reserved word")
+      return false
+    }
+
+    if (!isValidText(description.trim(), /^[A-Za-z0-9\s.,()&'"!?:;\-]+$/, 500)) {
+      toast.info("Description contains invalid characters or is too long (max 500 chars)")
+      return false
+    }
+  }
+
+  if (metaTitle) {
+    if (containsXSS(metaTitle) || containsSQLInjection(metaTitle)) {
+      toast.info("Meta title contains invalid characters")
+      return false
+    }
+
+    if (isReserved(metaTitle.trim())) {
+      toast.info("Meta title cannot be a Python reserved word")
+      return false
+    }
+
+    if (!isValidText(metaTitle.trim(), /^[A-Za-z0-9\s.,()&'"!?:;|\-]+$/, 70)) {
+      toast.info("Meta title contains invalid characters or is too long (max 70 chars)")
+      return false
+    }
+  }
+
+  if (metaDescription) {
+    if (containsXSS(metaDescription) || containsSQLInjection(metaDescription)) {
+      toast.info("Meta description contains invalid characters")
+      return false
+    }
+
+    if (isReserved(metaDescription.trim())) {
+      toast.info("Meta description cannot be a Python reserved word")
+      return false
+    }
+
+    if (!isValidText(metaDescription.trim(), /^[A-Za-z0-9\s.,()&'"!?:;\-]+$/, 160)) {
+      toast.info("Meta description contains invalid characters or is too long (max 160 chars)")
+      return false
+    }
+  }
+
+  return true
+}
+
 
   const handleAddCategory = async () => {
     if (!validateForm()) return
@@ -293,7 +398,7 @@ export default function CategoryPage() {
         <div className="flex items-center gap-2">
           <AlertCircle className="w-5 h-5 text-red-500" />
           <span>{error.response?.data?.message || "Failed to create category. Please try again."}</span>
-        </div>,
+        </div>
       )
       console.error(error)
     } finally {
@@ -426,11 +531,12 @@ export default function CategoryPage() {
                     >
                       {image ? (
                         <div className="relative w-full h-full group">
-                          <Image
-                            src={URL.createObjectURL(image) || "/placeholder.svg"}
-                            alt="Preview"
-                            className="w-full h-full object-cover rounded-3xl"
-                          />
+                           <Image
+      src={URL.createObjectURL(image)}
+      alt="Preview"
+      fill
+      className="object-cover rounded-3xl"
+    />
                           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl flex items-center justify-center">
                             <div className="text-white text-center">
                               <Upload className="w-8 h-8 mx-auto mb-2" />
