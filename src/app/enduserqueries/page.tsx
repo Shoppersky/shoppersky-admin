@@ -1,54 +1,84 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState, useEffect } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Search, MessageSquare, Calendar, Clock } from "lucide-react"
-import axiosInstance from "@/lib/axiosInstance" // Adjust path as needed
+import type React from "react";
+import { useState, useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Search, MessageSquare, Calendar, Clock } from "lucide-react";
+import axiosInstance from "@/lib/axiosInstance"; // Adjust path as needed
 
 interface Enquiry {
-  enquiry_id: number
-  firstname: string
-  lastname: string
-  email: string
-  phone_number: string
-  message: string
-  enquiry_status: string
-  created_at: string
-  updated_at: string
+  enquiry_id: number;
+  firstname: string;
+  lastname: string;
+  email: string;
+  phone_number: string;
+  message: string;
+  enquiry_status: string;
+  created_at: string;
+  updated_at: string;
 }
 
+// Skeleton component for enquiry cards
+const EnquirySkeleton = () => (
+  <div className="border-b border-slate-200 dark:border-slate-700 pb-6 last:border-b-0">
+    <div className="flex items-start justify-between">
+      <div className="flex-1">
+        <div className="flex items-center gap-3 mb-2">
+          <Skeleton className="h-6 w-48" />
+          <Skeleton className="h-5 w-20" />
+        </div>
+        <div className="flex items-center gap-4 mb-3">
+          <Skeleton className="h-5 w-16" />
+          <Skeleton className="h-4 w-40" />
+        </div>
+        <Skeleton className="h-4 w-full mb-2" />
+        <Skeleton className="h-4 w-3/4 mb-3" />
+        <div className="flex items-center gap-4">
+          <Skeleton className="h-3 w-32" />
+          <Skeleton className="h-3 w-32" />
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 export default function EndUserQueries() {
-  const [enquiries, setEnquiries] = useState<Enquiry[]>([])
-  const [searchTerm, setSearchTerm] = useState("")
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchEnquiries = async () => {
       try {
-        setIsLoading(true)
-        const response = await axiosInstance.get("/users/CustomerContactPage?skip=0&limit=100")
-        setEnquiries(response.data.data)
-        setError(null)
+        setIsLoading(true);
+        const response = await axiosInstance.get(
+          "/users/CustomerContactPage?skip=0&limit=100"
+        );
+        setEnquiries(response.data.data);
+        setError(null);
       } catch (err) {
-        setError("Failed to fetch enquiries")
-        console.error(err)
+        setError("Failed to fetch enquiries");
+        console.error(err);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    fetchEnquiries()
-  }, [])
+    fetchEnquiries();
+  }, []);
 
-  const filteredEnquiries = enquiries.filter((enquiry) =>
-    `${enquiry.firstname} ${enquiry.lastname}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    enquiry.message.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    enquiry.email.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredEnquiries = enquiries.filter(
+    (enquiry) =>
+      `${enquiry.firstname} ${enquiry.lastname}`
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      enquiry.message.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      enquiry.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -57,13 +87,15 @@ export default function EndUserQueries() {
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-    })
-  }
+    });
+  };
 
   const statusConfig = {
-    pending: { color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400" },
+    pending: {
+      color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
+    },
     // Add other statuses if needed
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -85,20 +117,28 @@ export default function EndUserQueries() {
           <CardContent className="p-8 space-y-6">
             {/* Search */}
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-              <Input
-                placeholder="Search enquiries..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 h-12 bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 rounded-xl"
-              />
+              {isLoading ? (
+                <Skeleton className="h-12 w-full rounded-xl" />
+              ) : (
+                <>
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                  <Input
+                    placeholder="Search enquiries..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 h-12 bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 rounded-xl"
+                  />
+                </>
+              )}
             </div>
 
             {/* Enquiries List */}
             <div className="space-y-6">
               {isLoading ? (
-                <div className="p-12 text-center">
-                  <p className="text-slate-600 dark:text-slate-400">Loading enquiries...</p>
+                <div className="space-y-6">
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <EnquirySkeleton key={index} />
+                  ))}
                 </div>
               ) : error ? (
                 <div className="p-12 text-center">
@@ -111,7 +151,9 @@ export default function EndUserQueries() {
                     No enquiries found
                   </h3>
                   <p className="text-slate-500 dark:text-slate-500">
-                    {searchTerm ? "Try adjusting your search" : "No enquiries available"}
+                    {searchTerm
+                      ? "Try adjusting your search"
+                      : "No enquiries available"}
                   </p>
                 </div>
               ) : (
@@ -131,10 +173,15 @@ export default function EndUserQueries() {
                           </Badge>
                         </div>
                         <div className="flex items-center gap-4 mb-3">
-                          <Badge className={`${statusConfig.pending.color} border-0 text-xs`}>
-                            {enquiry.enquiry_status.charAt(0).toUpperCase() + enquiry.enquiry_status.slice(1)}
+                          <Badge
+                            className={`${statusConfig.pending.color} border-0 text-xs`}
+                          >
+                            {enquiry.enquiry_status.charAt(0).toUpperCase() +
+                              enquiry.enquiry_status.slice(1)}
                           </Badge>
-                          <span className="text-sm text-slate-500 dark:text-slate-400">{enquiry.email}</span>
+                          <span className="text-sm text-slate-500 dark:text-slate-400">
+                            {enquiry.email}
+                          </span>
                         </div>
                         <p className="text-slate-600 dark:text-slate-400 text-sm line-clamp-2 mb-3">
                           {enquiry.message}
@@ -161,5 +208,5 @@ export default function EndUserQueries() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

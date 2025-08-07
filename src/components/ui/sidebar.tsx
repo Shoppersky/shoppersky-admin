@@ -59,9 +59,9 @@ export default function Sidebar() {
     { label: "category", icon: Box, path: "/category" },
     { label: "products", icon: ShoppingBag, path: "/products" },
     {
-      label: "enquiries",
+      label: "Vendor Enquiries",
       icon: MessageCircleQuestionMark,
-      path: "/vendor-enquiry-management",
+      path: "/vendor-enquiries",
     },
     { label: "End User Queries", icon: BadgeQuestionMark , path: "/enduserqueries" },
   ];
