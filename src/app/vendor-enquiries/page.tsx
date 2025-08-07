@@ -47,6 +47,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import useStore from '@/lib/Zustand';
 
 // API Response interfaces
 interface ThreadMessage {
@@ -427,7 +428,6 @@ export default function AdminEnquiryManagement() {
   const [searchTerm, setSearchTerm] = useState("");
   const [responseMessage, setResponseMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [viewMode, setViewMode] = useState<"cards" | "table">("cards");
   const [queries, setQueries] = useState<Query[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -438,6 +438,8 @@ export default function AdminEnquiryManagement() {
     message: string;
     type: "success" | "error" | "info";
   } | null>(null);
+  // Get userId from Zustand store
+  const { userId, isAuthenticated } = useStore();
 
   // Notification function
   const showNotification = (
@@ -561,12 +563,6 @@ export default function AdminEnquiryManagement() {
     }
   };
 
-  // Helper function to get current admin user ID
-  const getCurrentAdminUserId = (): string => {
-    // In a real app, you'd get this from auth context or localStorage
-    // For now, returning a placeholder. You should replace this with actual logic
-    return localStorage.getItem("adminUserId") || "admin_user_id";
-  };
 
   const sendResponse = async (
     queryId: string,
@@ -575,8 +571,6 @@ export default function AdminEnquiryManagement() {
   ) => {
     try {
       setIsSubmitting(true);
-
-      const userId = getCurrentAdminUserId();
 
       const response = await axiosInstance.post(
         `/vendor/vendor_admin_queries/${queryId}/messages`,
