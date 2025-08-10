@@ -434,87 +434,68 @@ const handleReviewAction = (action: string, reviewId: number) => {
         </div>
 
         {/* 2. Quick Stats / Summary Cards */}
-       <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+     <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4 sm:gap-6">
+  {/* Card Template */}
+  {[
+    {
+      title: "Total Orders",
+      value: "0",
+      growth: orderGrowth,
+      color: "blue",
+      icon: ShoppingCart,
+      gradient: "from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30",
+    },
+    {
+      title: "Total Revenue",
+      value: "₹0L",
+      growth: revenueGrowth,
+      color: "green",
+      icon: DollarSign,
+      gradient: "from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30",
+    },
+    {
+      title: "Total Customers",
+      value: "0",
+      growth: customerGrowth,
+      color: "purple",
+      icon: Users,
+      gradient: "from-purple-100 to-violet-100 dark:from-purple-900/30 dark:to-violet-900/30",
+    },
+    {
+      title: "Total Vendors",
+      value: "0",
+      growth: vendorGrowth,
+      color: "orange",
+      icon: Store,
+      gradient: "from-orange-100 to-amber-100 dark:from-orange-900/30 dark:to-amber-900/30",
+    },
+  ].map((card, index) => (
+    <Card
+      key={index}
+      className={`backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl transition-all duration-300 hover:shadow-2xl hover:shadow-${card.color}-500/20 hover:scale-105 cursor-pointer group`}
+    >
+      <CardContent className="p-4 lg:p-5">
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-medium text-gray-600 dark:text-gray-400 truncate">{card.title}</p>
+            <p className="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white mt-1">{card.value}</p>
+            <p className={`text-xs text-${card.color}-600 dark:text-${card.color}-400 flex items-center mt-2`}>
+              <ArrowUpRight className="w-3 h-3 mr-1 flex-shrink-0" />
+              <span className="truncate hidden sm:inline">+{card.growth}% from last month</span>
+              <span className="truncate sm:hidden">+{card.growth}%</span>
+            </p>
+          </div>
+          <div
+            className={`p-2 lg:p-3 bg-gradient-to-br ${card.gradient} rounded-lg sm:rounded-xl group-hover:scale-110 transition-transform duration-300 flex-shrink-0`}
+          >
+            <card.icon className={`w-5 lg:w-6 h-5 lg:h-6 text-${card.color}-600 dark:text-${card.color}-400`} />
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  ))}
 
-          {/* Total Orders */}
-          <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl relative overflow-visible transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/20 hover:scale-105 cursor-pointer group">
-            <CardContent className="p-3 sm:p-4 lg:p-5">
-              <div className="flex items-center justify-between gap-2 sm:gap-3">
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs font-medium text-gray-600 dark:text-gray-400 truncate">Total Orders</p>
-                  <p className="text-base sm:text-lg lg:text-xl xl:text-2xl font-bold text-gray-900 dark:text-white mt-1">{dashboardStats.totalOrders.toLocaleString()}</p>
-                  <p className="text-xs text-blue-600 dark:text-blue-400 flex items-center mt-1 sm:mt-2">
-                    <ArrowUpRight className="w-3 h-3 mr-1 flex-shrink-0" />
-                    <span className="truncate hidden sm:inline">+{orderGrowth}% from last month</span>
-                    <span className="truncate sm:hidden">+{orderGrowth}%</span>
-                  </p>
-                </div>
-                <div className="p-1.5 sm:p-2 lg:p-3 bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30 rounded-lg sm:rounded-xl group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-                  <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-blue-600 dark:text-blue-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
 
-          {/* Total Revenue */}
-          <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-green-500/20 hover:scale-105 cursor-pointer group">
-            <CardContent className="p-3 sm:p-4 lg:p-5">
-              <div className="flex items-center justify-between gap-2 sm:gap-3">
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs font-medium text-gray-600 dark:text-gray-400 truncate">Total Revenue</p>
-                  <p className="text-base sm:text-lg lg:text-xl xl:text-2xl font-bold text-gray-900 dark:text-white mt-1">₹{(dashboardStats.totalRevenue/100000).toFixed(2)}L</p>
-                  <p className="text-xs text-green-600 dark:text-green-400 flex items-center mt-1 sm:mt-2">
-                    <ArrowUpRight className="w-3 h-3 mr-1 flex-shrink-0" />
-                    <span className="truncate hidden sm:inline">+{revenueGrowth}% from last month</span>
-                    <span className="truncate sm:hidden">+{revenueGrowth}%</span>
-                  </p>
-                </div>
-                <div className="p-1.5 sm:p-2 lg:p-3 bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 rounded-lg sm:rounded-xl group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-                  <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-green-600 dark:text-green-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Total Customers */}
-          <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/20 hover:scale-105 cursor-pointer group">
-            <CardContent className="p-3 sm:p-4 lg:p-5">
-              <div className="flex items-center justify-between gap-2 sm:gap-3">
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs font-medium text-gray-600 dark:text-gray-400 truncate">Total Customers</p>
-                  <p className="text-base sm:text-lg lg:text-xl xl:text-2xl font-bold text-gray-900 dark:text-white mt-1">{dashboardStats.totalCustomers.toLocaleString()}+</p>
-                  <p className="text-xs text-purple-600 dark:text-purple-400 flex items-center mt-1 sm:mt-2">
-                    <ArrowUpRight className="w-3 h-3 mr-1 flex-shrink-0" />
-                    <span className="truncate hidden sm:inline">+{customerGrowth}% from last month</span>
-                    <span className="truncate sm:hidden">+{customerGrowth}%</span>
-                  </p>
-                </div>
-                <div className="p-1.5 sm:p-2 lg:p-3 bg-gradient-to-br from-purple-100 to-violet-100 dark:from-purple-900/30 dark:to-violet-900/30 rounded-lg sm:rounded-xl group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-                  <Users className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-purple-600 dark:text-purple-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Total Vendors */}
-          <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-orange-500/20 hover:scale-105 cursor-pointer group">
-            <CardContent className="p-3 sm:p-4 lg:p-5">
-              <div className="flex items-center justify-between gap-2 sm:gap-3">
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs font-medium text-gray-600 dark:text-gray-400 truncate">Total Vendors</p>
-                  <p className="text-base sm:text-lg lg:text-xl xl:text-2xl font-bold text-gray-900 dark:text-white mt-1">{dashboardStats.totalVendors}</p>
-                  <p className="text-xs text-orange-600 dark:text-orange-400 flex items-center mt-1 sm:mt-2">
-                    <ArrowUpRight className="w-3 h-3 mr-1 flex-shrink-0" />
-                    <span className="truncate hidden sm:inline">+{vendorGrowth}% from last month</span>
-                    <span className="truncate sm:hidden">+{vendorGrowth}%</span>
-                  </p>
-                </div>
-                <div className="p-1.5 sm:p-2 lg:p-3 bg-gradient-to-br from-orange-100 to-amber-100 dark:from-orange-900/30 dark:to-amber-900/30 rounded-lg sm:rounded-xl group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-                  <Store className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-orange-600 dark:text-orange-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
 
           {/* Pending Shipments */}
           
@@ -525,7 +506,21 @@ const handleReviewAction = (action: string, reviewId: number) => {
         </div>
 
         {/* 3. Analytics Overview - Moved to top for better visibility */}
-        <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/20">
+       {/* <Card
+  className="
+    backdrop-blur-xl
+    bg-white/30 dark:bg-slate-900/30
+    border border-white/20 dark:border-slate-700/20
+    shadow-xl
+    rounded-xl sm:rounded-2xl
+    overflow-hidden
+    transition-all duration-300
+    hover:shadow-2xl hover:shadow-purple-500/20
+    w-full
+    max-w-full
+  "
+>
+
           <CardHeader className="pb-2 px-3 sm:px-6 pt-4 sm:pt-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
               <CardTitle className="text-base sm:text-lg font-semibold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
@@ -559,7 +554,7 @@ const handleReviewAction = (action: string, reviewId: number) => {
               </div>
             </div>
           </CardHeader>
-          <CardContent className="pt-2 sm:pt-4 px-3 sm:px-6 pb-4 sm:pb-6">
+          <CardContent className="pt-2 sm:pt-4 px-3 sm:px-6 pb-4 sm:pb-6 w-full max-w-full">
             {activeTab === 'revenue' && (
               <div className="h-48 sm:h-64 lg:h-80">
                 <ResponsiveContainer width="100%" height="100%">
@@ -651,7 +646,7 @@ const handleReviewAction = (action: string, reviewId: number) => {
             </div>
           )}
         </CardContent>
-      </Card>
+      </Card> */}
 
         {/* Main Content Grid - Balanced 2-Column Layout */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-5 lg:gap-6">
@@ -708,7 +703,7 @@ const handleReviewAction = (action: string, reviewId: number) => {
             </Card>
 
             {/* Top Vendors */}
-            <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-orange-500/20">
+            {/* <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-orange-500/20">
               <CardHeader className="pb-2 px-3 sm:px-6 pt-4 sm:pt-6 flex flex-row items-center justify-between">
                 <CardTitle className="text-base sm:text-lg font-semibold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
                   Top Vendors
@@ -750,12 +745,12 @@ const handleReviewAction = (action: string, reviewId: number) => {
                   ))}
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
           </div>
 
           {/* Right Column */}
           <div className="space-y-4 sm:space-y-6">
-            {/* System Alerts */}
+            {/* System Alerts
             <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-yellow-500/20">
               <CardHeader className="pb-2 px-3 sm:px-6 pt-4 sm:pt-6">
                 <CardTitle className="text-base sm:text-lg font-semibold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
@@ -791,7 +786,7 @@ const handleReviewAction = (action: string, reviewId: number) => {
                   ))}
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
 
           
           </div>
@@ -800,7 +795,7 @@ const handleReviewAction = (action: string, reviewId: number) => {
         {/* Bottom Section - Balanced 2-Column Layout */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-5 lg:gap-6">
           {/* Quick Actions Section */}
-          <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/20 ">
+          {/* <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/20 ">
             <CardHeader className="pb-1 px-3 sm:px-6 pt-4 sm:pt-6">
               <CardTitle className="text-base sm:text-lg font-semibold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
                 Quick Actions
@@ -838,9 +833,9 @@ const handleReviewAction = (action: string, reviewId: number) => {
                 </Button>
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
   {/* Top Products */}
-            <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-green-500/20">
+            {/* <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-green-500/20">
               <CardHeader className="pb-2 px-3 sm:px-6 pt-4 sm:pt-6 flex flex-row items-center justify-between">
                 <CardTitle className="text-base sm:text-lg font-semibold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
                   Top Products
@@ -879,9 +874,9 @@ const handleReviewAction = (action: string, reviewId: number) => {
                   ))}
                 </div>
               </CardContent>
-            </Card></div>
+            </Card></div> */}
           {/* Download Reports */}
-          <Card className=" w-full backdrop-blur-xl  bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/20">
+          {/* <Card className=" w-full backdrop-blur-xl  bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/20">
             <CardHeader className="pb-2 px-3 sm:px-6 pt-4 sm:pt-6">
               <CardTitle className="text-base sm:text-lg font-semibold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
                 Download Reports
@@ -924,10 +919,10 @@ const handleReviewAction = (action: string, reviewId: number) => {
               </div>
             </CardContent>
           </Card>
-       
+        */}
 
         {/* Customer Reviews / Feedback */}
-        <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-pink-500/20">
+        {/* <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-pink-500/20">
           <CardHeader className="pb-2 px-3 sm:px-6 pt-4 sm:pt-6 flex flex-row items-center justify-between">
             <CardTitle className="text-base sm:text-lg font-semibold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
               Recent Customer Reviews
@@ -1008,9 +1003,10 @@ const handleReviewAction = (action: string, reviewId: number) => {
               ))}
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
     </div>
+        </div>
   );
 };
 

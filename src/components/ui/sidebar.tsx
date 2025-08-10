@@ -1,52 +1,47 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import {
   Home,
   MessageCircleQuestionMark,
   Box,
-  Menu,
-  X,
   Factory,
   ShoppingBag,
   UsersRound,
   BadgeQuestionMark,
   SquareUserRound,
   ShieldUser,
+  Menu,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import Logo from "../logo";
 
-export default function Sidebar() {
+interface SidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+  isMobile?: boolean;
+  isCollapsed?: boolean;
+  onMenuClick?: () => void;
+  isOverlay?: boolean;
+}
+
+export default function Sidebar({ isOpen = false, onClose, isMobile = false, isCollapsed = false, onMenuClick, isOverlay = false }: SidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Debug logging
+  useEffect(() => {
+    console.log('Sidebar props changed:', { isOpen, isMobile });
+  }, [isOpen, isMobile]);
 
   // Close mobile menu when route changes
   useEffect(() => {
-    setIsMobileMenuOpen(false);
-  }, [pathname]);
-
-  // Close mobile menu when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const sidebar = document.getElementById("mobile-sidebar");
-      const menuButton = document.getElementById("mobile-menu-button");
-
-      if (
-        isMobileMenuOpen &&
-        sidebar &&
-        menuButton &&
-        !sidebar.contains(event.target as Node) &&
-        !menuButton.contains(event.target as Node)
-      ) {
-        setIsMobileMenuOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isMobileMenuOpen]);
+    if (isMobile && onClose) {
+      onClose();
+    }
+  }, [pathname, isMobile, onClose]);
 
   const navItems = [
     { label: "home", icon: Home, path: "/home" },
@@ -66,59 +61,56 @@ export default function Sidebar() {
     { label: "End User Queries", icon: BadgeQuestionMark , path: "/enduserqueries" },
   ];
 
+  // Get current page name
+  const getCurrentPageName = () => {
+    const currentItem = navItems.find(item => item.path === pathname);
+    return currentItem ? currentItem.label : "Dashboard";
+  };
+
  
 
   return (
     <>
-      {/* Mobile Menu Button */}
-      <button
-        id="mobile-menu-button"
-        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="fixed top-4 left-4 z-[60] lg:hidden bg-white/90 backdrop-blur-sm border border-gray-200/60 rounded-xl p-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-      >
-        {isMobileMenuOpen ? (
-          <X className="w-5 h-5 text-gray-700" />
-        ) : (
-          <Menu className="w-5 h-5 text-gray-700" />
-        )}
-      </button>
-
-      {/* Mobile Overlay */}
-      {isMobileMenuOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300" />
-      )}
-
       {/* Sidebar */}
       <aside
-        id="mobile-sidebar"
-        className={`lg:sticky lg:top-0 fixed top-0 left-0 h-screen bg-gradient-to-b from-white to-gray-50/50 dark:from-zinc-900 dark:to-zinc-950/50 border-r border-gray-200/60 dark:border-zinc-800/60 backdrop-blur-xl shadow-2xl dark:shadow-black/20 flex flex-col z-50 transition-all duration-300 
-          ${
-            isMobileMenuOpen
-              ? "w-64 translate-x-0"
-              : "w-64 -translate-x-full lg:translate-x-0"
-          }
-        `}
+        id="sidebar"
+        className={`${isOverlay ? 'relative' : 'sticky top-0'} h-screen bg-gradient-to-b from-white to-gray-50/50 dark:from-zinc-900 dark:to-zinc-950/50 border-r border-gray-200/60 dark:border-zinc-800/60 backdrop-blur-xl shadow-2xl dark:shadow-black/20 flex flex-col z-[60] transition-all duration-300 ${
+          isCollapsed ? "w-16" : "w-64"
+        }`}
       >
         {/* Subtle gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-purple-500/[0.02] via-transparent to-blue-500/[0.02] pointer-events-none" />
 
         {/* Brand */}
-        <div className="relative px-4 sm:px-6 py-4 sm:py-6 border-b border-gray-200/60 dark:border-zinc-800/60 bg-gradient-to-r from-purple-50/30 to-blue-50/30 dark:from-purple-950/20 dark:to-blue-950/20">
-          <div className="flex items-center gap-2 sm:gap-3 text-xl sm:text-2xl font-bold tracking-tight select-none group cursor-pointer">
+        <div className={`relative py-4 sm:py-6 border-b border-gray-200/60 dark:border-zinc-800/60 bg-gradient-to-r from-purple-50/30 to-blue-50/30 dark:from-purple-950/20 dark:to-blue-950/20 ${
+          isCollapsed ? 'px-2' : 'px-4 sm:px-6'
+        }`}>
+          <div 
+            className={`flex items-center text-xl sm:text-2xl font-bold tracking-tight select-none group cursor-pointer ${
+              isCollapsed ? 'justify-center gap-0' : 'gap-2 sm:gap-3'
+            }`}
+            onClick={() => router.push('/home')}
+          >
             <div className="relative">
               <span className="text-2xl sm:text-3xl transform transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12 inline-block">
                 <Logo />
               </span>
               <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full opacity-0 group-hover:opacity-20 blur transition-opacity duration-300" />
             </div>
-            <span className="text-gray-900 dark:text-white font-pacifico bg-gradient-to-r from-purple-600 via-purple-700 to-blue-600 bg-clip-text text-transparent group-hover:from-purple-500 group-hover:to-blue-500 transition-all duration-300 text-lg sm:text-xl">
-              SHOPPERSKY
-            </span>
+            {(!isCollapsed || isMobile) && (
+              <span className="text-gray-900 dark:text-white font-pacifico bg-gradient-to-r from-purple-600 via-purple-700 to-blue-600 bg-clip-text text-transparent group-hover:from-purple-500 group-hover:to-blue-500 transition-all duration-300 text-lg sm:text-xl">
+                SHOPPERSKY
+              </span>
+            )}
           </div>
         </div>
 
+
+
         {/* Main Nav */}
-        <nav className="flex-1 px-2 sm:px-3 py-4 sm:py-6 relative overflow-y-auto">
+        <nav className={`flex-1 py-4 sm:py-6 relative overflow-y-auto ${
+          isCollapsed && !isMobile ? 'px-1' : 'px-2 sm:px-3'
+        }`}>
           <div className="space-y-1 sm:space-y-2">
             {navItems.map((item, index) => {
               const active = pathname === item.path;
@@ -137,8 +129,13 @@ export default function Sidebar() {
 
                   <button
                     onClick={() => router.push(item.path)}
-                    className={`relative w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-[15px] font-medium
+                    className={`relative w-full flex items-center text-sm sm:text-[15px] font-medium
                     transition-all duration-300 ease-out transform hover:scale-[1.02] active:scale-[0.98]
+                    ${
+                      isCollapsed && !isMobile
+                        ? "justify-center px-2 py-3 rounded-xl"
+                        : "gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl"
+                    }
                     ${
                       active
                         ? "bg-gradient-to-r from-purple-100 via-purple-50 to-blue-50 dark:from-purple-900/40 dark:via-purple-900/30 dark:to-blue-900/30 text-purple-800 dark:text-purple-200 shadow-lg shadow-purple-500/10 border border-purple-200/50 dark:border-purple-800/50"
@@ -146,11 +143,14 @@ export default function Sidebar() {
                     }
                     group overflow-hidden
                   `}
+                    title={isCollapsed && !isMobile ? item.label : undefined}
                   >
                     {/* Background shimmer effect */}
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
 
-                    <div className="relative flex items-center gap-2 sm:gap-3 z-10">
+                    <div className={`relative flex items-center z-10 ${
+                      isCollapsed && !isMobile ? 'justify-center' : 'gap-2 sm:gap-3'
+                    }`}>
                       <span
                         className={`p-1.5 sm:p-2 rounded-lg sm:rounded-xl transition-all duration-300 transform group-hover:rotate-6 group-hover:scale-110
                         ${
@@ -168,9 +168,11 @@ export default function Sidebar() {
                           }`}
                         />
                       </span>
-                      <span className="font-medium tracking-wide capitalize">
-                        {item.label}
-                      </span>
+                      {(!isCollapsed || isMobile) && (
+                        <span className="font-medium tracking-wide capitalize">
+                          {item.label}
+                        </span>
+                      )}
                     </div>
 
                     {/* Hover glow effect */}

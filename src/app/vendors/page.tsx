@@ -738,38 +738,32 @@ const VendorManagement = () => {
 
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3 lg:gap-4 xl:gap-6">
-          <StatCard
-            title="Total Vendors"
-            value={stats.total.toString()}
-            icon={<Users className="w-6 h-6" />}
-            color="blue"
-          />
-          <StatCard
-            title="Approved"
-            value={stats.approved.toString()}
-            icon={<CheckCircle className="w-6 h-6" />}
-            color="green"
-          />
-          <StatCard
-            title="Pending"
-            value={stats.pending.toString()}
-            icon={<Clock className="w-6 h-6" />}
-            color="yellow"
-          />
-          <StatCard
-            title="Rejected"
-            value={stats.rejected.toString()}
-            icon={<XCircle className="w-6 h-6" />}
-            color="red"
-          />
-          <StatCard
-            title="Not Onboarded"
-            value={stats.notOnboarded.toString()}
-            icon={<Users className="w-6 h-6" />}
-            color="purple"
-          />
-        </div>
+  <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4 sm:gap-6">
+  <StatCard
+    title="Total Vendors"
+    value={stats.total.toString()}
+    icon={<Users className="w-6 h-6" />}
+    color="blue"
+  />
+  <StatCard
+    title="Approved"
+    value={stats.approved.toString()}
+    icon={<CheckCircle className="w-6 h-6" />}
+    color="green"
+  />
+  <StatCard
+    title="Pending"
+    value={stats.pending.toString()}
+    icon={<Clock className="w-6 h-6" />}
+    color="yellow"
+  />
+  <StatCard
+    title="Rejected"
+    value={stats.rejected.toString()}
+    icon={<XCircle className="w-6 h-6" />}
+    color="red"
+  />
+</div>
 
         <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-lg sm:rounded-xl lg:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl">
           <CardContent className="p-2 sm:p-3 lg:p-6">
@@ -796,9 +790,7 @@ const VendorManagement = () => {
                       <SelectItem value="pending">Pending</SelectItem>
                       <SelectItem value="rejected">Rejected</SelectItem>
                       <SelectItem value="onhold">On Hold</SelectItem>
-                      <SelectItem value="not onboarded">
-                        Not Onboarded
-                      </SelectItem>
+                     
                     </SelectContent>
                   </Select>
                   <Select value={roleFilter} onValueChange={setRoleFilter}>

@@ -176,15 +176,29 @@ function SkeletonQueryCard() {
 function SkeletonFilters() {
   return (
     <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm animate-pulse">
-      <CardContent className="p-6">
-        <div className="flex flex-col lg:flex-row gap-4">
-          <div className="relative flex-1">
-            <div className="h-10 bg-slate-200 dark:bg-slate-700 rounded-md"></div>
+      <CardContent className="p-3 sm:p-4 lg:p-6">
+        <div className="space-y-3 sm:space-y-4">
+          {/* Search Bar Skeleton */}
+          <div className="relative w-full">
+            <div className="h-9 sm:h-10 lg:h-11 bg-slate-200 dark:bg-slate-700 rounded-md"></div>
           </div>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="h-10 w-full sm:w-40 bg-slate-200 dark:bg-slate-700 rounded-md"></div>
-            <div className="h-10 w-full sm:w-40 bg-slate-200 dark:bg-slate-700 rounded-md"></div>
-            <div className="h-10 w-full sm:w-40 bg-slate-200 dark:bg-slate-700 rounded-md"></div>
+          
+          {/* Filter Controls Skeleton */}
+          <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+            {/* Filter Selects Skeleton */}
+            <div className="flex flex-col space-y-2 sm:space-y-0 sm:flex-row sm:gap-3 flex-1">
+              <div className="w-full sm:w-auto sm:min-w-[140px] lg:min-w-[160px]">
+                <div className="h-9 sm:h-10 lg:h-11 bg-slate-200 dark:bg-slate-700 rounded-md"></div>
+              </div>
+              <div className="w-full sm:w-auto sm:min-w-[140px] lg:min-w-[160px]">
+                <div className="h-9 sm:h-10 lg:h-11 bg-slate-200 dark:bg-slate-700 rounded-md"></div>
+              </div>
+            </div>
+            
+            {/* Results Count Skeleton */}
+            <div className="flex flex-col space-y-2 sm:space-y-0 sm:flex-row sm:items-center sm:gap-3">
+              <div className="h-6 sm:h-7 w-24 sm:w-28 bg-slate-200 dark:bg-slate-700 rounded-md"></div>
+            </div>
           </div>
         </div>
       </CardContent>
@@ -234,15 +248,15 @@ function StatCard({
     <Card
       className={`bg-gradient-to-br ${colorClasses[color]} border transition-all duration-300 hover:shadow-lg hover:scale-[1.02] group`}
     >
-      <CardContent className="p-6">
+      <CardContent className="p-4 sm:p-6">
         <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <p className="text-sm font-medium text-muted-foreground">{title}</p>
+          <div className="space-y-1 flex-1 min-w-0">
+            <p className="text-xs sm:text-sm font-medium text-muted-foreground">{title}</p>
             <div className="flex items-baseline gap-2">
-              <p className="text-2xl font-bold">{value}</p>
+              <p className="text-lg sm:text-xl lg:text-2xl font-bold truncate">{value}</p>
               {trend && trendValue && (
                 <div
-                  className={`flex items-center text-xs font-medium ${
+                  className={`flex items-center text-xs font-medium flex-shrink-0 ${
                     trend === "up" ? "text-emerald-600" : "text-rose-600"
                   }`}
                 >
@@ -251,15 +265,17 @@ function StatCard({
                       trend === "down" ? "rotate-180" : ""
                     }`}
                   />
-                  {trendValue}
+                  <span className="hidden xs:inline">{trendValue}</span>
                 </div>
               )}
             </div>
           </div>
           <div
-            className={`p-3 rounded-xl ${iconColors[color]} group-hover:scale-110 transition-transform duration-300`}
+            className={`p-2 sm:p-3 rounded-lg sm:rounded-xl ${iconColors[color]} group-hover:scale-110 transition-transform duration-300 flex-shrink-0`}
           >
-            {icon}
+            <div className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6">
+              {icon}
+            </div>
           </div>
         </div>
       </CardContent>
@@ -326,16 +342,16 @@ function QueryCard({ query, onClick }: { query: Query; onClick: () => void }) {
       className="group cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-[1.02] bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800 border-0 shadow-lg"
       onClick={onClick}
     >
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-3 p-4 sm:p-6">
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
-              <div className={`w-2 h-2 rounded-full ${priorityConfig.color}`} />
-              <h3 className="font-bold text-lg text-slate-900 dark:text-slate-100 group-hover:text-violet-600 transition-colors line-clamp-1">
+              <div className={`w-2 h-2 rounded-full ${priorityConfig.color} flex-shrink-0`} />
+              <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-slate-100 group-hover:text-violet-600 transition-colors line-clamp-1">
                 {query.title}
               </h3>
             </div>
-            <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+            <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 mb-3">
               {query.description}
             </p>
           </div>
@@ -344,10 +360,10 @@ function QueryCard({ query, onClick }: { query: Query; onClick: () => void }) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8"
+                className="opacity-0 group-hover:opacity-100 transition-opacity h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0"
                 onClick={(e) => e.stopPropagation()}
               >
-                <MoreHorizontal className="h-4 w-4" />
+                <MoreHorizontal className="h-3 w-3 sm:h-4 sm:w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -359,10 +375,10 @@ function QueryCard({ query, onClick }: { query: Query; onClick: () => void }) {
           </DropdownMenu>
         </div>
       </CardHeader>
-      <CardContent className="pt-0">
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <Avatar className="h-8 w-8">
+      <CardContent className="pt-0 p-4 sm:p-6">
+        <div className="space-y-3 sm:space-y-4">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Avatar className="h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0">
               <AvatarFallback className="bg-gradient-to-br from-violet-400 to-blue-400 text-white text-xs">
                 {query.vendorName
                   .split(" ")
@@ -372,7 +388,7 @@ function QueryCard({ query, onClick }: { query: Query; onClick: () => void }) {
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
+              <p className="text-xs sm:text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
                 {query.vendorName}
               </p>
               <p className="text-xs text-muted-foreground truncate">
@@ -381,15 +397,15 @@ function QueryCard({ query, onClick }: { query: Query; onClick: () => void }) {
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2">
+            <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
               <Badge variant="outline" className="text-xs">
-                <Tag className="w-3 h-3 mr-1" />
-                {query.category}
+                <Tag className="w-2 w-2 sm:w-3 sm:h-3 mr-1" />
+                <span className="truncate max-w-[80px] sm:max-w-none">{query.category}</span>
               </Badge>
               <Badge className={`${statusConfig.color} text-xs border`}>
                 {statusConfig.icon}
-                <span className="ml-1">{query.status}</span>
+                <span className="ml-1 hidden xs:inline">{query.status}</span>
               </Badge>
             </div>
             <div className="text-xs text-muted-foreground">
@@ -399,14 +415,14 @@ function QueryCard({ query, onClick }: { query: Query; onClick: () => void }) {
 
           {query.assignedTo && (
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <UserCheck className="w-3 h-3" />
-              <span>Assigned to {query.assignedTo}</span>
+              <UserCheck className="w-3 h-3 flex-shrink-0" />
+              <span className="truncate">Assigned to {query.assignedTo}</span>
             </div>
           )}
 
           {query.followUps.length > 0 && (
             <div className="flex items-center gap-2 text-xs text-blue-600">
-              <MessageCircle className="w-3 h-3" />
+              <MessageCircle className="w-3 h-3 flex-shrink-0" />
               <span>
                 {query.followUps.length} follow-up
                 {query.followUps.length !== 1 ? "s" : ""}
@@ -786,20 +802,20 @@ export default function AdminEnquiryManagement() {
             </Card>
           )}
           {/* Header */}
-          <div className="flex items-center gap-4 mb-8">
+          <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
             <Button
               variant="outline"
               size="icon"
               onClick={() => setCurrentView("list")}
-              className="shrink-0 bg-transparent"
+              className="shrink-0 bg-transparent h-8 w-8 sm:h-9 sm:w-9"
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4" />
             </Button>
-            <div className="flex-1">
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-900 via-violet-700 to-blue-700 bg-clip-text text-transparent">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl sm:text-2xl p-2 lg:text-3xl font-bold bg-gradient-to-r from-slate-900 via-violet-700 to-blue-700 bg-clip-text text-transparent">
                 Query Details
               </h1>
-              <p className="text-muted-foreground mt-1">
+              <p className="text-sm sm:text-base text-muted-foreground mt-1">
                 Manage query communication and resolution
               </p>
             </div>
@@ -808,86 +824,88 @@ export default function AdminEnquiryManagement() {
           <div className="space-y-6">
             {/* Query Information */}
             <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
-              <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-violet-50 dark:from-slate-800 dark:to-violet-900/20">
-                <div className="flex items-start justify-between">
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-                        {selectedQuery.title}
-                      </h2>
-                      <Badge className="bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400">
-                        {selectedQuery.id}
+              <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-violet-50 dark:from-slate-800 dark:to-violet-900/20 p-4 sm:p-6">
+                <div className="flex flex-col gap-3 sm:gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                    <div className="space-y-2 sm:space-y-3 flex-1 min-w-0">
+                      <div className="flex flex-col xs:flex-row xs:items-center gap-2 xs:gap-3">
+                        <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-900 dark:text-slate-100 truncate">
+                          {selectedQuery.title}
+                        </h2>
+                        <Badge className="bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400 text-xs sm:text-sm self-start xs:self-auto">
+                          {selectedQuery.id}
+                        </Badge>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 self-start sm:self-auto">
+                      <Badge
+                        variant="outline"
+                        className={`text-xs sm:text-sm ${
+                          selectedQuery.status === "pending"
+                            ? "border-amber-200 bg-amber-50 text-amber-700"
+                            : selectedQuery.status === "in-progress"
+                            ? "border-blue-200 bg-blue-50 text-blue-700"
+                            : selectedQuery.status === "resolved"
+                            ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                            : "border-slate-200 bg-slate-50 text-slate-700"
+                        }`}
+                      >
+                        {selectedQuery.status}
                       </Badge>
                     </div>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-2">
-                        <User className="w-4 h-4" />
-                        <span>{selectedQuery.vendorName}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Mail className="w-4 h-4" />
-                        <span>{selectedQuery.vendorEmail}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4" />
-                        <span>
-                          {new Date(
-                            selectedQuery.createdAt
-                          ).toLocaleDateString()}
-                        </span>
-                      </div>
-                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Badge
-                      variant="outline"
-                      className={
-                        selectedQuery.status === "pending"
-                          ? "border-amber-200 bg-amber-50 text-amber-700"
-                          : selectedQuery.status === "in-progress"
-                          ? "border-blue-200 bg-blue-50 text-blue-700"
-                          : selectedQuery.status === "resolved"
-                          ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                          : "border-slate-200 bg-slate-50 text-slate-700"
-                      }
-                    >
-                      {selectedQuery.status}
-                    </Badge>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <User className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                      <span className="truncate">{selectedQuery.vendorName}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Mail className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                      <span className="truncate">{selectedQuery.vendorEmail}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                      <span>
+                        {new Date(
+                          selectedQuery.createdAt
+                        ).toLocaleDateString()}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="p-6">
+              <CardContent className="p-4 sm:p-6">
                 <div className="space-y-4">
                   <div>
-                    <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-2">
+                    <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-2 text-sm sm:text-base">
                       Description
                     </h4>
-                    <p className="text-muted-foreground leading-relaxed">
+                    <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
                       {selectedQuery.description}
                     </p>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 pt-4 border-t">
                     <div>
-                      <span className="text-sm font-medium text-muted-foreground">
+                      <span className="text-xs sm:text-sm font-medium text-muted-foreground">
                         Category
                       </span>
-                      <p className="text-slate-900 dark:text-slate-100">
+                      <p className="text-slate-900 dark:text-slate-100 text-sm sm:text-base">
                         {selectedQuery.category}
                       </p>
                     </div>
                     <div>
-                      <span className="text-sm font-medium text-muted-foreground">
+                      <span className="text-xs sm:text-sm font-medium text-muted-foreground">
                         Priority
                       </span>
-                      <p className="text-slate-900 dark:text-slate-100 capitalize">
+                      <p className="text-slate-900 dark:text-slate-100 capitalize text-sm sm:text-base">
                         {selectedQuery.priority}
                       </p>
                     </div>
                     <div>
-                      <span className="text-sm font-medium text-muted-foreground">
+                      <span className="text-xs sm:text-sm font-medium text-muted-foreground">
                         Assigned To
                       </span>
-                      <p className="text-slate-900 dark:text-slate-100">
+                      <p className="text-slate-900 dark:text-slate-100 text-sm sm:text-base">
                         {selectedQuery.assignedTo || "Unassigned"}
                       </p>
                     </div>
@@ -898,18 +916,18 @@ export default function AdminEnquiryManagement() {
 
             {/* Conversation Thread */}
             <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
-              <CardHeader>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                  <MessageSquare className="w-5 h-5 text-violet-600" />
+              <CardHeader className="p-4 sm:p-6">
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                  <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-violet-600" />
                   Conversation Thread
                 </h3>
               </CardHeader>
-              <CardContent className="p-6">
-                <div className="space-y-6">
+              <CardContent className="p-4 sm:p-6">
+                <div className="space-y-4 sm:space-y-6">
                   {/* Original Query */}
-                  <div className="flex gap-4">
-                    <Avatar className="h-10 w-10 shrink-0">
-                      <AvatarFallback className="bg-gradient-to-br from-blue-400 to-violet-400 text-white">
+                  <div className="flex gap-3 sm:gap-4">
+                    <Avatar className="h-8 w-8 sm:h-10 sm:w-10 shrink-0">
+                      <AvatarFallback className="bg-gradient-to-br from-blue-400 to-violet-400 text-white text-xs sm:text-sm">
                         {selectedQuery.vendorName
                           .split(" ")
                           .map((n) => n[0])
@@ -917,20 +935,20 @@ export default function AdminEnquiryManagement() {
                           .toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="flex-1 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold text-slate-900 dark:text-slate-100">
+                    <div className="flex-1 space-y-2 min-w-0">
+                      <div className="flex flex-col xs:flex-row xs:items-center gap-1 xs:gap-2">
+                        <span className="font-semibold text-slate-900 dark:text-slate-100 text-sm sm:text-base truncate">
                           {selectedQuery.vendorName}
                         </span>
                         <span className="text-xs text-muted-foreground">
                           {new Date(selectedQuery.createdAt).toLocaleString()}
                         </span>
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-xs self-start xs:self-auto">
                           Original Query
                         </Badge>
                       </div>
-                      <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
-                        <p className="text-slate-700 dark:text-slate-300">
+                      <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-3 sm:p-4">
+                        <p className="text-slate-700 dark:text-slate-300 text-sm sm:text-base">
                           {selectedQuery.description}
                         </p>
                       </div>
@@ -1092,19 +1110,19 @@ export default function AdminEnquiryManagement() {
                     ))}
 
                   {/* Response Form */}
-                  <div className="border-t pt-6">
-                    <div className="flex gap-4">
-                      <Avatar className="h-10 w-10 shrink-0">
-                        <AvatarFallback className="bg-gradient-to-br from-violet-400 to-blue-400 text-white">
+                  <div className="border-t pt-4 sm:pt-6">
+                    <div className="flex gap-3 sm:gap-4">
+                      <Avatar className="h-8 w-8 sm:h-10 sm:w-10 shrink-0">
+                        <AvatarFallback className="bg-gradient-to-br from-violet-400 to-blue-400 text-white text-xs sm:text-sm">
                           CA
                         </AvatarFallback>
                       </Avatar>
-                      <div className="flex-1 space-y-4">
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-slate-900 dark:text-slate-100">
+                      <div className="flex-1 space-y-3 sm:space-y-4 min-w-0">
+                        <div className="flex flex-col xs:flex-row xs:items-center gap-1 xs:gap-2">
+                          <span className="font-semibold text-slate-900 dark:text-slate-100 text-sm sm:text-base">
                             Current Admin
                           </span>
-                          <Badge variant="outline" className="text-xs">
+                          <Badge variant="outline" className="text-xs self-start xs:self-auto">
                             Composing Response
                           </Badge>
                         </div>
@@ -1112,29 +1130,32 @@ export default function AdminEnquiryManagement() {
                           placeholder="Type your response here..."
                           value={responseMessage}
                           onChange={(e) => setResponseMessage(e.target.value)}
-                          className="min-h-[120px] resize-none"
+                          className="min-h-[100px] sm:min-h-[120px] resize-none text-sm sm:text-base"
                         />
-                        <div className="flex items-center gap-3">
+                        <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2 xs:gap-3">
                           <Button
                             onClick={handleSubmitResponse}
                             disabled={!responseMessage.trim() || isSubmitting}
-                            className="bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700"
+                            className="bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700 h-9 sm:h-10 text-sm sm:text-base"
                           >
                             {isSubmitting ? (
                               <>
-                                <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                                Sending...
+                                <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4 mr-2 animate-spin" />
+                                <span className="hidden xs:inline">Sending...</span>
+                                <span className="xs:hidden">Send...</span>
                               </>
                             ) : (
                               <>
-                                <Send className="w-4 h-4 mr-2" />
-                                Send Response
+                                <Send className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
+                                <span className="hidden xs:inline">Send Response</span>
+                                <span className="xs:hidden">Send</span>
                               </>
                             )}
                           </Button>
                           <Button
                             variant="outline"
                             onClick={() => setResponseMessage("")}
+                            className="h-9 sm:h-10 text-sm sm:text-base"
                           >
                             Clear
                           </Button>
@@ -1148,8 +1169,8 @@ export default function AdminEnquiryManagement() {
 
             {/* Actions */}
             <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
-              <CardContent className="p-6">
-                <div className="flex flex-wrap gap-3">
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex flex-col xs:flex-row flex-wrap gap-2 xs:gap-3">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="outline">
@@ -1263,21 +1284,21 @@ export default function AdminEnquiryManagement() {
           </Card>
         )}
         {/* Page Header */}
-        <div className="relative z-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-slate-800/50 dark:to-slate-700/50 p-3 sm:p-4 lg:p-6 rounded-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20 shadow-lg">
-          <div className="flex-1 min-w-0">
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
-              Query Management
-            </h1>
-            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-1">
-              Manage and respond to vendor queries efficiently
-            </p>
-          </div>
-          <div className="flex items-center justify-end gap-3 sm:gap-4">
+        <div className="relative z-50 flex flex-col gap-3 sm:gap-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-slate-800/50 dark:to-slate-700/50 p-4 sm:p-6 rounded-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20 shadow-lg">
+          <div className="flex items-center justify-between">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-lg p-2 sm:text-xl lg:text-2xl xl:text-3xl font-bold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
+                Query Management
+              </h1>
+              <p className="text-xs sm:text-sm lg:text-base text-gray-600 dark:text-gray-400 mt-1">
+                Manage and respond to vendor queries efficiently
+              </p>
+            </div>
             <Button
               variant="outline"
               onClick={() => fetchQueries(currentPage)}
               disabled={loading}
-              className="flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition-all duration-300"
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition-all duration-300 h-8 sm:h-9 lg:h-10"
             >
               <RefreshCw
                 className={`w-3 h-3 sm:w-4 sm:h-4 ${
@@ -1318,103 +1339,133 @@ export default function AdminEnquiryManagement() {
           </>
         )}
 
-        {/* Statistics */}
-        {!loading && !error && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-            <StatCard
-              title="Total Queries"
-              value={stats.total}
-              icon={<MessageSquare className="w-6 h-6" />}
-              color="slate"
-              trend="up"
-              trendValue="+12%"
-            />
-            <StatCard
-              title="Pending"
-              value={stats.pending}
-              icon={<Clock className="w-6 h-6" />}
-              color="amber"
-              trend="down"
-              trendValue="-5%"
-            />
-            <StatCard
-              title="In Progress"
-              value={stats.inProgress}
-              icon={<RefreshCw className="w-6 h-6" />}
-              color="blue"
-              trend="up"
-              trendValue="+8%"
-            />
-            <StatCard
-              title="Resolved"
-              value={stats.resolved}
-              icon={<CheckCircle2 className="w-6 h-6" />}
-              color="emerald"
-              trend="up"
-              trendValue="+15%"
-            />
-            {/* <StatCard
-              title="Urgent"
-              value={stats.urgent}
-              icon={<Zap className="w-6 h-6" />}
-              color="rose"
-              trend="down"
-              trendValue="-3%"
-            />
-            <StatCard
-              title="Avg Response"
-              value={stats.avgResponseTime}
-              icon={<Timer className="w-6 h-6" />}
-              color="violet"
-              trend="down"
-              trendValue="-20%"
-            /> */}
-          </div>
-        )}
+       {/* Statistics */}
+
+  <div
+  className="
+    grid
+    gap-3
+    sm:gap-4
+    lg:gap-6
+    grid-cols-[repeat(auto-fit,minmax(240px,1fr))]
+  "
+>
+  <StatCard
+    title="Total Queries"
+    value={stats.total}
+    icon={<MessageSquare className="w-6 h-6" />}
+    color="slate"
+    trend="up"
+    trendValue="+12%"
+  />
+  <StatCard
+    title="Pending"
+    value={stats.pending}
+    icon={<Clock className="w-6 h-6" />}
+    color="amber"
+    trend="down"
+    trendValue="-5%"
+  />
+  <StatCard
+    title="In Progress"
+    value={stats.inProgress}
+    icon={<RefreshCw className="w-6 h-6" />}
+    color="blue"
+    trend="up"
+    trendValue="+8%"
+  />
+  <StatCard
+    title="Resolved"
+    value={stats.resolved}
+    icon={<CheckCircle2 className="w-6 h-6" />}
+    color="emerald"
+    trend="up"
+    trendValue="+15%"
+  />
+</div>
+
+
 
         {/* Filters */}
         {!loading && !error && (
           <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
-            <CardContent className="p-6">
-              <div className="flex flex-col lg:flex-row gap-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+            <CardContent className="p-3 sm:p-4 lg:p-6">
+              <div className="space-y-3 sm:space-y-4">
+                {/* Search Bar */}
+                <div className="relative w-full">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4 z-10" />
                   <Input
                     placeholder="Search queries by title, description, or vendor..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 h-9 sm:h-10 lg:h-11 w-full text-sm sm:text-base"
                   />
                 </div>
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-full sm:w-40">
-                      <SelectValue placeholder="All Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Status</SelectItem>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="in-progress">In Progress</SelectItem>
-                      <SelectItem value="resolved">Resolved</SelectItem>
-                      <SelectItem value="closed">Closed</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Select
-                    value={categoryFilter}
-                    onValueChange={setCategoryFilter}
-                  >
-                    <SelectTrigger className="w-full sm:w-40">
-                      <SelectValue placeholder="All Categories" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Categories</SelectItem>
-                      {categories.map((category) => (
-                        <SelectItem key={category} value={category}>
-                          {category}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                
+                {/* Filter Controls */}
+                <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                  {/* Filter Selects */}
+                  <div className="flex flex-col space-y-2 sm:space-y-0 sm:flex-row sm:gap-3 flex-1">
+                    <div className="w-full sm:w-auto sm:min-w-[140px] lg:min-w-[160px]">
+                      <Select value={statusFilter} onValueChange={setStatusFilter}>
+                        <SelectTrigger className="w-full h-9 sm:h-10 lg:h-11 text-sm sm:text-base">
+                          <SelectValue placeholder="All Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Status</SelectItem>
+                          <SelectItem value="pending">Pending</SelectItem>
+                          <SelectItem value="in-progress">In Progress</SelectItem>
+                          <SelectItem value="resolved">Resolved</SelectItem>
+                          <SelectItem value="closed">Closed</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="w-full sm:w-auto sm:min-w-[140px] lg:min-w-[160px]">
+                      <Select
+                        value={categoryFilter}
+                        onValueChange={setCategoryFilter}
+                      >
+                        <SelectTrigger className="w-full h-9 sm:h-10 lg:h-11 text-sm sm:text-base">
+                          <SelectValue placeholder="All Categories" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Categories</SelectItem>
+                          {categories.map((category) => (
+                            <SelectItem key={category} value={category}>
+                              {category}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  
+                  {/* Results Count and Clear Filters */}
+                  <div className="flex flex-col space-y-2 sm:space-y-0 sm:flex-row sm:items-center sm:gap-3">
+                    <div className="flex items-center justify-center sm:justify-start text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-medium">
+                      <span className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-md">
+                        {filteredQueries.length} queries found
+                      </span>
+                    </div>
+                    
+                    {/* Clear Filters Button - Show when filters are active */}
+                    {(searchTerm || statusFilter !== "all" || categoryFilter !== "all") && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSearchTerm("");
+                          setStatusFilter("all");
+                          setCategoryFilter("all");
+                        }}
+                        className="h-8 sm:h-9 px-3 sm:px-4 text-xs sm:text-sm whitespace-nowrap bg-white/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 transition-all duration-200"
+                      >
+                        <XCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                        Clear Filters
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </div>
             </CardContent>
@@ -1423,17 +1474,17 @@ export default function AdminEnquiryManagement() {
 
         {/* Queries Display */}
         {!loading && !error && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+          <div className="space-y-4 sm:space-y-6">
+            <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2">
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100">
                 Queries
               </h2>
-              <Badge variant="secondary" className="text-sm">
+              <Badge variant="secondary" className="text-xs sm:text-sm self-start xs:self-auto">
                 {filteredQueries.length} queries
               </Badge>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
               {filteredQueries.map((query) => (
                 <QueryCard
                   key={query.id}
@@ -1451,12 +1502,12 @@ export default function AdminEnquiryManagement() {
         {/* Empty State */}
         {!loading && !error && filteredQueries.length === 0 && (
           <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
-            <CardContent className="py-16 text-center">
-              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center">
-                <MessageSquare className="w-12 h-12 text-muted-foreground" />
+            <CardContent className="py-12 sm:py-16 text-center px-4 sm:px-6">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 mx-auto mb-4 sm:mb-6 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center">
+                <MessageSquare className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-muted-foreground" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">No queries found</h3>
-              <p className="text-muted-foreground mb-6">
+              <h3 className="text-lg sm:text-xl font-semibold mb-2">No queries found</h3>
+              <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6 max-w-md mx-auto">
                 {searchTerm ||
                 statusFilter !== "all" ||
                 priorityFilter !== "all" ||
@@ -1476,6 +1527,7 @@ export default function AdminEnquiryManagement() {
                     setPriorityFilter("all");
                     setCategoryFilter("all");
                   }}
+                  className="h-9 sm:h-10 px-4 sm:px-6 text-sm sm:text-base"
                 >
                   Clear Filters
                 </Button>
@@ -1488,11 +1540,11 @@ export default function AdminEnquiryManagement() {
         {!loading && !error && queries.length > 0 && (
           <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
             <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="text-sm text-muted-foreground">
+              <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-3">
+                <div className="text-xs sm:text-sm text-muted-foreground text-center xs:text-left">
                   Page {currentPage} of {totalPages}
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center justify-center gap-2">
                   <Button
                     variant="outline"
                     size="sm"
@@ -1500,8 +1552,10 @@ export default function AdminEnquiryManagement() {
                       setCurrentPage((prev) => Math.max(1, prev - 1))
                     }
                     disabled={currentPage === 1 || loading}
+                    className="h-8 sm:h-9 px-3 sm:px-4 text-xs sm:text-sm"
                   >
-                    Previous
+                    <span className="hidden xs:inline">Previous</span>
+                    <span className="xs:hidden">Prev</span>
                   </Button>
                   <Button
                     variant="outline"
@@ -1510,6 +1564,7 @@ export default function AdminEnquiryManagement() {
                       setCurrentPage((prev) => Math.min(totalPages, prev + 1))
                     }
                     disabled={currentPage === totalPages || loading}
+                    className="h-8 sm:h-9 px-3 sm:px-4 text-xs sm:text-sm"
                   >
                     Next
                   </Button>

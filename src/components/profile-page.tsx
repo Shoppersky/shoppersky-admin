@@ -34,6 +34,7 @@ import {
 import { toast } from "sonner";
 import axiosInstance from "@/lib/axiosInstance"; // Adjust path to your axios instance
 import useStore from "@/lib/Zustand";
+import { cn } from "@/lib/utils";
 
 interface ProfileData {
   name: string;
@@ -259,7 +260,7 @@ export default function ProfilePage() {
         <div className="text-center space-y-4">
           <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-full border border-indigo-200/50 dark:border-indigo-800/50">
             <Sparkles className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
-            <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <h1 className="text-3xl p-2 lg:text-4xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
               Profile Settings
             </h1>
           </div>
@@ -271,7 +272,7 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Profile Picture Section */}
           <Card className="backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border-0 shadow-xl rounded-2xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-indigo-500/5 to-purple-500/5 border-b border-indigo-100 dark:border-indigo-800/30">
+            <CardHeader className="bg-gradient-to-r pt-6 from-indigo-500/5 to-purple-500/5 border-b border-indigo-100 dark:border-indigo-800/30">
               <CardTitle className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent flex items-center gap-3">
                 <div className="p-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl">
                   <Camera className="w-5 h-5 text-white" />
@@ -351,7 +352,7 @@ export default function ProfilePage() {
 
           {/* Profile Information Section */}
           <Card className="lg:col-span-2 backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border-0 shadow-xl rounded-2xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-indigo-500/5 to-purple-500/5 border-b border-indigo-100 dark:border-indigo-800/30">
+            <CardHeader className="bg-gradient-to-r pt-6 from-indigo-500/5 to-purple-500/5 border-b border-indigo-100 dark:border-indigo-800/30">
               <CardTitle className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent flex items-center gap-3">
                 <div className="p-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl">
                   <User className="w-5 h-5 text-white" />
@@ -360,28 +361,38 @@ export default function ProfilePage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-8 space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Name */}
-                <div className="space-y-2">
-                  <Label className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                    <User className="w-4 h-4" />
-                    Full Name
-                  </Label>
-                  <div className="h-12 px-4 bg-gray-50/80 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-xl flex items-center">
-                    <span className="font-medium text-gray-900 dark:text-gray-100">{profileData.name}</span>
-                  </div>
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+  {/* Name */}
+  <div className="space-y-2">
+    <Label className="flex items-center gap-1 sm:gap-2 font-semibold text-gray-700 dark:text-gray-300 text-[clamp(12px,1.5vw,16px)]">
+      <User className="w-3 h-3 sm:w-4 sm:h-4" />
+      Full Name
+    </Label>
+
+    <div className="h-10 sm:h-12 px-3 sm:px-4 bg-gray-50/80 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-lg sm:rounded-xl flex items-center">
+      <span className="font-medium text-gray-900 dark:text-gray-100 text-[clamp(12px,1.4vw,16px)] truncate">
+        {profileData.name}
+      </span>
+    </div>
+  </div>
+
+
+  
 
                 {/* Email */}
                 <div className="space-y-2">
-                  <Label className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                    <Mail className="w-4 h-4" />
-                    Email Address
-                  </Label>
-                  <div className="h-12 px-4 bg-gray-50/80 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-xl flex items-center">
-                    <span className="font-medium text-gray-900 dark:text-gray-100">{profileData.email}</span>
-                  </div>
-                </div>
+  <Label className="flex flex-wrap items-center gap-1 sm:gap-2 font-semibold text-gray-700 dark:text-gray-300 text-[clamp(12px,1.5vw,16px)]">
+    <Mail className="w-3 h-3 sm:w-4 sm:h-4" />
+    Email Address
+  </Label>
+
+  <div className="h-10 sm:h-12 px-3 sm:px-4 bg-gray-50/80 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-lg sm:rounded-xl flex items-center overflow-hidden">
+    <span className="font-medium text-gray-900 dark:text-gray-100 text-[clamp(12px,1.4vw,16px)] truncate">
+      {profileData.email}
+    </span>
+  </div>
+</div>
+
 
                 {/* Role */}
                 <div className="space-y-2">
@@ -416,7 +427,7 @@ export default function ProfilePage() {
 
           {/* Security Section */}
           <Card className="lg:col-span-3 backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border-0 shadow-xl rounded-2xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-indigo-500/5 to-purple-500/5 border-b border-indigo-100 dark:border-indigo-800/30">
+            <CardHeader className="bg-gradient-to-r pt-6 from-indigo-500/5 to-purple-500/5 border-b border-indigo-100 dark:border-indigo-800/30">
               <CardTitle className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent flex items-center gap-3">
                 <div className="p-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl">
                   <Key className="w-5 h-5 text-white" />
@@ -424,23 +435,35 @@ export default function ProfilePage() {
                 Security Settings
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-8">
-              <div className="flex items-center justify-between p-6 bg-gradient-to-r from-indigo-50/50 to-purple-50/50 dark:from-indigo-950/30 dark:to-purple-950/30 rounded-xl border border-indigo-100 dark:border-indigo-800/30">
-                <div className="space-y-1">
-                  <h3 className="font-semibold text-gray-900 dark:text-gray-100">Password</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Keep your account secure with a strong password
-                  </p>
-                </div>
-                <Button
-                  onClick={() => setChangePasswordOpen(true)}
-                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300"
-                >
-                  <Key className="w-4 h-4 mr-2" />
-                  Change Password
-                </Button>
-              </div>
-            </CardContent>
+           <CardContent className="p-4 sm:p-8">
+  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6 p-4 sm:p-6 bg-gradient-to-r from-indigo-50/50 to-purple-50/50 dark:from-indigo-950/30 dark:to-purple-950/30 rounded-xl border border-indigo-100 dark:border-indigo-800/30">
+    
+    {/* Text */}
+    <div className="space-y-1 text-center sm:text-left">
+      <h3 className="font-semibold text-[clamp(14px,2vw,18px)] text-gray-900 dark:text-gray-100">
+        Password
+      </h3>
+      <p className="text-[clamp(12px,1.6vw,14px)] text-gray-600 dark:text-gray-400">
+        Keep your account secure with a strong password
+      </p>
+    </div>
+
+    {/* Button */}
+    <Button
+      size="lg"
+      onClick={() => setChangePasswordOpen(true)}
+      className={cn(
+        "w-full sm:w-auto text-[clamp(12px,1.6vw,14px)]",
+        "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700",
+        "shadow-lg hover:shadow-xl transition-all duration-300 text-white font-medium"
+      )}
+    >
+      <Key className="w-[clamp(14px,1.6vw,16px)] h-[clamp(14px,1.6vw,16px)] mr-2" />
+      Change Password
+    </Button>
+  </div>
+</CardContent>
+
           </Card>
         </div>
 

@@ -572,19 +572,20 @@ export default function UsersPage() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col xs:flex-row items-stretch xs:items-center justify-center gap-2 sm:gap-3 lg:gap-4 px-2 sm:px-4 lg:px-0">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 px-3 sm:px-4 lg:px-0">
           <Button
             variant="outline"
             onClick={handleExportUsers}
-            className="flex items-center justify-center gap-2 px-3 sm:px-4 md:px-6 py-2 sm:py-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-300 text-xs sm:text-sm md:text-base"
+            className="flex items-center justify-center gap-2 px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 h-10 sm:h-11 md:h-12 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-300 text-sm sm:text-base font-medium rounded-lg sm:rounded-xl shadow-sm hover:shadow-md"
           >
-            <Download className="w-4 h-4" />
-            Export Data
+            <Download className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+            <span className="hidden xs:inline">Export Data</span>
+            <span className="xs:hidden">Export</span>
           </Button>
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button
-                className="flex items-center justify-center gap-2 px-3 sm:px-4 md:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 text-xs sm:text-sm md:text-base"
+                className="flex items-center justify-center gap-2 px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 h-10 sm:h-11 md:h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 text-sm sm:text-base font-medium rounded-lg sm:rounded-xl"
                 onClick={() => {
                   setEditingUser(null);
                   setFormData({
@@ -596,8 +597,9 @@ export default function UsersPage() {
                   });
                 }}
               >
-                <Plus className="w-4 h-4" />
-                Add User
+                <Plus className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                <span className="hidden xs:inline">Add Employee</span>
+                <span className="xs:hidden">Add Employee</span>
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[95vh] overflow-y-auto bg-white/95 dark:bg-slate-900/95 border border-slate-200/50 dark:border-slate-700/50 shadow-2xl backdrop-blur-sm m-2 sm:m-4">
@@ -761,12 +763,12 @@ export default function UsersPage() {
                   {editingUser ? (
                     <>
                       <Save className="w-4 h-4 mr-2" />
-                      Update User
+                      Update Employee
                     </>
                   ) : (
                     <>
                       <Plus className="w-4 h-4 mr-2" />
-                      Add User
+                      Add Employee
                     </>
                   )}
                 </Button>
@@ -776,32 +778,33 @@ export default function UsersPage() {
         </div>
 
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-          <StatCard
-            title="Total Users"
-            value={stats.total.toString()}
-            icon={<Users className="w-5 h-5 sm:w-6 sm:h-6" />}
-            color="blue"
-          />
-          <StatCard
-            title="Active Users"
-            value={stats.active.toString()}
-            icon={<UserCheck className="w-5 h-5 sm:w-6 sm:h-6" />}
-            color="green"
-          />
-          <StatCard
-            title="Inactive Users"
-            value={stats.inactive.toString()}
-            icon={<UserX className="w-5 h-5 sm:w-6 sm:h-6" />}
-            color="red"
-          />
-          <StatCard
-            title="Administrators"
-            value={stats.admin.toString()}
-            icon={<Crown className="w-5 h-5 sm:w-6 sm:h-6" />}
-            color="yellow"
-          />
-        </div>
+       <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4 sm:gap-6">
+  <StatCard
+    title="Total Users"
+    value={stats.total.toString()}
+    icon={<Users className="w-5 h-5 sm:w-6 sm:h-6" />}
+    color="blue"
+  />
+  <StatCard
+    title="Active Users"
+    value={stats.active.toString()}
+    icon={<UserCheck className="w-5 h-5 sm:w-6 sm:h-6" />}
+    color="green"
+  />
+  <StatCard
+    title="Inactive Users"
+    value={stats.inactive.toString()}
+    icon={<UserX className="w-5 h-5 sm:w-6 sm:h-6" />}
+    color="red"
+  />
+  <StatCard
+    title="Administrators"
+    value={stats.admin.toString()}
+    icon={<Crown className="w-5 h-5 sm:w-6 sm:h-6" />}
+    color="yellow"
+  />
+</div>
+
 
         {/* Filters and Search */}
         <Card className="backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border-0 shadow-xl rounded-2xl">
@@ -880,19 +883,35 @@ export default function UsersPage() {
 
         {/* Users Display */}
         {viewMode === "cards" ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-            {filteredUsers.map((user) => (
-              <UserCard
-                key={user.id}
-                user={user}
-                onEdit={handleEditUser}
-                onDelete={handleDeactivateUser}
-                onRestore={handleRestoreUser}
-                getRoleBadge={getRoleBadge}
-                getStatusBadge={getStatusBadge}
-              />
-            ))}
-          </div>
+          filteredUsers.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+              {filteredUsers.map((user) => (
+                <UserCard
+                  key={user.id}
+                  user={user}
+                  onEdit={handleEditUser}
+                  onDelete={handleDeactivateUser}
+                  onRestore={handleRestoreUser}
+                  getRoleBadge={getRoleBadge}
+                  getStatusBadge={getStatusBadge}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 sm:py-12 md:py-16">
+              <Users className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 text-slate-400 mx-auto mb-3 sm:mb-4" />
+              <h3 className="text-base sm:text-lg md:text-xl font-semibold text-slate-600 dark:text-slate-300 mb-2">
+                No Users Found
+              </h3>
+              <p className="text-xs sm:text-sm md:text-base text-slate-500 dark:text-slate-400 text-center mb-4 sm:mb-6 max-w-md mx-auto px-4">
+                {searchTerm ||
+                statusFilter !== "all" ||
+                roleFilter !== "all"
+                  ? "No users match your current filters. Try adjusting your search criteria."
+                  : "Get started by adding your first user to manage your team."}
+              </p>
+            </div>
+          )
         ) : (
           <Card className="backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border-0 shadow-xl rounded-2xl overflow-hidden">
             <CardHeader className="bg-slate-50/80 dark:bg-slate-800/80 border-b border-slate-200/50 dark:border-slate-700/50">
@@ -1053,13 +1072,7 @@ export default function UsersPage() {
                       ? "No users match your current filters. Try adjusting your search criteria."
                       : "Get started by adding your first user to manage your team."}
                   </p>
-                  <Button
-                    onClick={() => setOpen(true)}
-                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-xs sm:text-sm md:text-base px-3 sm:px-4 py-2 sm:py-3"
-                  >
-                    <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
-                    Add Your First User
-                  </Button>
+                 
                 </div>
               )}
             </CardContent>

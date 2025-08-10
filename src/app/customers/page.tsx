@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+
 import {
   Search,
   Filter,
@@ -16,7 +16,6 @@ import {
   Users,
   UserCheck,
   UserX,
-  MoreHorizontal,
   Mail,
   Phone,
   Shield,
@@ -163,17 +162,11 @@ function UserCard({
           )}
         </div>
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1 sm:gap-2 flex-1 min-w-0">
-            <Badge variant={user.status === "Active" ? "default" : "secondary"} className="text-xs flex-shrink-0">
-              {user.status}
-            </Badge>
-            <span className="text-xs font-medium truncate">{user.role}</span>
-          </div>
-          <div className="text-right flex-shrink-0">
-            <div className="text-xs font-semibold">{user.totalOrders || 0} orders</div>
-            <div className="text-xs text-muted-foreground">{user.totalSpent || "$0"}</div>
-          </div>
+        <div className="flex items-center gap-1 sm:gap-2">
+          <Badge variant={user.status === "Active" ? "default" : "secondary"} className="text-xs flex-shrink-0">
+            {user.status}
+          </Badge>
+          <span className="text-xs font-medium truncate">{user.role}</span>
         </div>
       </CardContent>
     </Card>
@@ -189,8 +182,6 @@ interface UserInterface {
   phone_number?: string
   created_at: string
   last_active: string
-  totalOrders?: number
-  totalSpent?: string
 }
 
 export default function UsersPage() {
@@ -218,8 +209,6 @@ export default function UsersPage() {
           phone_number: user.phone_number,
           created_at: user.created_at,
           last_active: user.last_active || user.created_at,
-          totalOrders: user.totalOrders || 0,
-          totalSpent: user.totalSpent || "$0",
         }))
         setUsers(usersData)
       } catch (err) {
@@ -255,11 +244,6 @@ export default function UsersPage() {
     const managerUsers = users.filter((u) => u.role === "Manager").length
     const employeeUsers = users.filter((u) => u.role === "Employee").length
     const vendorUsers = users.filter((u) => u.role === "Vendor").length
-    const totalRevenue = users.reduce((sum, user) => {
-      const spent = Number.parseFloat(user.totalSpent?.replace("$", "").replace(",", "") || "0")
-      return sum + spent
-    }, 0)
-
     return {
       total: totalUsers,
       active: activeUsers,
@@ -268,7 +252,6 @@ export default function UsersPage() {
       customers: managerUsers,
       employee: employeeUsers,
       vendor: vendorUsers,
-      revenue: totalRevenue,
     }
   }, [users])
 
@@ -304,7 +287,7 @@ export default function UsersPage() {
 
   const handleExportUsers = () => {
     const csvContent = [
-      ["ID", "Name", "Email", "Phone", "Role", "Status", "Join Date", "Last Active", "Total Orders", "Total Spent"],
+      ["ID", "Name", "Email", "Phone", "Role", "Status", "Join Date", "Last Active"],
       ...filteredUsers.map((user) => [
         user.user_id,
         user.name,
@@ -314,8 +297,6 @@ export default function UsersPage() {
         user.status,
         user.created_at,
         user.last_active,
-        user.totalOrders?.toString() || "0",
-        user.totalSpent || "$0",
       ]),
     ]
       .map((row) => row.join(","))
@@ -358,7 +339,7 @@ export default function UsersPage() {
         </div>
 
         {/* Enhanced Statistics Grid */}
-        <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4 xl:gap-6">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4 sm:gap-6">
           <StatCard
             title="Total Users"
             value={stats.total.toString()}
@@ -405,7 +386,7 @@ export default function UsersPage() {
               </div>
 
               {/* Desktop Filters */}
-              <div className="hidden lg:flex items-center gap-2 sm:gap-3">
+              <div className="hidden md:flex items-center gap-2 sm:gap-3">
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="w-36 sm:w-40 h-9 sm:h-10 lg:h-11 text-sm">
                     <SelectValue placeholder="Status" />
@@ -451,7 +432,7 @@ export default function UsersPage() {
               </div>
 
               {/* Mobile Filters Toggle */}
-              <div className="flex lg:hidden items-center gap-2 sm:gap-3">
+              <div className="flex md:hidden items-center gap-2 sm:gap-3">
                 <Button
                   variant="outline"
                   onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
@@ -484,7 +465,7 @@ export default function UsersPage() {
 
             {/* Mobile Filters */}
             {mobileFiltersOpen && (
-              <div className="lg:hidden mt-3 sm:mt-4 pt-3 sm:pt-4 border-t grid grid-cols-2 gap-2 sm:gap-3">
+              <div className="md:hidden mt-3 sm:mt-4 pt-3 sm:pt-4 border-t grid grid-cols-2 gap-2 sm:gap-3">
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="h-9 sm:h-10 text-sm">
                     <SelectValue placeholder="Status" />
@@ -559,7 +540,7 @@ export default function UsersPage() {
             ) : (
               <>
                 {/* Desktop Table */}
-                <div className="hidden lg:block overflow-x-auto">
+                <div className="hidden md:block overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -625,25 +606,8 @@ export default function UsersPage() {
                               {user.status}
                             </Badge>
                           </TableCell>
-                          {/* <TableCell>
-                            <div className="space-y-1">
-                              <div className="flex items-center gap-2 text-sm">
-                                <Calendar className="w-3 h-3 text-muted-foreground" />
-                                <span>Joined {new Date(user.created_at).toLocaleDateString()}</span>
-                              </div>
-                              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                <Activity className="w-3 h-3" />
-                                <span>Active {new Date(user.last_active).toLocaleDateString()}</span>
-                              </div>
-                            </div>
-                          </TableCell> */}
-                          {/* <TableCell>
-                            <div className="text-center">
-                              <div className="font-semibold">{user.totalOrders || 0}</div>
-                              <div className="text-xs text-muted-foreground">orders</div>
-                              <div className="text-sm font-medium text-emerald-600">{user.totalSpent || "$0"}</div>
-                            </div>
-                          </TableCell> */}
+
+
                           <TableCell className="py-3">
                             <div className="flex justify-end gap-1">
                               {user.status === "Active" ? (
@@ -674,7 +638,7 @@ export default function UsersPage() {
                 </div>
 
                 {/* Mobile Cards */}
-                <div className="lg:hidden p-3 sm:p-4 space-y-3 sm:space-y-4">
+                <div className="md:hidden p-3 sm:p-4 space-y-3 sm:space-y-4">
                   {filteredUsers.map((user) => (
                     <UserCard
                       key={user.user_id}

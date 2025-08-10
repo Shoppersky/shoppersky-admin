@@ -74,13 +74,13 @@ function StatCard({
 
   return (
     <Card className="bg-white/80 dark:bg-slate-900/80 border-0 shadow-lg rounded-2xl hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-      <CardContent className="p-6">
+      <CardContent className="p-4 sm:p-6">
         <div className="flex items-center justify-between">
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-slate-600 dark:text-slate-400">{title}</p>
-            <p className="text-3xl font-bold text-slate-900 dark:text-slate-100">{value}</p>
+          <div className="space-y-1 sm:space-y-2">
+            <p className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400">{title}</p>
+            <p className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">{value}</p>
           </div>
-          <div className={`p-3 bg-slate-100/80 dark:bg-slate-800/80 rounded-2xl shadow-lg ${colorClasses[color]}`}>
+          <div className={`p-2 sm:p-3 bg-slate-100/80 dark:bg-slate-800/80 rounded-xl sm:rounded-2xl shadow-lg ${colorClasses[color]}`}>
             {icon}
           </div>
         </div>
@@ -105,11 +105,11 @@ function IndustryCard({
 }) {
   return (
     <Card className="bg-white/80 dark:bg-slate-900/80 border-0 shadow-lg rounded-2xl hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
-          <div className="space-y-1">
-            <CardTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">{industry.name}</CardTitle>
-            <p className="text-sm text-slate-600 dark:text-slate-400 font-mono bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">
+      <CardHeader className="pb-3 p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-0">
+          <div className="space-y-1 flex-1 min-w-0">
+            <CardTitle className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 truncate">{industry.name}</CardTitle>
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-mono bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded truncate">
               {industry.slug}
             </p>
           </div>
@@ -118,7 +118,7 @@ function IndustryCard({
               industry.status === "Active"
                 ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
                 : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
-            } border-0 text-xs`}
+            } border-0 text-xs flex-shrink-0 self-start sm:self-auto`}
           >
             {industry.status === "Active" ? (
               <CheckCircle className="w-3 h-3 mr-1" />
@@ -129,39 +129,39 @@ function IndustryCard({
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200/50 dark:border-slate-700/50">
-          <span>Created: {new Date(industry.createdDate).toLocaleDateString()}</span>
-          <span>Updated: {new Date(industry.lastUpdated).toLocaleDateString()}</span>
+      <CardContent className="space-y-3 sm:space-y-4 p-4 sm:p-6 pt-0">
+        <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-1 xs:gap-0 text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200/50 dark:border-slate-700/50">
+          <span className="truncate">Created: {new Date(industry.createdDate).toLocaleDateString()}</span>
+          <span className="truncate">Updated: {new Date(industry.lastUpdated).toLocaleDateString()}</span>
         </div>
         <div className="flex items-center gap-2 pt-2">
-        
           <Button
             variant="outline"
             size="sm"
             onClick={() => onEdit(industry)}
-            className="flex-1 hover:bg-indigo-50 hover:border-indigo-200 dark:hover:bg-indigo-950/50"
+            className="flex-1 hover:bg-indigo-50 hover:border-indigo-200 dark:hover:bg-indigo-950/50 text-xs sm:text-sm h-8 sm:h-9"
           >
-            <Pencil className="w-4 h-4 mr-1" />
-            Edit
+            <Pencil className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+            <span className="hidden xs:inline">Edit</span>
+            <span className="xs:hidden">Edit</span>
           </Button>
           {industry.status === "Active" ? (
             <Button
               variant="outline"
               size="sm"
               onClick={() => onDelete(industry)}
-              className="hover:bg-red-50 hover:border-red-200 dark:hover:bg-red-950/50"
+              className="hover:bg-red-50 hover:border-red-200 dark:hover:bg-red-950/50 h-8 sm:h-9 px-2 sm:px-3"
             >
-              <Trash2 className="w-4 h-4 text-red-600" />
+              <Trash2 className="w-3 h-3 sm:w-4 sm:h-4 text-red-600" />
             </Button>
           ) : (
             <Button
               variant="outline"
               size="sm"
               onClick={() => onRestore(industry)}
-              className="hover:bg-green-50 hover:border-green-200 dark:hover:bg-green-950/50"
+              className="hover:bg-green-50 hover:border-green-200 dark:hover:bg-green-950/50 h-8 sm:h-9 px-2 sm:px-3"
             >
-              <RotateCcw className="w-4 h-4 text-green-600" />
+              <RotateCcw className="w-3 h-3 sm:w-4 sm:h-4 text-green-600" />
             </Button>
           )}
         </div>
@@ -491,14 +491,15 @@ export default function IndustriesPage() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 px-4 sm:px-0">
           <Button
             variant="outline"
             onClick={handleExportIndustries}
-            className="flex items-center gap-2 px-6 py-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-300"
+            className="flex items-center justify-center gap-2 px-4 sm:px-6 py-3 h-11 sm:h-auto bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-300 text-sm sm:text-base"
           >
             <Download className="w-4 h-4" />
-            Export Data
+            <span className="hidden xs:inline">Export Data</span>
+            <span className="xs:hidden">Export</span>
           </Button>
           <Dialog open={open} onOpenChange={(isOpen) => {
             setOpen(isOpen)
@@ -508,14 +509,15 @@ export default function IndustriesPage() {
             }
           }}>
             <DialogTrigger asChild>
-              <Button className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300">
+              <Button className="flex items-center justify-center gap-2 px-4 sm:px-6 py-3 h-11 sm:h-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 text-sm sm:text-base">
                 <Plus className="w-4 h-4" />
-                Add New Industry
+                <span className="hidden xs:inline">Add New Industry</span>
+                <span className="xs:hidden">Add Industry</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-md bg-white/95 dark:bg-slate-900/95 border border-slate-200/50 dark:border-slate-700/50 shadow-2xl backdrop-blur-sm">
+            <DialogContent className="max-w-md mx-4 sm:mx-auto bg-white/95 dark:bg-slate-900/95 border border-slate-200/50 dark:border-slate-700/50 shadow-2xl backdrop-blur-sm">
               <DialogHeader>
-                <DialogTitle className="text-xl font-bold text-slate-800 dark:text-slate-100">
+                <DialogTitle className="text-lg sm:text-xl font-bold text-slate-800 dark:text-slate-100">
                   {editingIndustry ? "Edit Industry" : "Add New Industry"}
                 </DialogTitle>
               </DialogHeader>
@@ -536,7 +538,7 @@ export default function IndustriesPage() {
                       })
                     }}
                     placeholder="e.g., Technology"
-                    className="h-12 bg-white/80 dark:bg-slate-800/80 border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="h-10 sm:h-12 bg-white/80 dark:bg-slate-800/80 border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                   />
                 </div>
                 <div className="space-y-2">
@@ -551,13 +553,13 @@ export default function IndustriesPage() {
                       setIsSlugManuallyEdited(true)
                     }}
                     placeholder="e.g., technology"
-                    className="h-12 bg-white/80 dark:bg-slate-800/80 border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="h-10 sm:h-12 bg-white/80 dark:bg-slate-800/80 border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                   />
                   <p className="text-xs text-slate-500 dark:text-slate-400">
                     URL-friendly version of the name (auto-generated unless manually edited)
                   </p>
                 </div>
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <Label htmlFor="status" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
                     Status *
                   </Label>
@@ -567,7 +569,7 @@ export default function IndustriesPage() {
                       setNewIndustry({ ...newIndustry, status: value })
                     }
                   >
-                    <SelectTrigger className="h-12 bg-white/80 dark:bg-slate-800/80 border-slate-300 dark:border-slate-600 rounded-xl">
+                    <SelectTrigger className="h-10 sm:h-12 bg-white/80 dark:bg-slate-800/80 border-slate-300 dark:border-slate-600 rounded-xl text-sm sm:text-base">
                       <SelectValue placeholder="Select status" />
                     </SelectTrigger>
                     <SelectContent>
@@ -575,13 +577,13 @@ export default function IndustriesPage() {
                       <SelectItem value="Inactive">Inactive</SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
+                </div> */}
               </div>
-              <DialogFooter>
+              <DialogFooter className="flex flex-col sm:flex-row gap-3">
                 <DialogClose asChild>
                   <Button
                     variant="outline"
-                    className="flex-1 h-12 rounded-xl border-2 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 bg-white dark:bg-slate-800"
+                    className="flex-1 h-10 sm:h-12 rounded-xl border-2 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 bg-white dark:bg-slate-800 text-sm sm:text-base"
                   >
                     Cancel
                   </Button>
@@ -589,7 +591,7 @@ export default function IndustriesPage() {
                 <Button
                   onClick={handleAddIndustry}
                   disabled={!newIndustry.name.trim() || !newIndustry.slug.trim()}
-                  className="flex-1 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl"
+                  className="flex-1 h-10 sm:h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl text-sm sm:text-base"
                 >
                   {editingIndustry ? "Update Industry" : "Add Industry"}
                 </Button>
@@ -599,7 +601,7 @@ export default function IndustriesPage() {
         </div>
 
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           <StatCard
             title="Total Industries"
             value={stats.total.toString()}
@@ -622,7 +624,7 @@ export default function IndustriesPage() {
 
         {/* Filters and Search */}
         <Card className="backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border-0 shadow-xl rounded-2xl">
-          <CardContent className="p-6">
+          <CardContent className="p-4 sm:p-6">
             <div className="flex flex-col gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
@@ -630,13 +632,13 @@ export default function IndustriesPage() {
                   placeholder="Search industries by name or slug..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 h-12 bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="pl-10 h-10 sm:h-12 bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                 />
               </div>
-              <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-                <div className="flex flex-col xs:flex-row gap-3 w-full sm:w-auto">
+              <div className="flex flex-col gap-3 sm:gap-4">
+                <div className="flex flex-col xs:flex-row gap-3 w-full">
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-full xs:w-40 h-12 bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 rounded-xl">
+                    <SelectTrigger className="w-full xs:w-40 h-10 sm:h-12 bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 rounded-xl text-sm sm:text-base">
                       <Filter className="w-4 h-4 mr-2" />
                       <SelectValue placeholder="Status" />
                     </SelectTrigger>
@@ -647,26 +649,28 @@ export default function IndustriesPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="flex items-center justify-between w-full sm:w-auto gap-3">
-                  <div className="flex items-center gap-2 bg-slate-100/80 dark:bg-slate-800/80 rounded-xl p-1">
+                <div className="flex items-center justify-between w-full gap-3">
+                  <div className="flex items-center gap-1 sm:gap-2 bg-slate-100/80 dark:bg-slate-800/80 rounded-xl p-1">
                     <Button
                       variant={viewMode === "cards" ? "default" : "ghost"}
                       size="sm"
                       onClick={() => setViewMode("cards")}
-                      className="h-10 px-3"
+                      className="h-8 sm:h-10 px-2 sm:px-3"
                     >
                       <Grid3X3 className="w-4 h-4" />
+                      <span className="hidden sm:ml-1 sm:inline">Cards</span>
                     </Button>
                     <Button
                       variant={viewMode === "table" ? "default" : "ghost"}
                       size="sm"
                       onClick={() => setViewMode("table")}
-                      className="h-10 px-3"
+                      className="h-8 sm:h-10 px-2 sm:px-3"
                     >
                       <List className="w-4 h-4" />
+                      <span className="hidden sm:ml-1 sm:inline">Table</span>
                     </Button>
                   </div>
-                  <span className="text-slate-500 text-sm">
+                  <span className="text-slate-500 text-xs sm:text-sm">
                     {filteredIndustries.length} of {industries.length}
                   </span>
                 </div>
@@ -678,7 +682,7 @@ export default function IndustriesPage() {
         {/* Industries Display */}
         {filteredIndustries.length > 0 ? (
           viewMode === "cards" ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-4 sm:gap-6">
               {filteredIndustries.map((industry) => (
                 <IndustryCard
                   key={industry.id}
@@ -697,16 +701,16 @@ export default function IndustriesPage() {
                   <table className="w-full">
                     <thead className="bg-slate-50/80 dark:bg-slate-800/80 border-b border-slate-200/50 dark:border-slate-700/50">
                       <tr>
-                        <th className="text-left p-4 font-semibold text-slate-700 dark:text-slate-300">Name</th>
-                        <th className="text-left p-4 font-semibold text-slate-700 dark:text-slate-300">Slug</th>
-                        <th className="text-left p-4 font-semibold text-slate-700 dark:text-slate-300">Status</th>
-                        <th className="text-left p-4 font-semibold text-slate-700 dark:text-slate-300 hidden sm:table-cell">
+                        <th className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">Name</th>
+                        <th className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm hidden xs:table-cell">Slug</th>
+                        <th className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">Status</th>
+                        <th className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm hidden md:table-cell">
                           Created
                         </th>
-                        <th className="text-left p-4 font-semibold text-slate-700 dark:text-slate-300 hidden md:table-cell">
+                        <th className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm hidden lg:table-cell">
                           Updated
                         </th>
-                        <th className="text-left p-4 font-semibold text-slate-700 dark:text-slate-300">Actions</th>
+                        <th className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -715,15 +719,20 @@ export default function IndustriesPage() {
                           key={industry.id}
                           className="border-b border-slate-200/50 dark:border-slate-700/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/50"
                         >
-                          <td className="p-4">
-                            <div className="font-medium text-slate-900 dark:text-slate-100">{industry.name}</div>
+                          <td className="p-2 sm:p-4">
+                            <div className="font-medium text-slate-900 dark:text-slate-100 text-xs sm:text-sm truncate max-w-[120px] sm:max-w-none">{industry.name}</div>
+                            <div className="xs:hidden mt-1">
+                              <code className="text-xs bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded text-slate-700 dark:text-slate-300 truncate block max-w-[100px]">
+                                {industry.slug}
+                              </code>
+                            </div>
                           </td>
-                          <td className="p-4">
-                            <code className="text-sm bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-slate-700 dark:text-slate-300">
+                          <td className="p-2 sm:p-4 hidden xs:table-cell">
+                            <code className="text-xs sm:text-sm bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-slate-700 dark:text-slate-300 truncate block max-w-[120px] sm:max-w-none">
                               {industry.slug}
                             </code>
                           </td>
-                          <td className="p-4">
+                          <td className="p-2 sm:p-4">
                             <Badge
                               className={`text-xs border-0 ${
                                 industry.status === "Active"
@@ -732,47 +741,47 @@ export default function IndustriesPage() {
                               }`}
                             >
                               {industry.status === "Active" ? (
-                                <CheckCircle className="w-3 h-3 mr-1" />
+                                <CheckCircle className="w-2 h-2 sm:w-3 sm:h-3 mr-1" />
                               ) : (
-                                <XCircle className="w-3 h-3 mr-1" />
+                                <XCircle className="w-2 h-2 sm:w-3 sm:h-3 mr-1" />
                               )}
-                              {industry.status}
+                              <span className="hidden sm:inline">{industry.status}</span>
+                              <span className="sm:hidden">{industry.status === "Active" ? "A" : "I"}</span>
                             </Badge>
                           </td>
-                          <td className="p-4 text-sm text-slate-600 dark:text-slate-400 hidden sm:table-cell">
+                          <td className="p-2 sm:p-4 text-xs sm:text-sm text-slate-600 dark:text-slate-400 hidden md:table-cell">
                             {new Date(industry.createdDate).toLocaleDateString()}
                           </td>
-                          <td className="p-4 text-sm text-slate-600 dark:text-slate-400 hidden md:table-cell">
+                          <td className="p-2 sm:p-4 text-xs sm:text-sm text-slate-600 dark:text-slate-400 hidden lg:table-cell">
                             {new Date(industry.lastUpdated).toLocaleDateString()}
                           </td>
-                          <td className="p-4">
+                          <td className="p-2 sm:p-4">
                             <div className="flex items-center gap-1">
-                             
                               <Button
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => handleEditIndustry(industry)}
-                                className="h-8 w-8 p-0 hover:bg-indigo-50 dark:hover:bg-indigo-950/50"
+                                className="h-6 w-6 sm:h-8 sm:w-8 p-0 hover:bg-indigo-50 dark:hover:bg-indigo-950/50"
                               >
-                                <Pencil className="w-4 h-4" />
+                                <Pencil className="w-3 h-3 sm:w-4 sm:h-4" />
                               </Button>
                               {industry.status === "Active" ? (
                                 <Button
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => handleDeleteIndustry(industry)}
-                                  className="h-8 w-8 p-0 hover:bg-red-50 dark:hover:bg-red-950/50"
+                                  className="h-6 w-6 sm:h-8 sm:w-8 p-0 hover:bg-red-50 dark:hover:bg-red-950/50"
                                 >
-                                  <Trash2 className="w-4 h-4 text-red-600" />
+                                  <Trash2 className="w-3 h-3 sm:w-4 sm:h-4 text-red-600" />
                                 </Button>
                               ) : (
                                 <Button
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => handleRestoreIndustry(industry)}
-                                  className="h-8 w-8 p-0 hover:bg-green-50 dark:hover:bg-green-950/50"
+                                  className="h-6 w-6 sm:h-8 sm:w-8 p-0 hover:bg-green-50 dark:hover:bg-green-950/50"
                                 >
-                                  <RotateCcw className="w-4 h-4 text-green-600" />
+                                  <RotateCcw className="w-3 h-3 sm:w-4 sm:h-4 text-green-600" />
                                 </Button>
                               )}
                             </div>
@@ -808,7 +817,7 @@ export default function IndustriesPage() {
 
         {/* View Industry Dialog */}
         <Dialog open={viewOpen} onOpenChange={setViewOpen}>
-          <DialogContent className="max-w-md bg-white/95 dark:bg-slate-900/95 border border-slate-200/50 dark:border-slate-700/50 shadow-2xl backdrop-blur-sm">
+          <DialogContent className="max-w-md mx-4 sm:mx-auto bg-white/95 dark:bg-slate-900/95 border border-slate-200/50 dark:border-slate-700/50 shadow-2xl backdrop-blur-sm">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-3">
                 {viewingIndustry && (
@@ -863,18 +872,18 @@ export default function IndustriesPage() {
                 </div>
               </div>
             )}
-            <DialogFooter>
+            <DialogFooter className="flex flex-col sm:flex-row gap-3">
               <DialogClose asChild>
                 <Button
                   variant="outline"
-                  className="flex-1 h-12 rounded-xl border-2 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 bg-white dark:bg-slate-800"
+                  className="flex-1 h-10 sm:h-12 rounded-xl border-2 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 bg-white dark:bg-slate-800 text-sm sm:text-base"
                 >
                   Close
                 </Button>
               </DialogClose>
               <Button
                 onClick={() => viewingIndustry && handleEditIndustry(viewingIndustry)}
-                className="flex-1 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl"
+                className="flex-1 h-10 sm:h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl text-sm sm:text-base"
               >
                 <Pencil className="w-4 h-4 mr-2" />
                 Edit
@@ -885,7 +894,7 @@ export default function IndustriesPage() {
 
         {/* Delete Confirmation Dialog */}
         <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-          <AlertDialogContent className="border border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 shadow-2xl backdrop-blur-sm max-w-md">
+          <AlertDialogContent className="border border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 shadow-2xl backdrop-blur-sm max-w-md mx-4 sm:mx-auto">
             <AlertDialogHeader className="space-y-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-2xl bg-gradient-to-r from-red-500 to-rose-500 p-3 shadow-lg">
@@ -914,16 +923,17 @@ export default function IndustriesPage() {
                 </div>
               </div>
             )}
-            <AlertDialogFooter className="gap-3">
-              <AlertDialogCancel className="flex-1 h-12 border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-xl">
+            <AlertDialogFooter className="flex flex-col sm:flex-row gap-3">
+              <AlertDialogCancel className="flex-1 h-10 sm:h-12 border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-xl text-sm sm:text-base">
                 Cancel
               </AlertDialogCancel>
               <AlertDialogAction
                 onClick={confirmDeleteIndustry}
-                className="flex-1 h-12 bg-gradient-to-r from-red-600 to-rose-600 shadow-lg hover:from-red-700 hover:to-rose-700 hover:shadow-xl text-white rounded-xl"
+                className="flex-1 h-10 sm:h-12 bg-gradient-to-r from-red-600 to-rose-600 shadow-lg hover:from-red-700 hover:to-rose-700 hover:shadow-xl text-white rounded-xl text-sm sm:text-base"
               >
-                <Trash2 className="mr-2 h-4 w-4" />
-                Deactivate Industry
+                <Trash2 className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden xs:inline">Deactivate Industry</span>
+                <span className="xs:hidden">Deactivate</span>
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
@@ -931,7 +941,7 @@ export default function IndustriesPage() {
 
         {/* Restore Confirmation Dialog */}
         <AlertDialog open={restoreDialogOpen} onOpenChange={setRestoreDialogOpen}>
-          <AlertDialogContent className="border border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 shadow-2xl backdrop-blur-sm max-w-md">
+          <AlertDialogContent className="border border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 shadow-2xl backdrop-blur-sm max-w-md mx-4 sm:mx-auto">
             <AlertDialogHeader className="space-y-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-2xl bg-gradient-to-r from-green-500 to-emerald-500 p-3 shadow-lg">
@@ -960,16 +970,17 @@ export default function IndustriesPage() {
                 </div>
               </div>
             )}
-            <AlertDialogFooter className="gap-3">
-              <AlertDialogCancel className="flex-1 h-12 border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-xl">
+            <AlertDialogFooter className="flex flex-col sm:flex-row gap-3">
+              <AlertDialogCancel className="flex-1 h-10 sm:h-12 border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-xl text-sm sm:text-base">
                 Cancel
               </AlertDialogCancel>
               <AlertDialogAction
                 onClick={confirmRestoreIndustry}
-                className="flex-1 h-12 bg-gradient-to-r from-green-600 to-emerald-600 shadow-lg hover:from-green-700 hover:to-emerald-700 hover:shadow-xl text-white rounded-xl"
+                className="flex-1 h-10 sm:h-12 bg-gradient-to-r from-green-600 to-emerald-600 shadow-lg hover:from-green-700 hover:to-emerald-700 hover:shadow-xl text-white rounded-xl text-sm sm:text-base"
               >
-                <RotateCcw className="mr-2 h-4 w-4" />
-                Restore Industry
+                <RotateCcw className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden xs:inline">Restore Industry</span>
+                <span className="xs:hidden">Restore</span>
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
