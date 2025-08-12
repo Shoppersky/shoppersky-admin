@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import axiosInstance from "@/lib/axiosInstance";
 import SuspenseSearchParamsWrapper from "@/components/SuspenseSearchParamsWrapper";
+import { toast } from "sonner";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -107,8 +108,9 @@ export default function ResetPasswordPage() {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      if (response.data.status_code === 200) {
+      if (response.status === 200) {
         setIsSuccess(true);
+        toast.success("Password has been reset successfully, please lofin.")
         router.push("/");
       } else {
         setError(response.data.message || "Something went wrong. Please try again.");

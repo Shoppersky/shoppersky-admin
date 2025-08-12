@@ -62,12 +62,12 @@ import {
   X,
   Info,
   Store,
-  Sparkles,
   Grid3X3,
   List,
   RotateCcw,
 } from "lucide-react";
 import axiosInstance from "@/lib/axiosInstance";
+import { toast } from "sonner";
 
 // StatCard Component with consistent theme
 function StatCard({
@@ -276,7 +276,7 @@ export default function UsersPage() {
             }))
         );
       } catch (err) {
-        setError("Failed to fetch roles");
+        console.log("Failed to fetch roles");
       } finally {
         setIsLoadingRoles(false);
       }
@@ -302,7 +302,7 @@ export default function UsersPage() {
         }));
         setUsers(apiUsers);
       } catch (err) {
-        setError("Failed to fetch users");
+        console.log("Failed to fetch users");
       }
     };
     if (roles.length > 0) {
@@ -345,120 +345,85 @@ export default function UsersPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // const handleAddUser = async () => {
-  //   try {
-  //     const payload = {
-  //       username: formData.name,
-  //       email: formData.email,
-  //       role_id: formData.role_id,
-  //     };
-
-  //     let response;
-  //     if (editingUser) {
-  //       response = await axiosInstance.put(
-  //         `/admin-users/${editingUser.id}`,
-  //         payload
-  //       );
-  //     } else {
-  //       response = await axiosInstance.post("/admin-users/register", payload);
-  //     }
-
-  //     const newUser: UserInterface = {
-  //       id: response.data.data.user_id,
-  //       name: response.data.data.username,
-  //       email: response.data.data.email,
-  //       role: roles.find((r) => r.id === formData.role_id)?.name || "Unknown",
-  //       status: response.data.data.is_active ? "Inactive" : "Active",
-  //       joinDate:
-  //         response.data.data.created_at ||
-  //         new Date().toISOString().split("T")[0],
-  //       lastActive:
-  //         response.data.data.created_at ||
-  //         new Date().toISOString().split("T")[0],
-  //     };
-
-  //     if (editingUser) {
-  //       setUsers((prev) =>
-  //         prev.map((user) =>
-  //           user.id === editingUser.id ? { ...user, ...newUser } : user
-  //         )
-  //       );
-  //     } else {
-  //       setUsers((prev) => [...prev, newUser]);
-  //     }
-
-  //     setFormData({
-  //       name: "",
-  //       email: "",
-
-  //       role: "",
-  //       role_id: "",
-  //     });
-  //     setEditingUser(null);
-  //     setOpen(false);
-  //   } catch (err: any) {
-  //     setError(err.response?.data?.message || "Failed to create/update user");
-  //   }
-  // };
-
-
   const handleAddUser = async () => {
-  try {
-    const payload = {
-      username: formData.name,
-      email: formData.email,
-      role_id: formData.role_id,
-    };
+    try {
+      const payload = {
+        username: formData.name,
+        email: formData.email,
+        role_id: formData.role_id,
+      };
 
-    let response;
-    if (editingUser) {
-      response = await axiosInstance.put(`/admin-users/${editingUser.id}`, payload);
-    } else {
-      response = await axiosInstance.post("/admin-users/register", payload);
-    }
-
-    const responseUser = response.data.data;
-    const newUser: UserInterface = {
-      id: responseUser.user_id,
-      name: responseUser.username,
-      email: responseUser.email,
-      role: roles.find((r) => r.id === formData.role_id)?.name || "Unknown",
-      status: responseUser.is_active ? "Inactive" : "Active", // Adjust based on API response
-      joinDate: responseUser.created_at || new Date().toISOString().split("T")[0],
-      lastActive: responseUser.created_at || new Date().toISOString().split("T")[0],
-    };
-
-    setUsers((prev) => {
-      // Check if the user already exists in the state (by id or email)
-      const existingUserIndex = prev.findIndex(
-        (user) => user.id === newUser.id || user.email === newUser.email
-      );
-
-      if (existingUserIndex !== -1) {
-        // If user exists (likely restored), update the existing user
-        return prev.map((user, index) =>
-          index === existingUserIndex ? { ...user, ...newUser } : user
+      let response;
+      if (editingUser) {
+        response = await axiosInstance.put(
+          `/admin-users/${editingUser.id}`,
+          payload
         );
       } else {
-        // If user is new, append to the list
-        return [...prev, newUser];
+        response = await axiosInstance.post("/admin-users/register", payload);
       }
-    });
 
-    setFormData({
-      name: "",
-      email: "",
-      role: "",
-      role_id: "",
-    });
+      const responseUser = response.data.data;
+      const newUser: UserInterface = {
+        id: responseUser.user_id,
+        name: responseUser.username,
+        email: responseUser.email,
+        role: roles.find((r) => r.id === formData.role_id)?.name || "Unknown",
+        status: responseUser.is_active ? "Inactive" : "Active", // Adjust based on API response
+        joinDate:
+          responseUser.created_at || new Date().toISOString().split("T")[0],
+        lastActive:
+          responseUser.created_at || new Date().toISOString().split("T")[0],
+      };
+
+      setUsers((prev) => {
+        // Check if the user already exists in the state (by id or email)
+        const existingUserIndex = prev.findIndex(
+          (user) => user.id === newUser.id || user.email === newUser.email
+        );
+
+        if (existingUserIndex !== -1) {
+          // If user exists (likely restored), update the existing user
+          return prev.map((user, index) =>
+            index === existingUserIndex ? { ...user, ...newUser } : user
+          );
+        } else {
+          // If user is new, append to the list
+          return [...prev, newUser];
+        }
+      });
+
+      setFormData({
+        name: "",
+        email: "",
+        role: "",
+        role_id: "",
+      });
+      setEditingUser(null);
+      setOpen(false);
+
+      if (response.status === 201) {
+        toast.success("User created successfully!");
+      } else if (response.status === 200) {
+        toast.success("User updated successfully!");
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Failed to create/update user");
+      toast.error(
+        err.response?.data?.message || "Failed to create/update user"
+      );
+    }
+  };
+
+  const handleOpenAddUser = () => {
+    setError(null); // clear old errors
     setEditingUser(null);
-    setOpen(false);
-  } catch (err: any) {
-    setError(err.response?.data?.message || "Failed to create/update user");
-  }
-};
+    setFormData({ name: "", email: "", role: "", role_id: "" });
+    setOpen(true);
+  };
 
   const handleEditUser = (user: UserInterface) => {
+    setError(null);
     setEditingUser(user);
     setFormData({
       name: user.name,
@@ -484,10 +449,15 @@ export default function UsersPage() {
             user.id === userToDelete.id ? { ...user, status: "Inactive" } : user
           )
         );
+
+        toast.success("User deactivated successfully!");
         setDeleteDialogOpen(false);
         setUserToDelete(null);
       } catch (err: any) {
-        setError(err.response?.data?.message || "Failed to deactivate user");
+        const message =
+          err.response?.data?.message || "Failed to deactivate user";
+        setError(message);
+        toast.error(message);
       }
     }
   };
@@ -506,10 +476,14 @@ export default function UsersPage() {
             user.id === userToRestore.id ? { ...user, status: "Active" } : user
           )
         );
+
+        toast.success("User restored successfully!");
         setRestoreDialogOpen(false);
         setUserToRestore(null);
       } catch (err: any) {
-        setError(err.response?.data?.message || "Failed to restore user");
+        const message = err.response?.data?.message || "Failed to restore user";
+        setError(message);
+        toast.error(message);
       }
     }
   };
@@ -598,12 +572,8 @@ export default function UsersPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-2 sm:px-4 lg:px-6 py-3 sm:py-4 lg:py-6 space-y-3 sm:space-y-4 lg:space-y-6">
-        {error && (
-          <div className="bg-red-100 text-red-800 p-4 rounded-xl">{error}</div>
-        )}
         {/* Header */}
         <div className="relative z-50 flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2 sm:gap-3 lg:gap-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-slate-800/50 dark:to-slate-700/50 p-2 sm:p-3 lg:p-6 rounded-lg sm:rounded-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20 shadow-lg">
-          
           <div className="flex-1 min-w-0">
             <h1 className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
               Employee Management
@@ -613,213 +583,221 @@ export default function UsersPage() {
             </p>
           </div>
 
-          
-        
-
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-end justify-end gap-3 sm:gap-4 px-3 sm:px-4 lg:px-0">
-          <Button
-            variant="outline"
-            onClick={handleExportUsers}
-            className="flex items-end justify-end gap-2 px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 h-10 sm:h-11 md:h-12 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-300 text-sm sm:text-base font-medium rounded-lg sm:rounded-xl shadow-sm hover:shadow-md"
-          >
-            <Download className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
-            <span className="hidden xs:inline">Export Data</span>
-            <span className="xs:hidden">Export</span>
-          </Button>
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-              <Button
-                className="flex items-end justify-end gap-2 px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 h-10 sm:h-11 md:h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 text-sm sm:text-base font-medium rounded-lg sm:rounded-xl"
-                onClick={() => {
-                  setEditingUser(null);
-                  setFormData({
-                    name: "",
-                    email: "",
-                    role: "",
-                    role_id: "",
-                  });
-                }}
-              >
-                <Plus className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
-                <span className="hidden xs:inline">Add Employee</span>
-                <span className="xs:hidden">Add Employee</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[95vh] overflow-y-auto bg-white/95 dark:bg-slate-900/95 border border-slate-200/50 dark:border-slate-700/50 shadow-2xl backdrop-blur-sm m-2 sm:m-4">
-              <DialogHeader>
-                <DialogTitle className="text-xl md:text-2xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-3">
-                  {editingUser ? (
-                    <>
-                      <Pencil className="w-5 h-5 md:w-6 md:h-6 text-blue-600 dark:text-blue-400" />
-                      Edit User
-                    </>
-                  ) : (
-                    <>
-                      <Plus className="w-5 h-5 md:w-6 md:h-6 text-blue-600 dark:text-blue-400" />
-                      Add New User
-                    </>
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-end justify-end gap-3 sm:gap-4 px-3 sm:px-4 lg:px-0">
+            <Button
+              variant="outline"
+              onClick={handleExportUsers}
+              className="flex items-end justify-end gap-2 px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 h-10 sm:h-11 md:h-12 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-300 text-sm sm:text-base font-medium rounded-lg sm:rounded-xl shadow-sm hover:shadow-md"
+            >
+              <Download className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+              <span className="hidden xs:inline">Export Data</span>
+              <span className="xs:hidden">Export</span>
+            </Button>
+            <Dialog
+              open={open}
+              onOpenChange={(isOpen) => {
+                setOpen(isOpen);
+                if (!isOpen) setError(null);
+              }}
+            >
+              <DialogTrigger asChild>
+                <Button
+                  className="flex items-end justify-end gap-2 px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 h-10 sm:h-11 md:h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 text-sm sm:text-base font-medium rounded-lg sm:rounded-xl"
+                  onClick={() => {
+                    setEditingUser(null);
+                    setFormData({
+                      name: "",
+                      email: "",
+                      role: "",
+                      role_id: "",
+                    });
+                  }}
+                >
+                  <Plus className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                  <span className="hidden xs:inline">Add Employee</span>
+                  <span className="xs:hidden">Add Employee</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[95vh] overflow-y-auto bg-white/95 dark:bg-slate-900/95 border border-slate-200/50 dark:border-slate-700/50 shadow-2xl backdrop-blur-sm m-2 sm:m-4">
+                <DialogHeader>
+                  {error && (
+                    <div className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700 border border-red-200">
+                      {error}
+                    </div>
                   )}
-                </DialogTitle>
-                <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 mt-2">
-                  {editingUser
-                    ? "Update user information"
-                    : "Fill in the details to add a new user"}
-                </p>
-              </DialogHeader>
+                  <DialogTitle className="text-xl md:text-2xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-3">
+                    {editingUser ? (
+                      <>
+                        <Pencil className="w-5 h-5 md:w-6 md:h-6 text-blue-600 dark:text-blue-400" />
+                        Edit User
+                      </>
+                    ) : (
+                      <>
+                        <Plus className="w-5 h-5 md:w-6 md:h-6 text-blue-600 dark:text-blue-400" />
+                        Add New User
+                      </>
+                    )}
+                  </DialogTitle>
+                  <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 mt-2">
+                    {editingUser
+                      ? "Update user information"
+                      : "Fill in the details to add a new user"}
+                  </p>
+                </DialogHeader>
 
-              <div className="space-y-6 py-4">
-                {/* Personal Information Section */}
-                <div className="space-y-4">
-                  <h3 className="text-base md:text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                    <User className="w-4 h-4 md:w-5 md:h-5 text-blue-600 dark:text-blue-400" />
-                    Personal Information
-                  </h3>
+                <div className="space-y-6 py-4">
+                  {/* Personal Information Section */}
+                  <div className="space-y-4">
+                    <h3 className="text-base md:text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                      <User className="w-4 h-4 md:w-5 md:h-5 text-blue-600 dark:text-blue-400" />
+                      Personal Information
+                    </h3>
 
-                  <div className="grid grid-cols-1 gap-4">
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                        <User className="w-4 h-4" />
-                        Full Name *
-                      </Label>
-                      <Input
-                        placeholder="Enter full name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        className="h-11 md:h-12 bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm md:text-base"
-                        required
-                      />
-                    </div>
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                          <User className="w-4 h-4" />
+                          Full Name *
+                        </Label>
+                        <Input
+                          placeholder="Enter full name"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleChange}
+                          className="h-11 md:h-12 bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm md:text-base"
+                          required
+                        />
+                      </div>
 
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                        <Mail className="w-4 h-4" />
-                        Email Address *
-                      </Label>
-                      <Input
-                        placeholder="Enter email address"
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        className="h-11 md:h-12 bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm md:text-base"
-                        required
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Role Section */}
-                <div className="space-y-4">
-                  <h3 className="text-base md:text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                    <Shield className="w-4 h-4 md:w-5 md:h-5 text-green-600 dark:text-green-400" />
-                    Role & Access
-                  </h3>
-
-                  <div className="grid grid-cols-1 gap-4">
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                        <Crown className="w-4 h-4" />
-                        Role *
-                      </Label>
-                      <Select
-                        value={formData.role_id}
-                        onValueChange={(value) =>
-                          setFormData((prev) => ({ ...prev, role_id: value }))
-                        }
-                      >
-                        <SelectTrigger className="h-11 md:h-12 bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 rounded-xl text-sm md:text-base">
-                          <SelectValue
-                            placeholder={
-                              isLoadingRoles
-                                ? "Loading roles..."
-                                : "Select role"
-                            }
-                          />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {isLoadingRoles ? (
-                            <SelectItem value="" disabled>
-                              Loading roles...
-                            </SelectItem>
-                          ) : roles.length === 0 ? (
-                            <SelectItem value="" disabled>
-                              No roles available
-                            </SelectItem>
-                          ) : (
-                            roles.map((role) => (
-                              <SelectItem key={role.id} value={role.id}>
-                                <div className="flex items-center gap-2">
-                                  {role.name === "SUPERADMIN" && (
-                                    <Crown className="w-4 h-4 text-red-600" />
-                                  )}
-                                  {role.name === "ADMIN" && (
-                                    <Shield className="w-4 h-4 text-blue-600" />
-                                  )}
-                                  {role.name}
-                                </div>
-                              </SelectItem>
-                            ))
-                          )}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Additional Information */}
-                {!editingUser && (
-                  <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-xl border border-blue-200/50 dark:border-blue-800/50">
-                    <div className="flex items-start gap-3">
-                      <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="text-sm font-medium text-blue-800 dark:text-blue-300">
-                          Welcome Email
-                        </p>
-                        <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
-                          A welcome email with login credentials will be sent to
-                          the user's email address.
-                        </p>
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                          <Mail className="w-4 h-4" />
+                          Email Address *
+                        </Label>
+                        <Input
+                          placeholder="Enter email address"
+                          name="email"
+                          type="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          className="h-11 md:h-12 bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm md:text-base"
+                          required
+                        />
                       </div>
                     </div>
                   </div>
-                )}
-              </div>
 
-              <DialogFooter className="gap-3 flex-col sm:flex-row">
-                <DialogClose asChild>
-                  <Button
-                    variant="outline"
-                    className="w-full sm:flex-1 h-11 md:h-12 rounded-xl border-2 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 bg-white dark:bg-slate-800 text-sm md:text-base"
-                  >
-                    <X className="w-4 h-4 mr-2" />
-                    Cancel
-                  </Button>
-                </DialogClose>
-                <Button
-                  onClick={handleAddUser}
-                  disabled={
-                    !formData.name || !formData.email || !formData.role_id
-                  }
-                  className="w-full sm:flex-1 h-11 md:h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
-                >
-                  {editingUser ? (
-                    <>
-                      <Save className="w-4 h-4 mr-2" />
-                      Update Employee
-                    </>
-                  ) : (
-                    <>
-                      <Plus className="w-4 h-4 mr-2" />
-                      Add Employee
-                    </>
+                  {/* Role Section */}
+                  <div className="space-y-4">
+                    <h3 className="text-base md:text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                      <Shield className="w-4 h-4 md:w-5 md:h-5 text-green-600 dark:text-green-400" />
+                      Role & Access
+                    </h3>
+
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                          <Crown className="w-4 h-4" />
+                          Role *
+                        </Label>
+                        <Select
+                          value={formData.role_id}
+                          onValueChange={(value) =>
+                            setFormData((prev) => ({ ...prev, role_id: value }))
+                          }
+                        >
+                          <SelectTrigger className="h-11 md:h-12 bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 rounded-xl text-sm md:text-base">
+                            <SelectValue
+                              placeholder={
+                                isLoadingRoles
+                                  ? "Loading roles..."
+                                  : "Select role"
+                              }
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {isLoadingRoles ? (
+                              <SelectItem value="" disabled>
+                                Loading roles...
+                              </SelectItem>
+                            ) : roles.length === 0 ? (
+                              <SelectItem value="" disabled>
+                                No roles available
+                              </SelectItem>
+                            ) : (
+                              roles.map((role) => (
+                                <SelectItem key={role.id} value={role.id}>
+                                  <div className="flex items-center gap-2">
+                                    {role.name === "SUPERADMIN" && (
+                                      <Crown className="w-4 h-4 text-red-600" />
+                                    )}
+                                    {role.name === "ADMIN" && (
+                                      <Shield className="w-4 h-4 text-blue-600" />
+                                    )}
+                                    {role.name}
+                                  </div>
+                                </SelectItem>
+                              ))
+                            )}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Additional Information */}
+                  {!editingUser && (
+                    <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-xl border border-blue-200/50 dark:border-blue-800/50">
+                      <div className="flex items-start gap-3">
+                        <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <p className="text-sm font-medium text-blue-800 dark:text-blue-300">
+                            Welcome Email
+                          </p>
+                          <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                            A welcome email with login credentials will be sent
+                            to the user's email address.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   )}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </div>
+                </div>
+
+                <DialogFooter className="gap-3 flex-col sm:flex-row">
+                  <DialogClose asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full sm:flex-1 h-11 md:h-12 rounded-xl border-2 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 bg-white dark:bg-slate-800 text-sm md:text-base"
+                    >
+                      <X className="w-4 h-4 mr-2" />
+                      Cancel
+                    </Button>
+                  </DialogClose>
+                  <Button
+                    onClick={handleAddUser}
+                    disabled={
+                      !formData.name || !formData.email || !formData.role_id
+                    }
+                    className="w-full sm:flex-1 h-11 md:h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
+                  >
+                    {editingUser ? (
+                      <>
+                        <Save className="w-4 h-4 mr-2" />
+                        Update Employee
+                      </>
+                    ) : (
+                      <>
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Employee
+                      </>
+                    )}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
 
         {/* Statistics Cards */}
@@ -842,7 +820,6 @@ export default function UsersPage() {
             icon={<UserX className="w-5 h-5 sm:w-6 sm:h-6" />}
             color="red"
           />
-          
         </div>
 
         {/* Filters and Search */}

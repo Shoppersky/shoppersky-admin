@@ -1,3 +1,4 @@
+
 "use client"
 
 import type React from "react"
@@ -12,10 +13,19 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { toast } from "sonner"
 import {
   Search,
   Filter,
@@ -32,7 +42,6 @@ import {
   Grid3X3,
   List,
   TrendingUp,
-  DollarSign,
   Loader2,
   MoreHorizontal,
 } from "lucide-react"
@@ -118,66 +127,123 @@ function UserCard({
   onDeactivate,
   onReactivate,
 }: { user: any; onDeactivate: (userId: string) => void; onReactivate: (userId: string) => void }) {
+  const [showDeactivateDialog, setShowDeactivateDialog] = useState(false)
+  const [showReactivateDialog, setShowReactivateDialog] = useState(false)
+
+  const handleDeactivateConfirm = async () => {
+    await onDeactivate(user.user_id)
+    setShowDeactivateDialog(false)
+    toast.success(`${user.name} has been successfully deactivated.`, {
+      description: "User Deactivated",
+    })
+  }
+
+  const handleReactivateConfirm = async () => {
+    await onReactivate(user.user_id)
+    setShowReactivateDialog(false)
+    toast.success(`${user.name} has been successfully reactivated.`, {
+      description: "User Reactivated",
+    })
+  }
+
   return (
-    <Card className="transition-all duration-300 hover:shadow-md">
-      <CardContent className="p-3 sm:p-4">
-        <div className="flex items-start justify-between mb-2 sm:mb-3">
-          <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-violet-400 to-blue-400 flex items-center justify-center text-white font-semibold text-xs sm:text-sm flex-shrink-0">
-              {user.name
-                .split(" ")
-                .map((n: string) => n[0])
-                .join("")
-                .toUpperCase()}
+    <>
+      <Card className="transition-all duration-300 hover:shadow-md">
+        <CardContent className="p-3 sm:p-4">
+          <div className="flex items-start justify-between mb-2 sm:mb-3">
+            <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-violet-400 to-blue-400 flex items-center justify-center text-white font-semibold text-xs sm:text-sm flex-shrink-0">
+                {user.name
+                  .split(" ")
+                  .map((n: string) => n[0])
+                  .join("")
+                  .toUpperCase()}
+              </div>
+              <div className="min-w-0 flex-1">
+                <h3 className="font-semibold text-xs sm:text-sm truncate">{user.name}</h3>
+                <p className="text-xs text-muted-foreground truncate">ID: {user.user_id}</p>
+              </div>
             </div>
-            <div className="min-w-0 flex-1">
-              <h3 className="font-semibold text-xs sm:text-sm truncate">{user.name}</h3>
-              <p className="text-xs text-muted-foreground truncate">ID: {user.user_id}</p>
-            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0">
+                  <MoreHorizontal className="w-3 h-3 sm:w-4 sm:h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                {user.status === "Active" ? (
+                  <DropdownMenuItem onClick={() => setShowDeactivateDialog(true)} className="text-red-600 text-sm">
+                    <UserX className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
+                    Deactivate
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem onClick={() => setShowReactivateDialog(true)} className="text-emerald-600 text-sm">
+                    <UserCheck className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
+                    Reactivate
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0">
-                <MoreHorizontal className="w-3 h-3 sm:w-4 sm:h-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40">
-              {user.status === "Active" ? (
-                <DropdownMenuItem onClick={() => onDeactivate(user.user_id)} className="text-red-600 text-sm">
-                  <UserX className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
-                  Deactivate
-                </DropdownMenuItem>
-              ) : (
-                <DropdownMenuItem onClick={() => onReactivate(user.user_id)} className="text-emerald-600 text-sm">
-                  <UserCheck className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
-                  Reactivate
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
 
-        <div className="space-y-1 sm:space-y-2 mb-2 sm:mb-3">
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Mail className="w-3 h-3 flex-shrink-0" />
-            <span className="truncate">{user.email}</span>
-          </div>
-          {user.phone_number && (
+          <div className="space-y-1 sm:space-y-2 mb-2 sm:mb-3">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Phone className="w-3 h-3 flex-shrink-0" />
-              <span className="truncate">{user.phone_number}</span>
+              <Mail className="w-3 h-3 flex-shrink-0" />
+              <span className="truncate">{user.email}</span>
             </div>
-          )}
-        </div>
+            {user.phone_number && (
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <Phone className="w-3 h-3 flex-shrink-0" />
+                <span className="truncate">{user.phone_number}</span>
+              </div>
+            )}
+          </div>
 
-        <div className="flex items-center gap-1 sm:gap-2">
-          <Badge variant={user.status === "Active" ? "default" : "secondary"} className="text-xs flex-shrink-0">
-            {user.status}
-          </Badge>
-          <span className="text-xs font-medium truncate">{user.role}</span>
-        </div>
-      </CardContent>
-    </Card>
+          <div className="flex items-center gap-1 sm:gap-2">
+            <Badge variant={user.status === "Active" ? "default" : "secondary"} className="text-xs flex-shrink-0">
+              {user.status}
+            </Badge>
+            <span className="text-xs font-medium truncate">{user.role}</span>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Deactivate Confirmation Dialog */}
+      <AlertDialog open={showDeactivateDialog} onOpenChange={setShowDeactivateDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Deactivate User</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to deactivate {user.name}? This will restrict their access to the system.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeactivateConfirm} className="bg-red-600 hover:bg-red-700">
+              Deactivate
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Reactivate Confirmation Dialog */}
+      <AlertDialog open={showReactivateDialog} onOpenChange={setShowReactivateDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Reactivate User</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to reactivate {user.name}? This will restore their access to the system.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleReactivateConfirm} className="bg-emerald-600 hover:bg-emerald-700">
+              Reactivate
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   )
 }
 
@@ -196,11 +262,12 @@ export default function UsersPage() {
   const [users, setUsers] = useState<UserInterface[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
-  // const [roleFilter, setRoleFilter] = useState("all")
   const [viewMode, setViewMode] = useState<"table" | "grid">("table")
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [showDeactivateDialog, setShowDeactivateDialog] = useState<string | null>(null)
+  const [showReactivateDialog, setShowReactivateDialog] = useState<string | null>(null)
 
   // Fetch users from API
   useEffect(() => {
@@ -237,8 +304,6 @@ export default function UsersPage() {
         user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.email.toLowerCase().includes(searchTerm.toLowerCase())
       const matchesStatus = statusFilter === "all" || user.status.toLowerCase() === statusFilter
-      // const matchesRole = roleFilter === "all" || user.role.toLowerCase() === roleFilter
-
       return matchesSearch && matchesStatus
     })
   }, [users, searchTerm, statusFilter])
@@ -265,39 +330,56 @@ export default function UsersPage() {
 
   const handleDeactivateUser = async (userId: string) => {
     try {
-      const response = await axiosInstance.patch(`/users/${userId}/soft-delete`)
+      const response = await axiosInstance.patch(`/users/soft-delete/${userId}`)
       if (response.status === 200) {
         setUsers((prev) =>
           prev.map((user) =>
             user.user_id === userId ? { ...user, status: "Inactive" } : user
           )
         )
+        const user = users.find(u => u.user_id === userId)
+        toast.success(`${user?.name} has been successfully deactivated.`, {
+          description: "User Deactivated",
+        })
       }
     } catch (error) {
       console.error("Error deactivating user:", error)
+      toast.error("Failed to deactivate user. Please try again.", {
+        description: "Error",
+      })
+    } finally {
+      setShowDeactivateDialog(null)
     }
   }
 
   const handleReactivateUser = async (userId: string) => {
     try {
-      const response = await axiosInstance.patch(`/users/${userId}/restore`)
+      const response = await axiosInstance.patch(`/users/restore/${userId}`)
       if (response.status === 200) {
         setUsers((prev) =>
           prev.map((user) =>
             user.user_id === userId ? { ...user, status: "Active" } : user
           )
         )
+        const user = users.find(u => u.user_id === userId)
+        toast.success(`${user?.name} has been successfully reactivated.`, {
+          description: "User Reactivated",
+        })
       }
     } catch (error) {
       console.error("Error reactivating user:", error)
+      toast.error("Failed to reactivate user. Please try again.", {
+        description: "Error",
+      })
+    } finally {
+      setShowReactivateDialog(null)
     }
   }
 
   const handleExportUsers = () => {
     const csvContent = [
-      [ "Name", "Email", "Phone", "Role", "Status", "Join Date", "Last Active"],
+      ["Name", "Email", "Phone", "Role", "Status", "Join Date", "Last Active"],
       ...filteredUsers.map((user) => [
-       
         user.name,
         user.email,
         user.phone_number || "",
@@ -326,10 +408,10 @@ export default function UsersPage() {
         <div className="relative z-50 flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2 sm:gap-3 lg:gap-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-slate-800/50 dark:to-slate-700/50 p-2 sm:p-3 lg:p-6 rounded-lg sm:rounded-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20 shadow-lg">
           <div className="flex-1 min-w-0">
             <h1 className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
-              Customer Management
+              End Users Management
             </h1>
             <p className="text-xs sm:text-sm lg:text-base text-gray-600 dark:text-gray-400 mt-0.5 sm:mt-1">
-              View and manage customer accounts
+              View and manage end user accounts
             </p>
           </div>
 
@@ -337,7 +419,7 @@ export default function UsersPage() {
             <Button
               variant="outline"
               onClick={handleExportUsers}
-              className="flex items-center gap-1 sm:gap-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-300 bg-transparent px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm"
+              className="flex items-center gap-1 sm:gapORN:2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-300 bg-transparent px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm"
             >
               <Download className="w-3 h-3 sm:w-4 sm:h-4" />
               <span className="hidden sm:inline">Export</span>
@@ -352,7 +434,7 @@ export default function UsersPage() {
             title="Total Users"
             value={stats.total.toString()}
             icon={<Users />}
-            color="slate"
+            color="cyan"
             trend="up"
             trendValue="+12%"
           />
@@ -370,12 +452,12 @@ export default function UsersPage() {
             icon={<UserX />}
             color="red"
           />
-          <StatCard
+          {/* <StatCard
             title="New Users"
             value={stats.customers.toString()}
             icon={<User />}
             color="violet"
-          />
+          /> */}
         </div>
 
         {/* Enhanced Filters and Search */}
@@ -405,7 +487,6 @@ export default function UsersPage() {
                     <SelectItem value="inactive">Inactive</SelectItem>
                   </SelectContent>
                 </Select>
-
 
                 <div className="flex items-center border rounded-lg p-0.5 sm:p-1">
                   <Button
@@ -472,8 +553,6 @@ export default function UsersPage() {
                     <SelectItem value="inactive">Inactive</SelectItem>
                   </SelectContent>
                 </Select>
-
-                
               </div>
             )}
           </CardContent>
@@ -494,157 +573,178 @@ export default function UsersPage() {
           </CardHeader>
 
           <CardContent className="p-0">
-            {isLoading ? (
-              <div className="flex justify-center items-center py-8 sm:py-12">
-                <Loader2 className="w-6 h-6 sm:w-8 sm:h-8 animate-spin text-violet-600" />
-              </div>
-            ) : error ? (
-              <div className="text-center py-8 sm:py-12 px-4">
-                <h3 className="text-base sm:text-lg font-semibold text-red-600 mb-2">{error}</h3>
-                <Button
-                  variant="outline"
-                  onClick={() => window.location.reload()}
-                  className="mt-3 sm:mt-4 text-sm px-3 py-2"
+  {isLoading ? (
+    <div className="flex justify-center items-center py-8 sm:py-12">
+      <Loader2 className="w-6 h-6 sm:w-8 sm:h-8 animate-spin text-violet-600" />
+    </div>
+  ) : error ? (
+    <div className="text-center py-8 sm:py-12 px-4">
+      <h3 className="text-base sm:text-lg font-semibold text-red-600 mb-2">{error}</h3>
+      <Button
+        variant="outline"
+        onClick={() => window.location.reload()}
+        className="mt-3 sm:mt-4 text-sm px-3 py-2"
+      >
+        Retry
+      </Button>
+    </div>
+  ) : viewMode === "grid" ? (
+    <div className="p-3 sm:p-4 lg:p-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4">
+        {filteredUsers.map((user) => (
+          <UserCard
+            key={user.user_id}
+            user={user}
+            onDeactivate={handleDeactivateUser}
+            onReactivate={handleReactivateUser}
+          />
+        ))}
+      </div>
+    </div>
+  ) : (
+    <div className="overflow-x-auto">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="text-sm font-semibold">User</TableHead>
+            <TableHead className="text-sm font-semibold">Contact</TableHead>
+            <TableHead className="text-sm font-semibold">Role</TableHead>
+            <TableHead className="text-sm font-semibold">Status</TableHead>
+            <TableHead className="text-right text-sm font-semibold">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {filteredUsers.map((user) => (
+            <TableRow
+              key={user.user_id}
+              className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
+            >
+              <TableCell className="py-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-full bg-gradient-to-br from-violet-400 to-blue-400 flex items-center justify-center text-white font-semibold text-xs lg:text-sm flex-shrink-0">
+                    {user.name
+                      .split(" ")
+                      .map((n: string) => n[0])
+                      .join("")
+                      .toUpperCase()}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="font-semibold text-sm lg:text-base truncate">{user.name}</div>
+                  </div>
+                </div>
+              </TableCell>
+              <TableCell className="py-3">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 text-xs lg:text-sm">
+                    <Mail className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+                    <span className="truncate max-w-[150px] lg:max-w-[200px]">{user.email}</span>
+                  </div>
+                  {user.phone_number && (
+                    <div className="flex items-center gap-2 text-xs lg:text-sm text-muted-foreground">
+                      <Phone className="w-3 h-3 flex-shrink-0" />
+                      <span className="truncate">{user.phone_number}</span>
+                    </div>
+                  )}
+                </div>
+              </TableCell>
+              <TableCell className="py-3">
+                <div className="flex items-center gap-2">
+                  {user.role === "Admin" && <Crown className="w-3 h-3 lg:w-4 lg:h-4 text-amber-600 flex-shrink-0" />}
+                  {user.role === "Manager" && <Shield className="w-3 h-3 lg:w-4 lg:h-4 text-blue-600 flex-shrink-0" />}
+                  {user.role === "Employee" && <User className="w-3 h-3 lg:w-4 lg:h-4 text-emerald-600 flex-shrink-0" />}
+                  {user.role === "Vendor" && <Store className="w-3 h-3 lg:w-4 lg:h-4 text-violet-600 flex-shrink-0" />}
+                  <span className="font-medium text-sm lg:text-base">{user.role}</span>
+                </div>
+              </TableCell>
+              <TableCell className="py-3">
+                <Badge
+                  variant={user.status === "Active" ? "default" : "secondary"}
+                  className={`text-xs ${
+                    user.status === "Active"
+                      ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400"
+                      : "bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400"
+                  }`}
                 >
-                  Retry
-                </Button>
-              </div>
-            ) : viewMode === "grid" ? (
-              <div className="p-3 sm:p-4 lg:p-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4">
-                  {filteredUsers.map((user) => (
-                    <UserCard
-                      key={user.user_id}
-                      user={user}
-                      onDeactivate={handleDeactivateUser}
-                      onReactivate={handleReactivateUser}
-                    />
-                  ))}
+                  {user.status}
+                </Badge>
+              </TableCell>
+              <TableCell className="py-3">
+                <div className="flex justify-end gap-1">
+                  {user.status === "Active" ? (
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => setShowDeactivateDialog(user.user_id)}
+                      className="h-7 w-7 lg:h-8 lg:w-8 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30"
+                    >
+                      <UserX className="w-3 h-3 lg:w-4 lg:h-4" />
+                    </Button>
+                  ) : (
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => setShowReactivateDialog(user.user_id)}
+                      className="h-7 w-7 lg:h-8 lg:w-8 hover:bg-emerald-50 hover:text-emerald-600 dark:hover:bg-emerald-900/30"
+                    >
+                      <UserCheck className="w-3 h-3 lg:w-4 lg:h-4" />
+                    </Button>
+                  )}
                 </div>
-              </div>
-            ) : (
-              <>
-                {/* Desktop Table */}
-                <div className="hidden md:block overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="text-sm font-semibold">User</TableHead>
-                        <TableHead className="text-sm font-semibold">Contact</TableHead>
-                        <TableHead className="text-sm font-semibold">Role</TableHead>
-                        <TableHead className="text-sm font-semibold">Status</TableHead>
-                        <TableHead className="text-right text-sm font-semibold">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredUsers.map((user) => (
-                        <TableRow
-                          key={user.user_id}
-                          className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
-                        >
-                          <TableCell className="py-3">
-                            <div className="flex items-center gap-3">
-                              <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-full bg-gradient-to-br from-violet-400 to-blue-400 flex items-center justify-center text-white font-semibold text-xs lg:text-sm flex-shrink-0">
-                                {user.name
-                                  .split(" ")
-                                  .map((n: string) => n[0])
-                                  .join("")
-                                  .toUpperCase()}
-                              </div>
-                              <div className="min-w-0 flex-1">
-                                <div className="font-semibold text-sm lg:text-base truncate">{user.name}</div>
-                              </div>
-                            </div>
-                          </TableCell>
-                          <TableCell className="py-3">
-                            <div className="space-y-1">
-                              <div className="flex items-center gap-2 text-xs lg:text-sm">
-                                <Mail className="w-3 h-3 text-muted-foreground flex-shrink-0" />
-                                <span className="truncate max-w-[150px] lg:max-w-[200px]">{user.email}</span>
-                              </div>
-                              {user.phone_number && (
-                                <div className="flex items-center gap-2 text-xs lg:text-sm text-muted-foreground">
-                                  <Phone className="w-3 h-3 flex-shrink-0" />
-                                  <span className="truncate">{user.phone_number}</span>
-                                </div>
-                              )}
-                            </div>
-                          </TableCell>
-                          <TableCell className="py-3">
-                            <div className="flex items-center gap-2">
-                              {user.role === "Admin" && <Crown className="w-3 h-3 lg:w-4 lg:h-4 text-amber-600 flex-shrink-0" />}
-                              {user.role === "Manager" && <Shield className="w-3 h-3 lg:w-4 lg:h-4 text-blue-600 flex-shrink-0" />}
-                              {user.role === "Employee" && <User className="w-3 h-3 lg:w-4 lg:h-4 text-emerald-600 flex-shrink-0" />}
-                              {user.role === "Vendor" && <Store className="w-3 h-3 lg:w-4 lg:h-4 text-violet-600 flex-shrink-0" />}
-                              <span className="font-medium text-sm lg:text-base">{user.role}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell className="py-3">
-                            <Badge
-                              variant={user.status === "Active" ? "default" : "secondary"}
-                              className={`text-xs ${
-                                user.status === "Active"
-                                  ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400"
-                                  : "bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400"
-                              }`}
-                            >
-                              {user.status}
-                            </Badge>
-                          </TableCell>
-
-
-                          <TableCell className="py-3">
-                            <div className="flex justify-end gap-1">
-                              {user.status === "Active" ? (
-                                <Button
-                                  size="icon"
-                                  variant="ghost"
-                                  onClick={() => handleDeactivateUser(user.user_id)}
-                                  className="h-7 w-7 lg:h-8 lg:w-8 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30"
-                                >
-                                  <UserX className="w-3 h-3 lg:w-4 lg:h-4" />
-                                </Button>
-                              ) : (
-                                <Button
-                                  size="icon"
-                                  variant="ghost"
-                                  onClick={() => handleReactivateUser(user.user_id)}
-                                  className="h-7 w-7 lg:h-8 lg:w-8 hover:bg-emerald-50 hover:text-emerald-600 dark:hover:bg-emerald-900/30"
-                                >
-                                  <UserCheck className="w-3 h-3 lg:w-4 lg:h-4" />
-                                </Button>
-                              )}
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-
-                {/* Mobile Cards */}
-                <div className="md:hidden p-3 sm:p-4 space-y-3 sm:space-y-4">
-                  {filteredUsers.map((user) => (
-                    <UserCard
-                      key={user.user_id}
-                      user={user}
-                      onDeactivate={handleDeactivateUser}
-                      onReactivate={handleReactivateUser}
-                    />
-                  ))}
-                </div>
-              </>
-            )}
-
-            {filteredUsers.length === 0 && !isLoading && !error && (
-              <div className="text-center py-8 sm:py-12 px-4">
-                <Users className="w-10 h-10 sm:w-12 sm:h-12 text-muted-foreground mx-auto mb-3 sm:mb-4" />
-                <h3 className="text-base sm:text-lg font-semibold text-muted-foreground mb-2">No users found</h3>
-                <p className="text-sm sm:text-base text-muted-foreground">Try adjusting your search or filter criteria</p>
-              </div>
-            )}
-          </CardContent>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  )}
+  {filteredUsers.length === 0 && !isLoading && !error && (
+    <div className="text-center py-8 sm:py-12 px-4">
+      <Users className="w-10 h-10 sm:w-12 sm:h-12 text-muted-foreground mx-auto mb-3 sm:mb-4" />
+      <h3 className="text-base sm:text-lg font-semibold text-muted-foreground mb-2">No users found</h3>
+      <p className="text-sm sm:text-base text-muted-foreground">Try adjusting your search or filter criteria</p>
+    </div>
+  )}
+</CardContent>
         </Card>
+
+        {/* Desktop Confirmation Dialogs */}
+        {showDeactivateDialog && (
+          <AlertDialog open={!!showDeactivateDialog} onOpenChange={() => setShowDeactivateDialog(null)}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Deactivate User</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to deactivate {users.find(u => u.user_id === showDeactivateDialog)?.name}? This will restrict their access to the system.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={() => handleDeactivateUser(showDeactivateDialog!)} className="bg-red-600 hover:bg-red-700">
+                  Deactivate
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
+
+        {showReactivateDialog && (
+          <AlertDialog open={!!showReactivateDialog} onOpenChange={() => setShowReactivateDialog(null)}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Reactivate User</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to reactivate {users.find(u => u.user_id === showReactivateDialog)?.name}? This will restore their access to the system.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={() => handleReactivateUser(showReactivateDialog!)} className="bg-emerald-600 hover:bg-emerald-700">
+                  Reactivate
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
       </div>
     </div>
   )

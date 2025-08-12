@@ -298,7 +298,7 @@ function ProductCard({ product }: { product: Product }) {
             <h3 className="font-bold text-sm sm:text-base lg:text-lg text-slate-900 dark:text-slate-100 line-clamp-2 group-hover:text-violet-600 transition-colors">
               {product.name}
             </h3>
-            <p className="text-xs text-muted-foreground mt-1 truncate">ID: {product.id}</p>
+           
           </div>
 
           <div className="flex flex-wrap gap-1 sm:gap-2">
@@ -682,7 +682,7 @@ const filteredProducts = useMemo(() => {
                     <TableRow>
                       <TableHead className="w-16 sm:w-20">Image</TableHead>
                       <TableHead className="min-w-[150px]">Name</TableHead>
-                      <TableHead className="hidden sm:table-cell min-w-[100px]">ID</TableHead>
+                      
                       <TableHead className="min-w-[120px]">Category</TableHead>
                       <TableHead className="hidden md:table-cell min-w-[120px]">Subcategory</TableHead>
                       <TableHead className="hidden lg:table-cell min-w-[120px]">Store</TableHead>
@@ -703,10 +703,10 @@ const filteredProducts = useMemo(() => {
                         <TableCell className="font-medium">
                           <div className="max-w-[200px]">
                             <div className="truncate">{product.name}</div>
-                            <div className="text-xs text-muted-foreground sm:hidden truncate">ID: {product.id}</div>
+                          
                           </div>
                         </TableCell>
-                        <TableCell className="hidden sm:table-cell text-muted-foreground text-sm">{product.id}</TableCell>
+                        
                         <TableCell>
                           <Badge variant="outline" className="text-xs">{product.category || "Uncategorized"}</Badge>
                           <div className="md:hidden mt-1">

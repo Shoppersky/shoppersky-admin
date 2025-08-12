@@ -230,7 +230,7 @@ export default function IndustriesPage() {
           throw new Error(response.data.message || "Failed to fetch industries")
         }
       } catch (err: any) {
-        setError(err.response?.data?.message || "Failed to fetch industries. Please try again.")
+        console.log(err.response?.data?.message || "Failed to fetch industries. Please try again.")
         console.error(err)
       } finally {
         setLoading(false)
@@ -265,6 +265,76 @@ export default function IndustriesPage() {
     }
   }, [industries])
 
+  // const handleAddIndustry = async () => {
+  //   if (!newIndustry.name.trim()) {
+  //     toast.error("Industry name is required")
+  //     return
+  //   }
+
+  //   const finalSlug = newIndustry.slug || generateSlug(newIndustry.name)
+
+  //   try {
+  //     const payload = {
+  //       industry_name: newIndustry.name,
+  //       industry_slug: finalSlug,
+  //     }
+
+  //     let response
+  //     if (editingIndustry) {
+  //       response = await axiosInstance.put(`/industries/${editingIndustry.id}`, payload)
+  //     } else {
+  //       response = await axiosInstance.post("/industries/", payload)
+  //     }
+
+  //     if (response.data.statusCode === 200 || response.data.statusCode === 201) {
+  //       const industryData = response.data.data
+  //       const updatedIndustry: Industry = {
+  //         id: industryData.industry_id,
+  //         name: newIndustry.name,
+  //         slug: finalSlug,
+  //         status: editingIndustry ? newIndustry.status : "Active",
+  //         createdDate: editingIndustry ? editingIndustry.createdDate : new Date().toISOString().split("T")[0],
+  //         lastUpdated: new Date().toISOString().split("T")[0],
+  //       }
+
+  //       // Update status if editing and status has changed
+  //       if (editingIndustry && editingIndustry.status !== newIndustry.status) {
+  //         await axiosInstance.patch(`/industries/status/${industryData.industry_id}`, null, {
+  //           params: { is_active: newIndustry.status === "Active" },
+  //         })
+  //       }
+
+  //       if (editingIndustry) {
+  //         setIndustries((prev) =>
+  //           prev.map((industry) =>
+  //             industry.id === editingIndustry.id ? updatedIndustry : industry
+  //           )
+  //         )
+  //         toast.success("Industry updated successfully!")
+  //       } else {
+  //         setIndustries([...industries, updatedIndustry])
+  //         toast.success("Industry created successfully!")
+  //       }
+
+  //       setNewIndustry({
+  //         name: "",
+  //         slug: "",
+  //         status: "Active",
+  //       })
+  //       setIsSlugManuallyEdited(false)
+  //       setOpen(false)
+  //       setEditingIndustry(null)
+  //     } else {
+  //       throw new Error(response.data.message || "Failed to save industry")
+  //     }
+  //   } catch (error: any) {
+  //     toast.error(error.response?.data?.message || "Failed to save industry. Please try again.")
+  //     console.error(error)
+  //   }
+  // }
+
+
+
   const handleAddIndustry = async () => {
     if (!newIndustry.name.trim()) {
       toast.error("Industry name is required")
@@ -288,23 +358,25 @@ export default function IndustriesPage() {
 
       if (response.data.statusCode === 200 || response.data.statusCode === 201) {
         const industryData = response.data.data
-        const updatedIndustry: Industry = {
-          id: industryData.industry_id,
-          name: newIndustry.name,
-          slug: finalSlug,
-          status: editingIndustry ? newIndustry.status : "Active",
-          createdDate: editingIndustry ? editingIndustry.createdDate : new Date().toISOString().split("T")[0],
-          lastUpdated: new Date().toISOString().split("T")[0],
-        }
-
-        // Update status if editing and status has changed
-        if (editingIndustry && editingIndustry.status !== newIndustry.status) {
-          await axiosInstance.patch(`/industries/status/${industryData.industry_id}`, null, {
-            params: { is_active: newIndustry.status === "Active" },
-          })
-        }
+        const currentDate = new Date().toISOString().split("T")[0]
 
         if (editingIndustry) {
+          const updatedIndustry: Industry = {
+            id: industryData.industry_id,
+            name: newIndustry.name,
+            slug: finalSlug,
+            status: editingIndustry ? newIndustry.status : "Active",
+            createdDate: editingIndustry ? editingIndustry.createdDate : currentDate,
+            lastUpdated: currentDate,
+          }
+
+          // Update status if editing and status has changed
+          if (editingIndustry && editingIndustry.status !== newIndustry.status) {
+            await axiosInstance.patch(`/industries/status/${industryData.industry_id}`, null, {
+              params: { is_active: newIndustry.status === "Active" },
+            })
+          }
+
           setIndustries((prev) =>
             prev.map((industry) =>
               industry.id === editingIndustry.id ? updatedIndustry : industry
@@ -312,8 +384,34 @@ export default function IndustriesPage() {
           )
           toast.success("Industry updated successfully!")
         } else {
-          setIndustries([...industries, updatedIndustry])
-          toast.success("Industry created successfully!")
+          const existingIndex = industries.findIndex((i) => i.id === industryData.industry_id)
+          if (existingIndex !== -1) {
+            // Restored existing deactivated industry
+            setIndustries((prev) => {
+              const newList = [...prev]
+              newList[existingIndex] = {
+                ...newList[existingIndex],
+                name: newIndustry.name,
+                slug: finalSlug,
+                status: "Active",
+                lastUpdated: currentDate,
+              }
+              return newList
+            })
+            toast.success("Industry restored successfully!")
+          } else {
+            // Truly new industry
+            const newIndustryEntry: Industry = {
+              id: industryData.industry_id,
+              name: newIndustry.name,
+              slug: finalSlug,
+              status: "Active",
+              createdDate: currentDate,
+              lastUpdated: currentDate,
+            }
+            setIndustries([...industries, newIndustryEntry])
+            toast.success("Industry created successfully!")
+          }
         }
 
         setNewIndustry({
@@ -333,16 +431,27 @@ export default function IndustriesPage() {
     }
   }
 
-  const handleEditIndustry = (industry: Industry) => {
-    setEditingIndustry(industry)
-    setNewIndustry({
-      name: industry.name,
-      slug: industry.slug,
-      status: industry.status,
-    })
-    setIsSlugManuallyEdited(false) // Assume slug is manually set when editing
-    setOpen(true)
-  }
+
+const handleOpenAddDialog = () => {
+  console.log("Opening add dialog, editingIndustry:", editingIndustry)
+  setEditingIndustry(null)
+  setNewIndustry({ name: "", slug: "", status: "Active" })
+  setIsSlugManuallyEdited(false)
+  setOpen(true)
+}
+
+const handleEditIndustry = (industry: Industry) => {
+  console.log("Opening edit dialog for industry:", industry)
+  setEditingIndustry(industry)
+  setNewIndustry({
+    name: industry.name,
+    slug: industry.slug,
+    status: industry.status,
+  })
+  setIsSlugManuallyEdited(true)
+  setOpen(true)
+}
+
 
   const handleViewIndustry = (industry: Industry) => {
     setViewingIndustry(industry)
@@ -505,10 +614,13 @@ export default function IndustriesPage() {
             if (!isOpen) {
               setNewIndustry({ name: "", slug: "", status: "Active" })
               setIsSlugManuallyEdited(false)
+              setEditingIndustry(null)
             }
           }}>
             <DialogTrigger asChild>
-              <Button className="flex items-center justify-center gap-2 px-4 sm:px-6 py-3 h-11 sm:h-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 text-sm sm:text-base">
+              <Button 
+              onClick={handleOpenAddDialog}
+              className="flex items-center justify-center gap-2 px-4 sm:px-6 py-3 h-11 sm:h-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 text-sm sm:text-base">
                 <Plus className="w-4 h-4" />
                 <span className="hidden xs:inline">Add New Industry</span>
                 <span className="xs:hidden">Add Industry</span>
@@ -786,13 +898,7 @@ export default function IndustriesPage() {
                   ? "No industries match your current filters. Try adjusting your search criteria."
                   : "Get started by adding your first industry to organize your business sectors."}
               </p>
-              <Button
-                onClick={() => setOpen(true)}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Your First Industry
-              </Button>
+             
             </CardContent>
           </Card>
         )}

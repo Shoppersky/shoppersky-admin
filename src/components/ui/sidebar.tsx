@@ -51,7 +51,7 @@ export default function Sidebar({ isOpen = false, onClose, isMobile = false, isC
     // { label: "orders", icon: Box, path: "/orders" },
     // { label: "payments", icon: CreditCard, path: "/payments" },
     { label: "industries", icon: Factory, path: "/industries" },
-    { label: "category", icon: Box, path: "/category" },
+   { label: "category", icon: Box, path: "/category", relatedPaths: ["/add-category"] },
     { label: "products", icon: ShoppingBag, path: "/products" },
     {
       label: "Vendor Enquiries",
@@ -113,7 +113,9 @@ export default function Sidebar({ isOpen = false, onClose, isMobile = false, isC
         }`}>
           <div className="space-y-1 sm:space-y-2">
             {navItems.map((item, index) => {
-              const active = pathname === item.path;
+              const active =
+    pathname === item.path ||
+    (item.relatedPaths && item.relatedPaths.includes(pathname));
               return (
                 <div
                   key={item.label}

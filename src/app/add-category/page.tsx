@@ -192,7 +192,7 @@ export default function CategoryPage() {
     }
 
     setImage(file)
-    toast.success("Image uploaded successfully!")
+    
   }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -280,7 +280,7 @@ export default function CategoryPage() {
     return false
   }
 
-  if (description) {
+  
     if (containsXSS(description) || containsSQLInjection(description)) {
       toast.info("Description contains invalid characters")
       return false
@@ -291,11 +291,11 @@ export default function CategoryPage() {
       return false
     }
 
-    if (!isValidText(description.trim(), /^[A-Za-z0-9\s.,()&'"!?:;\-]+$/, 500)) {
-      toast.info("Description contains invalid characters or is too long (max 500 chars)")
-      return false
+    if (!isValidText(description.trim(), /^[A-Za-z0-9\s.,()&'’"!?:;\-–— ]+$/, 500)) {
+      toast.info("Description contains invalid characters or is too long (max 500 chars)");
+      return false;
     }
-  }
+
 
   if (metaTitle) {
     if (containsXSS(metaTitle) || containsSQLInjection(metaTitle)) {
@@ -308,7 +308,7 @@ export default function CategoryPage() {
       return false
     }
 
-    if (!isValidText(metaTitle.trim(), /^[A-Za-z0-9\s.,()&'"!?:;|\-]+$/, 70)) {
+    if (!isValidText(metaTitle.trim(), /^[A-Za-z0-9\s.,()&'’"!?:;\-–— ]+$/, 70)) {
       toast.info("Meta title contains invalid characters or is too long (max 70 chars)")
       return false
     }
@@ -325,7 +325,7 @@ export default function CategoryPage() {
       return false
     }
 
-    if (!isValidText(metaDescription.trim(), /^[A-Za-z0-9\s.,()&'"!?:;\-]+$/, 160)) {
+    if (!isValidText(metaDescription.trim(), /^[A-Za-z0-9\s.,()&'’"!?:;\-–— ]+$/, 160)) {
       toast.info("Meta description contains invalid characters or is too long (max 160 chars)")
       return false
     }

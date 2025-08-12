@@ -1023,13 +1023,13 @@ const VendorManagement = () => {
                         </div>
                       </div>
                       <DialogClose asChild>
-                        <Button
+                        {/* <Button
                           variant="ghost"
                           size="sm"
                           className="text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 h-7 w-7 sm:h-8 sm:w-8 lg:h-10 lg:w-10 p-0 flex-shrink-0"
                         >
-                          <XCircle className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
-                        </Button>
+                          
+                        </Button> */}
                       </DialogClose>
                     </div>
                   </DialogHeader>

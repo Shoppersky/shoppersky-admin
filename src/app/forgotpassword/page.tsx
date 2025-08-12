@@ -47,7 +47,7 @@ export default function ForgotPasswordPage() {
 
     try {
       // Make API call to forgot-password endpoint with form data
-      const response = await axiosInstance.post("/vendor/forgot-password", formData, {
+      const response = await axiosInstance.post("/admin/forgot-password", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

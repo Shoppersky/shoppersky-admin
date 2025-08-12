@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 
-import Header from "@/components/Header";
 import Sidebar from "./ui/sidebar";
+import AuthGuard from "@/lib/AuthGuard";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const [isMobile, setIsMobile] = useState(false);
@@ -70,7 +70,9 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
           <div className="relative z-10">
            
             <div className={`${isMobile ? 'pt-0' : 'pt-0'}`}>
+              <AuthGuard>
               {children}
+              </AuthGuard>
             </div>
           </div>
         </div>

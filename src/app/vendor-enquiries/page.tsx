@@ -678,7 +678,7 @@ export default function AdminEnquiryManagement() {
       (q) => q.status === "in-progress"
     ).length;
     const resolvedQueries = queries.filter(
-      (q) => q.status === "resolved"
+      (q) => q.status === "closed"
     ).length;
     const urgentQueries = queries.filter((q) => q.priority === "urgent").length;
     const avgResponseTime = "2.5 hrs"; // Mock data
