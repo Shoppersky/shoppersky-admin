@@ -52,7 +52,7 @@ const Header = memo(function Header({ onMenuClick, isMobile, sidebarCollapsed, i
       setProfileError(null);
       
       console.log('Fetching profile for userId:', userId);
-      const response = await axiosInstance.get(`/admin-users/${userId}/admin-profile-details`);
+      const response = await axiosInstance.get(`/admin-users/admin-profile-details/${userId}/`);
       console.log('Profile API response:', response.data);
       
       const { data } = response.data; // Assuming api_response structure

@@ -8,7 +8,14 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Search,
   Filter,
@@ -27,6 +34,7 @@ import {
   TrendingUp,
   DollarSign,
   Loader2,
+  MoreHorizontal,
 } from "lucide-react"
 import axiosInstance from "@/lib/axiosInstance"
 
@@ -188,7 +196,7 @@ export default function UsersPage() {
   const [users, setUsers] = useState<UserInterface[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
-  const [roleFilter, setRoleFilter] = useState("all")
+  // const [roleFilter, setRoleFilter] = useState("all")
   const [viewMode, setViewMode] = useState<"table" | "grid">("table")
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -229,11 +237,11 @@ export default function UsersPage() {
         user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.email.toLowerCase().includes(searchTerm.toLowerCase())
       const matchesStatus = statusFilter === "all" || user.status.toLowerCase() === statusFilter
-      const matchesRole = roleFilter === "all" || user.role.toLowerCase() === roleFilter
+      // const matchesRole = roleFilter === "all" || user.role.toLowerCase() === roleFilter
 
-      return matchesSearch && matchesStatus && matchesRole
+      return matchesSearch && matchesStatus
     })
-  }, [users, searchTerm, statusFilter, roleFilter])
+  }, [users, searchTerm, statusFilter])
 
   // Enhanced statistics with trends
   const stats = useMemo(() => {
@@ -287,9 +295,9 @@ export default function UsersPage() {
 
   const handleExportUsers = () => {
     const csvContent = [
-      ["ID", "Name", "Email", "Phone", "Role", "Status", "Join Date", "Last Active"],
+      [ "Name", "Email", "Phone", "Role", "Status", "Join Date", "Last Active"],
       ...filteredUsers.map((user) => [
-        user.user_id,
+       
         user.name,
         user.email,
         user.phone_number || "",
@@ -325,7 +333,7 @@ export default function UsersPage() {
             </p>
           </div>
 
-          <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2 sm:gap-3 w-full xs:w-auto">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end ml-20 gap-3 sm:gap-4 px-3 sm:px-4 lg:px-0">
             <Button
               variant="outline"
               onClick={handleExportUsers}
@@ -398,18 +406,6 @@ export default function UsersPage() {
                   </SelectContent>
                 </Select>
 
-                <Select value={roleFilter} onValueChange={setRoleFilter}>
-                  <SelectTrigger className="w-36 sm:w-40 h-9 sm:h-10 lg:h-11 text-sm">
-                    <SelectValue placeholder="Role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Roles</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="manager">Manager</SelectItem>
-                    <SelectItem value="employee">Employee</SelectItem>
-                    <SelectItem value="vendor">Vendor</SelectItem>
-                  </SelectContent>
-                </Select>
 
                 <div className="flex items-center border rounded-lg p-0.5 sm:p-1">
                   <Button
@@ -477,18 +473,7 @@ export default function UsersPage() {
                   </SelectContent>
                 </Select>
 
-                <Select value={roleFilter} onValueChange={setRoleFilter}>
-                  <SelectTrigger className="h-9 sm:h-10 text-sm">
-                    <SelectValue placeholder="Role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Roles</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="manager">Manager</SelectItem>
-                    <SelectItem value="employee">Employee</SelectItem>
-                    <SelectItem value="vendor">Vendor</SelectItem>
-                  </SelectContent>
-                </Select>
+                
               </div>
             )}
           </CardContent>

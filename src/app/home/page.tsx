@@ -479,11 +479,11 @@ const handleReviewAction = (action: string, reviewId: number) => {
           <div className="min-w-0 flex-1">
             <p className="text-xs font-medium text-gray-600 dark:text-gray-400 truncate">{card.title}</p>
             <p className="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white mt-1">{card.value}</p>
-            <p className={`text-xs text-${card.color}-600 dark:text-${card.color}-400 flex items-center mt-2`}>
+            {/* <p className={`text-xs text-${card.color}-600 dark:text-${card.color}-400 flex items-center mt-2`}>
               <ArrowUpRight className="w-3 h-3 mr-1 flex-shrink-0" />
               <span className="truncate hidden sm:inline">+{card.growth}% from last month</span>
               <span className="truncate sm:hidden">+{card.growth}%</span>
-            </p>
+            </p> */}
           </div>
           <div
             className={`p-2 lg:p-3 bg-gradient-to-br ${card.gradient} rounded-lg sm:rounded-xl group-hover:scale-110 transition-transform duration-300 flex-shrink-0`}
@@ -649,7 +649,7 @@ const handleReviewAction = (action: string, reviewId: number) => {
       </Card> */}
 
         {/* Main Content Grid - Balanced 2-Column Layout */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-5 lg:gap-6">
+        <div className="w-full">
           {/* Left Column */}
           <div className="space-y-4 sm:space-y-6">
             {/* Recent Orders Table */}
@@ -658,14 +658,14 @@ const handleReviewAction = (action: string, reviewId: number) => {
                 <CardTitle className="text-base sm:text-lg font-semibold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
                   Recent Orders
                 </CardTitle>
-                <Button 
+                {/* <Button 
                   variant="ghost" 
                   size="sm" 
                   className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 text-xs sm:text-sm px-2 sm:px-3"
                   onClick={() => handleViewAll('Recent Orders')}
                 >
                   View All <ChevronRight className="ml-1 h-3 w-3 sm:h-4 sm:w-4" />
-                </Button>
+                </Button> */}
               </CardHeader>
               <CardContent className="px-3 sm:px-6 pb-4 sm:pb-6">
                 <div className="overflow-x-auto">

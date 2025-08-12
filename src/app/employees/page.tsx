@@ -54,7 +54,6 @@ import {
   UserX,
   MoreVertical,
   Mail,
-  Phone,
   Calendar,
   Shield,
   Crown,
@@ -152,7 +151,6 @@ function UserCard({
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 truncate">
                 {user.email}
               </p>
-              
             </div>
           </div>
           <DropdownMenu>
@@ -168,12 +166,12 @@ function UserCard({
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
-             
+
               <DropdownMenuItem onClick={() => onEdit(user)}>
                 <Pencil className="w-4 h-4 mr-2" />
                 Edit User
               </DropdownMenuItem>
-             
+
               <DropdownMenuSeparator />
               {user.status === "Active" ? (
                 <DropdownMenuItem
@@ -209,13 +207,7 @@ function UserCard({
             </span>
             {getStatusBadge(user.status)}
           </div>
-          {user.phone && (
-            <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-              <Phone className="w-3 h-3" />
-              <span className="truncate">{user.phone}</span>
-            </div>
-          )}
-          
+
           <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200/50 dark:border-slate-700/50">
             <Calendar className="w-3 h-3" />
             <span>Joined: {new Date(user.joinDate).toLocaleDateString()}</span>
@@ -233,10 +225,8 @@ interface UserInterface {
   role: string;
   status: string;
   avatar?: string;
-  phone?: string;
   joinDate: string;
   lastActive: string;
-
 }
 
 interface RoleInterface {
@@ -252,7 +242,9 @@ export default function UsersPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [restoreDialogOpen, setRestoreDialogOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<UserInterface | null>(null);
-  const [userToRestore, setUserToRestore] = useState<UserInterface | null>(null);
+  const [userToRestore, setUserToRestore] = useState<UserInterface | null>(
+    null
+  );
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [roleFilter, setRoleFilter] = useState("all");
@@ -262,23 +254,26 @@ export default function UsersPage() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phone: "",
+
     role: "",
     role_id: "",
   });
 
   // Fetch roles
   const [isLoadingRoles, setIsLoadingRoles] = useState(false);
+
   useEffect(() => {
     const fetchRoles = async () => {
       setIsLoadingRoles(true);
       try {
         const response = await axiosInstance.get("/roles/?is_active=false");
         setRoles(
-          response.data.data.map((role: any) => ({
-            id: role.role_id,
-            name: role.role_name,
-          }))
+          response.data.data
+            .filter((role: any) => role.role_name !== "SUPERADMIN")
+            .map((role: any) => ({
+              id: role.role_id,
+              name: role.role_name,
+            }))
         );
       } catch (err) {
         setError("Failed to fetch roles");
@@ -293,7 +288,9 @@ export default function UsersPage() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axiosInstance.get("/admin-users/?include_inactive=true");
+        const response = await axiosInstance.get(
+          "/admin-users/?include_inactive=true"
+        );
         const apiUsers = response.data.data.admins.map((user: any) => ({
           id: user.user_id,
           name: user.username,
@@ -302,7 +299,6 @@ export default function UsersPage() {
           status: user.is_active ? "Inactive" : "Active",
           joinDate: user.created_at,
           lastActive: user.created_at,
-         
         }));
         setUsers(apiUsers);
       } catch (err) {
@@ -349,62 +345,125 @@ export default function UsersPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // const handleAddUser = async () => {
+  //   try {
+  //     const payload = {
+  //       username: formData.name,
+  //       email: formData.email,
+  //       role_id: formData.role_id,
+  //     };
+
+  //     let response;
+  //     if (editingUser) {
+  //       response = await axiosInstance.put(
+  //         `/admin-users/${editingUser.id}`,
+  //         payload
+  //       );
+  //     } else {
+  //       response = await axiosInstance.post("/admin-users/register", payload);
+  //     }
+
+  //     const newUser: UserInterface = {
+  //       id: response.data.data.user_id,
+  //       name: response.data.data.username,
+  //       email: response.data.data.email,
+  //       role: roles.find((r) => r.id === formData.role_id)?.name || "Unknown",
+  //       status: response.data.data.is_active ? "Inactive" : "Active",
+  //       joinDate:
+  //         response.data.data.created_at ||
+  //         new Date().toISOString().split("T")[0],
+  //       lastActive:
+  //         response.data.data.created_at ||
+  //         new Date().toISOString().split("T")[0],
+  //     };
+
+  //     if (editingUser) {
+  //       setUsers((prev) =>
+  //         prev.map((user) =>
+  //           user.id === editingUser.id ? { ...user, ...newUser } : user
+  //         )
+  //       );
+  //     } else {
+  //       setUsers((prev) => [...prev, newUser]);
+  //     }
+
+  //     setFormData({
+  //       name: "",
+  //       email: "",
+
+  //       role: "",
+  //       role_id: "",
+  //     });
+  //     setEditingUser(null);
+  //     setOpen(false);
+  //   } catch (err: any) {
+  //     setError(err.response?.data?.message || "Failed to create/update user");
+  //   }
+  // };
+
+
   const handleAddUser = async () => {
-    try {
-      const payload = {
-        username: formData.name,
-        email: formData.email,
-        role_id: formData.role_id,
-      };
+  try {
+    const payload = {
+      username: formData.name,
+      email: formData.email,
+      role_id: formData.role_id,
+    };
 
-      let response;
-      if (editingUser) {
-        response = await axiosInstance.put(`/admin-users/${editingUser.id}`, payload);
-      } else {
-        response = await axiosInstance.post("/admin-users/register", payload);
-      }
+    let response;
+    if (editingUser) {
+      response = await axiosInstance.put(`/admin-users/${editingUser.id}`, payload);
+    } else {
+      response = await axiosInstance.post("/admin-users/register", payload);
+    }
 
-      const newUser: UserInterface = {
-        id: response.data.data.user_id,
-        name: response.data.data.username,
-        email: response.data.data.email,
-        role: roles.find((r) => r.id === formData.role_id)?.name || "Unknown",
-        status: response.data.data.is_active ? "Inactive" : "Active",
-        joinDate: response.data.data.created_at || new Date().toISOString().split("T")[0],
-        lastActive: response.data.data.created_at || new Date().toISOString().split("T")[0],
-       
-      };
+    const responseUser = response.data.data;
+    const newUser: UserInterface = {
+      id: responseUser.user_id,
+      name: responseUser.username,
+      email: responseUser.email,
+      role: roles.find((r) => r.id === formData.role_id)?.name || "Unknown",
+      status: responseUser.is_active ? "Inactive" : "Active", // Adjust based on API response
+      joinDate: responseUser.created_at || new Date().toISOString().split("T")[0],
+      lastActive: responseUser.created_at || new Date().toISOString().split("T")[0],
+    };
 
-      if (editingUser) {
-        setUsers((prev) =>
-          prev.map((user) =>
-            user.id === editingUser.id ? { ...user, ...newUser } : user
-          )
+    setUsers((prev) => {
+      // Check if the user already exists in the state (by id or email)
+      const existingUserIndex = prev.findIndex(
+        (user) => user.id === newUser.id || user.email === newUser.email
+      );
+
+      if (existingUserIndex !== -1) {
+        // If user exists (likely restored), update the existing user
+        return prev.map((user, index) =>
+          index === existingUserIndex ? { ...user, ...newUser } : user
         );
       } else {
-        setUsers((prev) => [...prev, newUser]);
+        // If user is new, append to the list
+        return [...prev, newUser];
       }
+    });
 
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        role: "",
-        role_id: "",
-      });
-      setEditingUser(null);
-      setOpen(false);
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to create/update user");
-    }
-  };
+    setFormData({
+      name: "",
+      email: "",
+      role: "",
+      role_id: "",
+    });
+    setEditingUser(null);
+    setOpen(false);
+  } catch (err: any) {
+    setError(err.response?.data?.message || "Failed to create/update user");
+  }
+};
 
   const handleEditUser = (user: UserInterface) => {
     setEditingUser(user);
     setFormData({
       name: user.name,
       email: user.email,
-      phone: user.phone || "",
+
       role: user.role,
       role_id: roles.find((r) => r.name === user.role)?.id || "",
     });
@@ -419,7 +478,7 @@ export default function UsersPage() {
   const confirmDeactivateUser = async () => {
     if (userToDelete) {
       try {
-        await axiosInstance.delete(`/admin-users/${userToDelete.id}/soft`);
+        await axiosInstance.delete(`/admin-users/soft/${userToDelete.id}`);
         setUsers((prev) =>
           prev.map((user) =>
             user.id === userToDelete.id ? { ...user, status: "Inactive" } : user
@@ -441,7 +500,7 @@ export default function UsersPage() {
   const confirmRestoreUser = async () => {
     if (userToRestore) {
       try {
-        await axiosInstance.post(`/admin-users/${userToRestore.id}/restore`);
+        await axiosInstance.post(`/admin-users/restore/${userToRestore.id}`);
         setUsers((prev) =>
           prev.map((user) =>
             user.id === userToRestore.id ? { ...user, status: "Active" } : user
@@ -457,27 +516,15 @@ export default function UsersPage() {
 
   const handleExportUsers = () => {
     const csvContent = [
-      [
-        "ID",
-        "Name",
-        "Email",
-        "Phone",
-        "Role",
-        "Status",
-        "Join Date",
-        "Last Active",
-       
-      ],
+      ["Name", "Email", "Role", "Status", "Join Date", "Last Active"],
       ...filteredUsers.map((user) => [
-        user.id,
         user.name,
         user.email,
-        user.phone || "",
+
         user.role,
         user.status,
         user.joinDate,
         user.lastActive,
-     
       ]),
     ]
       .map((row) => row.join(","))
@@ -555,28 +602,26 @@ export default function UsersPage() {
           <div className="bg-red-100 text-red-800 p-4 rounded-xl">{error}</div>
         )}
         {/* Header */}
-        <div className="text-center space-y-3 sm:space-y-4 md:space-y-6">
-          <div className="inline-flex items-center gap-2 sm:gap-3 md:gap-4 px-3 sm:px-4 md:px-8 py-2 sm:py-3 md:py-4 bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl rounded-xl sm:rounded-2xl md:rounded-3xl border border-slate-200/50 dark:border-slate-700/50 shadow-lg">
-            <div className="p-1.5 sm:p-2 md:p-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg sm:rounded-xl md:rounded-2xl shadow-lg">
-              <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 text-white" />
-            </div>
-            <div className="text-left">
-              <h1 className="text-lg sm:text-2xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent p-1 sm:p-2">
-                Employee Management
-              </h1>
-              <p className="text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-400 font-medium">
-                Manage users, roles, and permissions
-              </p>
-            </div>
+        <div className="relative z-50 flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2 sm:gap-3 lg:gap-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-slate-800/50 dark:to-slate-700/50 p-2 sm:p-3 lg:p-6 rounded-lg sm:rounded-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20 shadow-lg">
+          
+          <div className="flex-1 min-w-0">
+            <h1 className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
+              Employee Management
+            </h1>
+            <p className="text-xs sm:text-sm lg:text-base text-gray-600 dark:text-gray-400 mt-0.5 sm:mt-1">
+              View and manage employee accounts
+            </p>
           </div>
-        </div>
+
+          
+        
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 px-3 sm:px-4 lg:px-0">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-end justify-end gap-3 sm:gap-4 px-3 sm:px-4 lg:px-0">
           <Button
             variant="outline"
             onClick={handleExportUsers}
-            className="flex items-center justify-center gap-2 px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 h-10 sm:h-11 md:h-12 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-300 text-sm sm:text-base font-medium rounded-lg sm:rounded-xl shadow-sm hover:shadow-md"
+            className="flex items-end justify-end gap-2 px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 h-10 sm:h-11 md:h-12 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-300 text-sm sm:text-base font-medium rounded-lg sm:rounded-xl shadow-sm hover:shadow-md"
           >
             <Download className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
             <span className="hidden xs:inline">Export Data</span>
@@ -585,13 +630,12 @@ export default function UsersPage() {
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button
-                className="flex items-center justify-center gap-2 px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 h-10 sm:h-11 md:h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 text-sm sm:text-base font-medium rounded-lg sm:rounded-xl"
+                className="flex items-end justify-end gap-2 px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 h-10 sm:h-11 md:h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 text-sm sm:text-base font-medium rounded-lg sm:rounded-xl"
                 onClick={() => {
                   setEditingUser(null);
                   setFormData({
                     name: "",
                     email: "",
-                    phone: "",
                     role: "",
                     role_id: "",
                   });
@@ -776,35 +820,30 @@ export default function UsersPage() {
             </DialogContent>
           </Dialog>
         </div>
+        </div>
 
         {/* Statistics Cards */}
-       <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4 sm:gap-6">
-  <StatCard
-    title="Total Users"
-    value={stats.total.toString()}
-    icon={<Users className="w-5 h-5 sm:w-6 sm:h-6" />}
-    color="blue"
-  />
-  <StatCard
-    title="Active Users"
-    value={stats.active.toString()}
-    icon={<UserCheck className="w-5 h-5 sm:w-6 sm:h-6" />}
-    color="green"
-  />
-  <StatCard
-    title="Inactive Users"
-    value={stats.inactive.toString()}
-    icon={<UserX className="w-5 h-5 sm:w-6 sm:h-6" />}
-    color="red"
-  />
-  <StatCard
-    title="Administrators"
-    value={stats.admin.toString()}
-    icon={<Crown className="w-5 h-5 sm:w-6 sm:h-6" />}
-    color="yellow"
-  />
-</div>
-
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4 sm:gap-6">
+          <StatCard
+            title="Total Users"
+            value={stats.total.toString()}
+            icon={<Users className="w-5 h-5 sm:w-6 sm:h-6" />}
+            color="blue"
+          />
+          <StatCard
+            title="Active Users"
+            value={stats.active.toString()}
+            icon={<UserCheck className="w-5 h-5 sm:w-6 sm:h-6" />}
+            color="green"
+          />
+          <StatCard
+            title="Inactive Users"
+            value={stats.inactive.toString()}
+            icon={<UserX className="w-5 h-5 sm:w-6 sm:h-6" />}
+            color="red"
+          />
+          
+        </div>
 
         {/* Filters and Search */}
         <Card className="backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border-0 shadow-xl rounded-2xl">
@@ -904,9 +943,7 @@ export default function UsersPage() {
                 No Users Found
               </h3>
               <p className="text-xs sm:text-sm md:text-base text-slate-500 dark:text-slate-400 text-center mb-4 sm:mb-6 max-w-md mx-auto px-4">
-                {searchTerm ||
-                statusFilter !== "all" ||
-                roleFilter !== "all"
+                {searchTerm || statusFilter !== "all" || roleFilter !== "all"
                   ? "No users match your current filters. Try adjusting your search criteria."
                   : "Get started by adding your first user to manage your team."}
               </p>
@@ -939,7 +976,7 @@ export default function UsersPage() {
                       <th className="text-left p-2 sm:p-3 md:p-4 font-semibold text-slate-700 dark:text-slate-300 hidden lg:table-cell text-xs sm:text-sm md:text-base">
                         Activity
                       </th>
-                      
+
                       <th className="text-left p-2 sm:p-3 md:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm md:text-base">
                         Actions
                       </th>
@@ -981,12 +1018,6 @@ export default function UsersPage() {
                               <Mail className="w-3 h-3 flex-shrink-0" />
                               <span className="truncate">{user.email}</span>
                             </div>
-                            {user.phone && (
-                              <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-                                <Phone className="w-3 h-3 flex-shrink-0" />
-                                {user.phone}
-                              </div>
-                            )}
                           </div>
                         </td>
                         <td className="p-2 sm:p-3 md:p-4">
@@ -1008,7 +1039,7 @@ export default function UsersPage() {
                             </div>
                           </div>
                         </td>
-                       
+
                         <td className="p-2 sm:p-3 md:p-4">
                           <div className="flex items-center gap-1">
                             <DropdownMenu>
@@ -1030,7 +1061,7 @@ export default function UsersPage() {
                                   <Pencil className="w-4 h-4 mr-2" />
                                   Edit User
                                 </DropdownMenuItem>
-                               
+
                                 <DropdownMenuSeparator />
                                 {user.status === "Active" ? (
                                   <DropdownMenuItem
@@ -1072,7 +1103,6 @@ export default function UsersPage() {
                       ? "No users match your current filters. Try adjusting your search criteria."
                       : "Get started by adding your first user to manage your team."}
                   </p>
-                 
                 </div>
               )}
             </CardContent>
@@ -1092,7 +1122,8 @@ export default function UsersPage() {
                     Deactivate User
                   </AlertDialogTitle>
                   <AlertDialogDescription className="text-sm md:text-base text-slate-600 dark:text-slate-400 mt-1">
-                    This will deactivate the user account. The user can be restored later.
+                    This will deactivate the user account. The user can be
+                    restored later.
                   </AlertDialogDescription>
                 </div>
               </div>
@@ -1139,7 +1170,10 @@ export default function UsersPage() {
         </AlertDialog>
 
         {/* Restore Confirmation Dialog */}
-        <AlertDialog open={restoreDialogOpen} onOpenChange={setRestoreDialogOpen}>
+        <AlertDialog
+          open={restoreDialogOpen}
+          onOpenChange={setRestoreDialogOpen}
+        >
           <AlertDialogContent className="border border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 shadow-2xl backdrop-blur-sm max-w-[95vw] sm:max-w-md mx-2 sm:mx-auto">
             <AlertDialogHeader className="space-y-4">
               <div className="flex items-center gap-4">

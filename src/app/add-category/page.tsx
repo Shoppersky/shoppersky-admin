@@ -17,6 +17,7 @@ import {
   Tag,
   Globe,
   Eye,
+  MoveLeft,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -30,6 +31,7 @@ import { Separator } from "@/components/ui/separator"
 import { Progress } from "@/components/ui/progress"
 import axiosInstance from "@/lib/axiosInstance"
 import { useRouter } from "next/navigation"
+import Link from "next/link";
 
 interface Category {
   id: string
@@ -460,18 +462,24 @@ export default function CategoryPage() {
         )}
 
         {/* Header */}
-        <div className="text-center space-y-6">
-          <div className="inline-flex items-center gap-4 px-8 py-4 bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl rounded-3xl border border-slate-200/50 dark:border-slate-700/50 shadow-lg">
-            <div className="p-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl shadow-lg">
-              <Sparkles className="w-8 h-8 text-white" />
-            </div>
-            <div className="text-left">
-              <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                Category Studio
-              </h1>
-              <p className="text-slate-600 dark:text-slate-400 font-medium">Design & manage your product categories</p>
-            </div>
+        <div className=" space-y-6">
+          
+
+          <div className="relative z-50 flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2 sm:gap-3 lg:gap-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-slate-800/50 dark:to-slate-700/50 p-2 sm:p-3 lg:p-6 rounded-lg sm:rounded-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20 shadow-lg">
+         <span>
+<Link href="/category" className="justify-start text-blue-500 hover:underline">
+<MoveLeft />Back to category
+</Link>
+</span>
+
+
+          <div className="flex-1 text-center min-w-0">
+            <h1 className="text-lg sm:text-xl p-2 lg:text-2xl xl:text-3xl font-bold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
+              Category Studio
+            </h1>
+           
           </div>
+        </div>
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">

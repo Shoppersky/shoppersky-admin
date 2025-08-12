@@ -17,12 +17,8 @@ import {
   Star,
   Users,
   Shield,
-  ExternalLink,
-  Edit,
   Trash2,
-  MessageSquare,
   History,
-  Sparkles,
   Globe,
   FileText,
   RotateCcw,
@@ -47,7 +43,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogClose,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import {
   AlertDialog,
@@ -618,9 +613,9 @@ const VendorManagement = () => {
   const handleExportVendors = () => {
     const csvContent = [
       [
-        "ID",
+        
         "Email",
-        "Vendor ID",
+       
         "Role",
         "Store Name",
         "Store URL",
@@ -633,13 +628,13 @@ const VendorManagement = () => {
         "ABN Type",
         "ABN Location",
         "Registration Date",
-        "Last Activity",
+       
         "Status",
       ],
       ...filteredVendors.map((vendor) => [
-        vendor.id,
+        
         vendor.email,
-        vendor.vendorId,
+       
         vendor.role,
         vendor.storeName,
         vendor.storeUrl,

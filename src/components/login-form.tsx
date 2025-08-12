@@ -65,10 +65,19 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
       router.push("/home");
     }
   } catch (error: any) {
-    if (error.response?.status === 403) {
-      toast.success("Please change your default password.");
+
+    if (error.response?.status === 423) {
+      toast.success("Your account has been locked. Please contact support.");
+    } 
+    if (error.response?.status === 428) {
+      
       router.push(`/changepassword?email=${encodeURIComponent(email)}`);
-    } else {
+    } 
+    if (error.response?.status === 403) {
+      toast.success("Your account has been deactivated. Please contact support.");
+    
+    } 
+    else {
       const errorMessage =
         error.response?.data?.detail ||
         error.response?.data?.message ||

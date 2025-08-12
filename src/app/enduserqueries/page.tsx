@@ -82,22 +82,7 @@ function StatCard({
               <p className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-900 dark:text-gray-100 truncate">
                 {value}
               </p>
-              {trend && trendValue && (
-                <div
-                  className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold self-start xs:self-auto ${
-                    trend === "up"
-                      ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                      : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
-                  }`}
-                >
-                  <TrendingUp
-                    className={`w-3 h-3 ${
-                      trend === "down" ? "rotate-180" : ""
-                    }`}
-                  />
-                  {trendValue}
-                </div>
-              )}
+             
             </div>
             {description && (
               <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2">
@@ -261,18 +246,17 @@ export default function EndUserQueries() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-slate-50 to-purple-50/30 dark:from-gray-900 dark:via-slate-900 dark:to-purple-950/20">
       <div className="container mx-auto px-2 xs:px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4 md:py-6 lg:py-8 space-y-4 sm:space-y-6 lg:space-y-8 max-w-7xl">
         {/* Enhanced Responsive Page Header */}
-        <div className="text-center space-y-3 sm:space-y-4 px-2 sm:px-4 lg:px-6">
-          {/* Title Section */}
-          <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-3 px-3 sm:px-4 lg:px-6 py-2 sm:py-3 bg-gradient-to-r from-purple-500/10 to-blue-500/10 rounded-full border border-purple-200/50 dark:border-purple-800/50 backdrop-blur-sm">
-            <Activity className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-purple-600 dark:text-purple-400 flex-shrink-0" />
-            <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent leading-tight">
+         <div className="relative z-50 flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2 sm:gap-3 lg:gap-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-slate-800/50 dark:to-slate-700/50 p-2 sm:p-3 lg:p-6 rounded-lg sm:rounded-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20 shadow-lg">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
               Customer Enquiries
             </h1>
+            <p className="text-xs sm:text-sm lg:text-base text-gray-600 dark:text-gray-400 mt-0.5 sm:mt-1">
+               Manage and respond to customer enquiries with comprehensive analytics
+            </p>
           </div>
-          <p className="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-400 max-w-xs sm:max-w-md lg:max-w-2xl mx-auto leading-relaxed">
-            Manage and respond to customer enquiries with comprehensive analytics
-          </p>
-        </div>
+          </div>
+       
 
         {/* Enhanced Responsive Statistics */}
         {!isLoading && !error && (

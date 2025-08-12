@@ -47,7 +47,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import useStore from '@/lib/Zustand';
+import useStore from "@/lib/Zustand";
 
 // API Response interfaces
 interface ThreadMessage {
@@ -182,7 +182,7 @@ function SkeletonFilters() {
           <div className="relative w-full">
             <div className="h-9 sm:h-10 lg:h-11 bg-slate-200 dark:bg-slate-700 rounded-md"></div>
           </div>
-          
+
           {/* Filter Controls Skeleton */}
           <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             {/* Filter Selects Skeleton */}
@@ -194,7 +194,7 @@ function SkeletonFilters() {
                 <div className="h-9 sm:h-10 lg:h-11 bg-slate-200 dark:bg-slate-700 rounded-md"></div>
               </div>
             </div>
-            
+
             {/* Results Count Skeleton */}
             <div className="flex flex-col space-y-2 sm:space-y-0 sm:flex-row sm:items-center sm:gap-3">
               <div className="h-6 sm:h-7 w-24 sm:w-28 bg-slate-200 dark:bg-slate-700 rounded-md"></div>
@@ -251,9 +251,13 @@ function StatCard({
       <CardContent className="p-4 sm:p-6">
         <div className="flex items-center justify-between">
           <div className="space-y-1 flex-1 min-w-0">
-            <p className="text-xs sm:text-sm font-medium text-muted-foreground">{title}</p>
+            <p className="text-xs sm:text-sm font-medium text-muted-foreground">
+              {title}
+            </p>
             <div className="flex items-baseline gap-2">
-              <p className="text-lg sm:text-xl lg:text-2xl font-bold truncate">{value}</p>
+              <p className="text-lg sm:text-xl lg:text-2xl font-bold truncate">
+                {value}
+              </p>
               {trend && trendValue && (
                 <div
                   className={`flex items-center text-xs font-medium flex-shrink-0 ${
@@ -273,9 +277,7 @@ function StatCard({
           <div
             className={`p-2 sm:p-3 rounded-lg sm:rounded-xl ${iconColors[color]} group-hover:scale-110 transition-transform duration-300 flex-shrink-0`}
           >
-            <div className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6">
-              {icon}
-            </div>
+            <div className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6">{icon}</div>
           </div>
         </div>
       </CardContent>
@@ -346,7 +348,9 @@ function QueryCard({ query, onClick }: { query: Query; onClick: () => void }) {
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
-              <div className={`w-2 h-2 rounded-full ${priorityConfig.color} flex-shrink-0`} />
+              <div
+                className={`w-2 h-2 rounded-full ${priorityConfig.color} flex-shrink-0`}
+              />
               <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-slate-100 group-hover:text-violet-600 transition-colors line-clamp-1">
                 {query.title}
               </h3>
@@ -401,7 +405,9 @@ function QueryCard({ query, onClick }: { query: Query; onClick: () => void }) {
             <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
               <Badge variant="outline" className="text-xs">
                 <Tag className="w-2 w-2 sm:w-3 sm:h-3 mr-1" />
-                <span className="truncate max-w-[80px] sm:max-w-none">{query.category}</span>
+                <span className="truncate max-w-[80px] sm:max-w-none">
+                  {query.category}
+                </span>
               </Badge>
               <Badge className={`${statusConfig.color} text-xs border`}>
                 {statusConfig.icon}
@@ -579,7 +585,6 @@ export default function AdminEnquiryManagement() {
     }
   };
 
-
   const sendResponse = async (
     queryId: string,
     message: string,
@@ -589,7 +594,7 @@ export default function AdminEnquiryManagement() {
       setIsSubmitting(true);
 
       const response = await axiosInstance.post(
-        `/vendor/vendor_admin_queries/${queryId}/messages`,
+        `/vendor/vendor_admin_queries/messages/${queryId}`,
         {
           user_id: userId,
           message: message,
@@ -857,18 +862,20 @@ export default function AdminEnquiryManagement() {
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <User className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                      <span className="truncate">{selectedQuery.vendorName}</span>
+                      <span className="truncate">
+                        {selectedQuery.vendorName}
+                      </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Mail className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                      <span className="truncate">{selectedQuery.vendorEmail}</span>
+                      <span className="truncate">
+                        {selectedQuery.vendorEmail}
+                      </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Calendar className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
                       <span>
-                        {new Date(
-                          selectedQuery.createdAt
-                        ).toLocaleDateString()}
+                        {new Date(selectedQuery.createdAt).toLocaleDateString()}
                       </span>
                     </div>
                   </div>
@@ -943,7 +950,10 @@ export default function AdminEnquiryManagement() {
                         <span className="text-xs text-muted-foreground">
                           {new Date(selectedQuery.createdAt).toLocaleString()}
                         </span>
-                        <Badge variant="outline" className="text-xs self-start xs:self-auto">
+                        <Badge
+                          variant="outline"
+                          className="text-xs self-start xs:self-auto"
+                        >
                           Original Query
                         </Badge>
                       </div>
@@ -1122,7 +1132,10 @@ export default function AdminEnquiryManagement() {
                           <span className="font-semibold text-slate-900 dark:text-slate-100 text-sm sm:text-base">
                             Current Admin
                           </span>
-                          <Badge variant="outline" className="text-xs self-start xs:self-auto">
+                          <Badge
+                            variant="outline"
+                            className="text-xs self-start xs:self-auto"
+                          >
                             Composing Response
                           </Badge>
                         </div>
@@ -1141,13 +1154,17 @@ export default function AdminEnquiryManagement() {
                             {isSubmitting ? (
                               <>
                                 <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4 mr-2 animate-spin" />
-                                <span className="hidden xs:inline">Sending...</span>
+                                <span className="hidden xs:inline">
+                                  Sending...
+                                </span>
                                 <span className="xs:hidden">Send...</span>
                               </>
                             ) : (
                               <>
                                 <Send className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
-                                <span className="hidden xs:inline">Send Response</span>
+                                <span className="hidden xs:inline">
+                                  Send Response
+                                </span>
                                 <span className="xs:hidden">Send</span>
                               </>
                             )}
@@ -1167,7 +1184,7 @@ export default function AdminEnquiryManagement() {
               </CardContent>
             </Card>
 
-            {/* Actions */}
+            {/* Actions
             <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
               <CardContent className="p-4 sm:p-6">
                 <div className="flex flex-col xs:flex-row flex-wrap gap-2 xs:gap-3">
@@ -1237,7 +1254,7 @@ export default function AdminEnquiryManagement() {
                   </DropdownMenu>
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
           </div>
         </div>
       </div>
@@ -1339,52 +1356,50 @@ export default function AdminEnquiryManagement() {
           </>
         )}
 
-       {/* Statistics */}
+        {/* Statistics */}
 
-  <div
-  className="
+        <div
+          className="
     grid
     gap-3
     sm:gap-4
     lg:gap-6
     grid-cols-[repeat(auto-fit,minmax(240px,1fr))]
   "
->
-  <StatCard
-    title="Total Queries"
-    value={stats.total}
-    icon={<MessageSquare className="w-6 h-6" />}
-    color="slate"
-    trend="up"
-    trendValue="+12%"
-  />
-  <StatCard
-    title="Pending"
-    value={stats.pending}
-    icon={<Clock className="w-6 h-6" />}
-    color="amber"
-    trend="down"
-    trendValue="-5%"
-  />
-  <StatCard
-    title="In Progress"
-    value={stats.inProgress}
-    icon={<RefreshCw className="w-6 h-6" />}
-    color="blue"
-    trend="up"
-    trendValue="+8%"
-  />
-  <StatCard
-    title="Resolved"
-    value={stats.resolved}
-    icon={<CheckCircle2 className="w-6 h-6" />}
-    color="emerald"
-    trend="up"
-    trendValue="+15%"
-  />
-</div>
-
-
+        >
+          <StatCard
+            title="Total Queries"
+            value={stats.total}
+            icon={<MessageSquare className="w-6 h-6" />}
+            color="slate"
+            trend="up"
+            trendValue="+12%"
+          />
+          <StatCard
+            title="Pending"
+            value={stats.pending}
+            icon={<Clock className="w-6 h-6" />}
+            color="amber"
+            trend="down"
+            trendValue="-5%"
+          />
+          <StatCard
+            title="In Progress"
+            value={stats.inProgress}
+            icon={<RefreshCw className="w-6 h-6" />}
+            color="blue"
+            trend="up"
+            trendValue="+8%"
+          />
+          <StatCard
+            title="Closed"
+            value={stats.resolved}
+            icon={<CheckCircle2 className="w-6 h-6" />}
+            color="emerald"
+            trend="up"
+            trendValue="+15%"
+          />
+        </div>
 
         {/* Filters */}
         {!loading && !error && (
@@ -1401,26 +1416,31 @@ export default function AdminEnquiryManagement() {
                     className="pl-10 h-9 sm:h-10 lg:h-11 w-full text-sm sm:text-base"
                   />
                 </div>
-                
+
                 {/* Filter Controls */}
                 <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                   {/* Filter Selects */}
                   <div className="flex flex-col space-y-2 sm:space-y-0 sm:flex-row sm:gap-3 flex-1">
                     <div className="w-full sm:w-auto sm:min-w-[140px] lg:min-w-[160px]">
-                      <Select value={statusFilter} onValueChange={setStatusFilter}>
+                      <Select
+                        value={statusFilter}
+                        onValueChange={setStatusFilter}
+                      >
                         <SelectTrigger className="w-full h-9 sm:h-10 lg:h-11 text-sm sm:text-base">
                           <SelectValue placeholder="All Status" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="all">All Status</SelectItem>
                           <SelectItem value="pending">Pending</SelectItem>
-                          <SelectItem value="in-progress">In Progress</SelectItem>
+                          <SelectItem value="in-progress">
+                            In Progress
+                          </SelectItem>
                           <SelectItem value="resolved">Resolved</SelectItem>
                           <SelectItem value="closed">Closed</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
-                    
+
                     <div className="w-full sm:w-auto sm:min-w-[140px] lg:min-w-[160px]">
                       <Select
                         value={categoryFilter}
@@ -1440,7 +1460,7 @@ export default function AdminEnquiryManagement() {
                       </Select>
                     </div>
                   </div>
-                  
+
                   {/* Results Count and Clear Filters */}
                   <div className="flex flex-col space-y-2 sm:space-y-0 sm:flex-row sm:items-center sm:gap-3">
                     <div className="flex items-center justify-center sm:justify-start text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-medium">
@@ -1448,9 +1468,11 @@ export default function AdminEnquiryManagement() {
                         {filteredQueries.length} queries found
                       </span>
                     </div>
-                    
+
                     {/* Clear Filters Button - Show when filters are active */}
-                    {(searchTerm || statusFilter !== "all" || categoryFilter !== "all") && (
+                    {(searchTerm ||
+                      statusFilter !== "all" ||
+                      categoryFilter !== "all") && (
                       <Button
                         variant="outline"
                         size="sm"
@@ -1479,7 +1501,10 @@ export default function AdminEnquiryManagement() {
               <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100">
                 Queries
               </h2>
-              <Badge variant="secondary" className="text-xs sm:text-sm self-start xs:self-auto">
+              <Badge
+                variant="secondary"
+                className="text-xs sm:text-sm self-start xs:self-auto"
+              >
                 {filteredQueries.length} queries
               </Badge>
             </div>
@@ -1506,7 +1531,9 @@ export default function AdminEnquiryManagement() {
               <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 mx-auto mb-4 sm:mb-6 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center">
                 <MessageSquare className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-muted-foreground" />
               </div>
-              <h3 className="text-lg sm:text-xl font-semibold mb-2">No queries found</h3>
+              <h3 className="text-lg sm:text-xl font-semibold mb-2">
+                No queries found
+              </h3>
               <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6 max-w-md mx-auto">
                 {searchTerm ||
                 statusFilter !== "all" ||

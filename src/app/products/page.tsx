@@ -216,10 +216,10 @@ function VendorCard({ vendor, onClick }: { vendor: Vendor; onClick: () => void }
             <Eye className="w-4 h-4 mr-2" />
             View Details
           </DropdownMenuItem>
-          <DropdownMenuItem className="text-sm sm:text-base">
+          {/* <DropdownMenuItem className="text-sm sm:text-base">
             <BarChart3 className="w-4 h-4 mr-2" />
             Analytics
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
@@ -591,12 +591,12 @@ const filteredProducts = useMemo(() => {
               icon={<BarChart3 className="w-6 h-6" />}
               color="violet"
             />
-            <StatCard
+            {/* <StatCard
               title="Top Vendor"
               value={stats.topVendor}
               icon={<Star className="w-6 h-6" />}
               color="amber"
-            />
+            /> */}
           </div>
         )}
 

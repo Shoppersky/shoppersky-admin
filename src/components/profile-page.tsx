@@ -35,6 +35,7 @@ import { toast } from "sonner";
 import axiosInstance from "@/lib/axiosInstance"; // Adjust path to your axios instance
 import useStore from "@/lib/Zustand";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 interface ProfileData {
   name: string;
@@ -56,6 +57,7 @@ interface PasswordValidation {
 
 export default function ProfilePage() {
   const { userId } = useStore();
+  const router = useRouter()
 
   const [profileData, setProfileData] = useState<ProfileData>({
     name: "",
@@ -97,7 +99,7 @@ export default function ProfilePage() {
 
   const fetchProfileData = async () => {
     try {
-      const response = await axiosInstance.get(`/admin-users/${userId}/admin-profile-details`);
+      const response = await axiosInstance.get(`/admin-users/admin-profile-details/${userId}`);
       const { data } = response.data; // Assuming api_response structure
       setProfileData({
         name: data.username || "Unknown",
@@ -166,7 +168,7 @@ export default function ProfilePage() {
       const formData = new FormData();
       formData.append("file", selectedImage);
 
-      const response = await axiosInstance.post(`/admin-users/${userId}/profile-picture`, formData, {
+      const response = await axiosInstance.post(`/admin-users/profile-picture/${userId}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -225,7 +227,9 @@ export default function ProfilePage() {
         digit: false,
         special: false,
       });
-      toast.success(response.data.message || "Password changed successfully!");
+      toast.success(response.data.message || "Password changed successfully! Please login again");
+      router.push("/")
+
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Failed to change password");
       console.error("Error changing password:", error);

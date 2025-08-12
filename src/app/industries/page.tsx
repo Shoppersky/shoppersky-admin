@@ -30,6 +30,7 @@ import {
   XCircle,
   Sparkles,
   RotateCcw,
+  
 } from "lucide-react"
 import {
   AlertDialog,
@@ -298,7 +299,7 @@ export default function IndustriesPage() {
 
         // Update status if editing and status has changed
         if (editingIndustry && editingIndustry.status !== newIndustry.status) {
-          await axiosInstance.patch(`/industries/${industryData.industry_id}/status`, null, {
+          await axiosInstance.patch(`/industries/status/${industryData.industry_id}`, null, {
             params: { is_active: newIndustry.status === "Active" },
           })
         }
@@ -361,8 +362,8 @@ export default function IndustriesPage() {
   const confirmDeleteIndustry = async () => {
     if (industryToDelete) {
       try {
-        const response = await axiosInstance.patch(`/industries/${industryToDelete.id}/status`, null, {
-          params: { is_active: false },
+        const response = await axiosInstance.patch(`/industries/status/${industryToDelete.id}`, null, {
+          params: { is_active: true },
         })
         if (response.data.statusCode === 200) {
           setIndustries((prev) =>
@@ -387,8 +388,8 @@ export default function IndustriesPage() {
   const confirmRestoreIndustry = async () => {
     if (industryToRestore) {
       try {
-        const response = await axiosInstance.patch(`/industries/${industryToRestore.id}/status`, null, {
-          params: { is_active: true },
+        const response = await axiosInstance.patch(`/industries/status/${industryToRestore.id}`, null, {
+          params: { is_active: false },
         })
         if (response.data.statusCode === 200) {
           setIndustries((prev) =>
@@ -412,9 +413,9 @@ export default function IndustriesPage() {
 
   const handleExportIndustries = () => {
     const csvContent = [
-      ["ID", "Name", "Slug", "Status", "Created Date", "Last Updated"],
+      ["Name", "Slug", "Status", "Created Date", "Last Updated"],
       ...filteredIndustries.map((industry) => [
-        industry.id,
+        
         industry.name,
         industry.slug,
         industry.status,
@@ -476,22 +477,20 @@ export default function IndustriesPage() {
         )}
 
         {/* Header */}
-        <div className="text-center space-y-4 sm:space-y-6">
-          <div className="inline-flex flex-col sm:flex-row items-center gap-3 sm:gap-4 px-4 sm:px-6 lg:px-8 py-4 sm:py-4 bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-slate-200/50 dark:border-slate-700/50 shadow-lg">
-            <div className="p-2 sm:p-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl sm:rounded-2xl shadow-lg">
-              <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
-            </div>
-            <div className="text-center sm:text-left">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent px-1 sm:p-2">
-                Industry Management
-              </h1>
-              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 font-medium mt-1">Manage your business industries</p>
-            </div>
+        <div className="relative z-50 flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2 sm:gap-3 lg:gap-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-slate-800/50 dark:to-slate-700/50 p-2 sm:p-3 lg:p-6 rounded-lg sm:rounded-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20 shadow-lg">
+           <div className="flex-1 min-w-0">
+            <h1 className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
+              Industry Management
+            </h1>
+            <p className="text-xs sm:text-sm lg:text-base text-gray-600 dark:text-gray-400 mt-0.5 sm:mt-1">
+              Manage your business industries
+            </p>
           </div>
-        </div>
+          
+        
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 px-4 sm:px-0">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-end justify-end gap-3 sm:gap-4 px-4 sm:px-0">
           <Button
             variant="outline"
             onClick={handleExportIndustries}
@@ -559,25 +558,7 @@ export default function IndustriesPage() {
                     URL-friendly version of the name (auto-generated unless manually edited)
                   </p>
                 </div>
-                {/* <div className="space-y-2">
-                  <Label htmlFor="status" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    Status *
-                  </Label>
-                  <Select
-                    value={newIndustry.status}
-                    onValueChange={(value: "Active" | "Inactive") =>
-                      setNewIndustry({ ...newIndustry, status: value })
-                    }
-                  >
-                    <SelectTrigger className="h-10 sm:h-12 bg-white/80 dark:bg-slate-800/80 border-slate-300 dark:border-slate-600 rounded-xl text-sm sm:text-base">
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Active">Active</SelectItem>
-                      <SelectItem value="Inactive">Inactive</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div> */}
+                
               </div>
               <DialogFooter className="flex flex-col sm:flex-row gap-3">
                 <DialogClose asChild>
@@ -598,6 +579,7 @@ export default function IndustriesPage() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
+        </div>
         </div>
 
         {/* Statistics Cards */}
@@ -658,7 +640,7 @@ export default function IndustriesPage() {
                       className="h-8 sm:h-10 px-2 sm:px-3"
                     >
                       <Grid3X3 className="w-4 h-4" />
-                      <span className="hidden sm:ml-1 sm:inline">Cards</span>
+                    
                     </Button>
                     <Button
                       variant={viewMode === "table" ? "default" : "ghost"}
@@ -667,7 +649,7 @@ export default function IndustriesPage() {
                       className="h-8 sm:h-10 px-2 sm:px-3"
                     >
                       <List className="w-4 h-4" />
-                      <span className="hidden sm:ml-1 sm:inline">Table</span>
+                     
                     </Button>
                   </div>
                   <span className="text-slate-500 text-xs sm:text-sm">

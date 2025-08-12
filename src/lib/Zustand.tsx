@@ -8,15 +8,13 @@ interface UserData {
 }
 
 interface DecodedToken {
-  sub: string;
-  username: string;
-  role_id: string;
+  uid: string;
+  rid: string;
   exp: number;
 }
 
 interface AuthState {
   userId: string | null;
-  username: string | null;
   roleId: string | null;
   exp: number | null;
   user: UserData | null;
@@ -81,24 +79,24 @@ const useStore = create<AuthState>((set, get) => ({
     try {
       const decoded = jwt.decode(token) as DecodedToken | null;
 
-      if (decoded?.sub && decoded?.username && decoded?.role_id) {
+      if (decoded?.uid  && decoded?.rid) {
         const tabId = getTabId();
 
         const userData: UserData = user || {};
 
         const userInfo = {
-          userId: decoded.sub,
-          username: decoded.username,
-          roleId: decoded.role_id,
+          userId: decoded.uid,
+         
+          roleId: decoded.rid,
           exp: decoded.exp,
           token,
           user: userData,
         };
 
         set({
-          userId: decoded.sub,
-          username: decoded.username,
-          roleId: decoded.role_id,
+          userId: decoded.uid,
+         
+          roleId: decoded.rid,
           exp: decoded.exp,
           user: userData,
           isAuthenticated: true,
@@ -141,7 +139,7 @@ const useStore = create<AuthState>((set, get) => ({
     const tabId = getTabId();
     set({
       userId: null,
-      username: null,
+      
       roleId: null,
       exp: null,
       user: null,
@@ -181,13 +179,13 @@ const useStore = create<AuthState>((set, get) => ({
 
         if (
           decoded &&
-          decoded.sub === userId &&
-          decoded.username === username &&
-          decoded.role_id === roleId
+          decoded.uid === userId &&
+         
+          decoded.rid === roleId
         ) {
           set({
             userId,
-            username,
+            
             roleId,
             exp,
             user,
