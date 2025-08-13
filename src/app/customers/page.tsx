@@ -161,7 +161,7 @@ function UserCard({
               </div>
               <div className="min-w-0 flex-1">
                 <h3 className="font-semibold text-xs sm:text-sm truncate">{user.name}</h3>
-                <p className="text-xs text-muted-foreground truncate">ID: {user.user_id}</p>
+                {/* <p className="text-xs text-muted-foreground truncate">ID: {user.user_id}</p> */}
               </div>
             </div>
             <DropdownMenu>

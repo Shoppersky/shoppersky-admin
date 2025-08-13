@@ -605,7 +605,7 @@ const filteredProducts = useMemo(() => {
         {selectedVendor && (
           <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
             <CardContent className="p-4 sm:p-6">
-              <div className="flex flex-col gap-3 sm:gap-4">
+              <div className="flex flex-col lg:flex-row gap-3 sm:gap-4 items-center">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                   <Input
@@ -615,9 +615,9 @@ const filteredProducts = useMemo(() => {
                     className="pl-10 h-10 sm:h-11"
                   />
                 </div>
-                <div className="flex flex-col xs:flex-row gap-3">
+                <div className="flex flex-col lg:flex-row gap-3 sm:gap-4 items-center">
                   <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                    <SelectTrigger className="w-full xs:w-auto xs:min-w-[160px] h-10 sm:h-11">
+                    <SelectTrigger className="w-50 he">
                       <SelectValue placeholder="All Categories" />
                     </SelectTrigger>
                     <SelectContent>

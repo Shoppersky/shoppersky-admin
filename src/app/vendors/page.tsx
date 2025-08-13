@@ -495,7 +495,7 @@ const VendorManagement = () => {
             comment: rejectionComment.trim(),
           }
         );
-        if (response.data.message === "Vendor rejected successfully") {
+        if (response.status === 200){
           setVendors((prev) =>
             prev.map((v) =>
               v.id === vendorToReject.id
@@ -510,7 +510,7 @@ const VendorManagement = () => {
           );
           toast.success("Vendor rejected successfully!");
         } else {
-          throw new Error(response.data.message || "Failed to reject vendor");
+          console.log(response.data.message || "Failed to reject vendor");
         }
       } catch (error: any) {
         toast.error(

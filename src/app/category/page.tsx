@@ -1991,7 +1991,7 @@ export default function CategoriesPage() {
 
         {/* Enhanced Delete Confirmation Dialog */}
         <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-          <AlertDialogContent className="border-0 bg-gradient-to-br from-white/80 to-red-50/10 dark:from-slate-900/80 dark:to-red-950/10 shadow-2xl backdrop-blur-2xl max-w-md">
+          <AlertDialogContent className="border border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 shadow-2xl backdrop-blur-sm max-w-md mx-4 sm:mx-auto">
             <AlertDialogHeader className="space-y-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-2xl bg-gradient-to-r from-red-500 to-rose-500 p-3 shadow-lg">
