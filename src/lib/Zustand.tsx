@@ -1,111 +1,96 @@
 "use client";
-
+ 
 import { create } from "zustand";
 import jwt from "jsonwebtoken";
-
-interface UserData {
-  [key: string]: any;
-}
-
+ 
 interface DecodedToken {
   uid: string;
   rid: string;
   exp: number;
 }
-
+ 
 interface AuthState {
   userId: string | null;
   roleId: string | null;
   exp: number | null;
-  user: UserData | null;
   isAuthenticated: boolean;
-  login: (token: string, user: UserData | null, rememberMe?: boolean) => void;
+  login: (token: string, rememberMe?: boolean) => void;
   logout: () => void;
   checkAuth: () => void;
-  switchAccount: (token: string, user?: UserData | null) => void;
+  switchAccount: (token: string) => void;
 }
-
+ 
 const getTabId = (): string => {
   if (typeof window === "undefined") return "";
   let tabId = sessionStorage.getItem("tabId");
-
+ 
   if (!tabId) {
     tabId = `tab_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     sessionStorage.setItem("tabId", tabId);
   }
-
+ 
   return tabId;
 };
-
+ 
 const getActiveAccounts = (): Record<string, any> => {
   if (typeof window === "undefined") return {};
   const accounts = localStorage.getItem("activeAccounts");
   return accounts ? JSON.parse(accounts) : {};
 };
-
-const setActiveAccount = (tabId: string, userInfo: any) => {
+ 
+const setActiveAccount = (tabId: string, info: any) => {
   if (typeof window === "undefined") return;
   const accounts = getActiveAccounts();
-
   accounts[tabId] = {
-    ...userInfo,
+    ...info,
     lastActive: Date.now(),
   };
-
   localStorage.setItem("activeAccounts", JSON.stringify(accounts));
 };
-
+ 
 const removeActiveAccount = (tabId: string) => {
   if (typeof window === "undefined") return;
   const accounts = getActiveAccounts();
   delete accounts[tabId];
   localStorage.setItem("activeAccounts", JSON.stringify(accounts));
 };
-
+ 
 const useStore = create<AuthState>((set, get) => ({
   userId: null,
-  username: null,
   roleId: null,
   exp: null,
-  user: null,
   isAuthenticated: false,
-
-  login: (token: string, user: UserData | null, rememberMe = true) => {
+ 
+  login: (token: string, rememberMe = true) => {
     if (!token) {
       console.error("No token received");
       return;
     }
-
+ 
     try {
       const decoded = jwt.decode(token) as DecodedToken | null;
-
-      if (decoded?.uid  && decoded?.rid) {
+ 
+      if (decoded?.uid && decoded?.rid) {
         const tabId = getTabId();
-
-        const userData: UserData = user || {};
-
+ 
         const userInfo = {
           userId: decoded.uid,
-         
           roleId: decoded.rid,
           exp: decoded.exp,
           token,
-          user: userData,
         };
-
+ 
         set({
           userId: decoded.uid,
-         
           roleId: decoded.rid,
           exp: decoded.exp,
-          user: userData,
           isAuthenticated: true,
         });
-
+ 
         if (rememberMe) {
           localStorage.setItem(`auth_${tabId}`, JSON.stringify(userInfo));
         }
-
+ 
         sessionStorage.setItem("currentAuth", JSON.stringify(userInfo));
         setActiveAccount(tabId, userInfo);
       } else {
@@ -115,83 +100,55 @@ const useStore = create<AuthState>((set, get) => ({
       console.error("Token decoding error:", error);
     }
   },
-
-  switchAccount: (token: string, user?: UserData | null) => {
+ 
+  switchAccount: (token: string) => {
     const tabId = getTabId();
     sessionStorage.removeItem("currentAuth");
     removeActiveAccount(tabId);
-
-    let userData: UserData = user || {};
-    if (!user) {
-      const accounts = getActiveAccounts();
-      const account = Object.values(accounts).find(
-        (acc: any) => acc.token === token
-      );
-      if (account && account.user) {
-        userData = account.user;
-      }
-    }
-
-    get().login(token, userData, true);
+    get().login(token, true);
   },
-
+ 
   logout: () => {
     const tabId = getTabId();
     set({
       userId: null,
-      
       roleId: null,
       exp: null,
-      user: null,
       isAuthenticated: false,
     });
-
+ 
     localStorage.removeItem(`auth_${tabId}`);
     sessionStorage.removeItem("currentAuth");
     removeActiveAccount(tabId);
   },
-
+ 
   checkAuth: () => {
     if (typeof window === "undefined") return;
-
+ 
     const tabId = getTabId();
-    let authData = sessionStorage.getItem("currentAuth");
-
-    if (!authData) {
-      authData = localStorage.getItem(`auth_${tabId}`);
-      if (authData) {
-        sessionStorage.setItem("currentAuth", authData);
-      }
-    }
-
+    let authData = sessionStorage.getItem("currentAuth") || localStorage.getItem(`auth_${tabId}`);
+ 
     if (authData) {
       try {
         const parsed = JSON.parse(authData);
-        const { token, userId, username, roleId, exp, user } = parsed;
-
+        const { token, userId, roleId, exp } = parsed;
+ 
         if (exp && exp * 1000 < Date.now()) {
           console.log("Token expired, logging out");
           get().logout();
           return;
         }
-
+ 
         const decoded = jwt.decode(token) as DecodedToken | null;
-
-        if (
-          decoded &&
-          decoded.uid === userId &&
-         
-          decoded.rid === roleId
-        ) {
+ 
+        if (decoded && decoded.uid === userId && decoded.rid === roleId) {
           set({
             userId,
-            
             roleId,
             exp,
-            user,
             isAuthenticated: true,
           });
-
+ 
           setActiveAccount(tabId, parsed);
         } else {
           console.error("Token validation failed");
@@ -204,56 +161,55 @@ const useStore = create<AuthState>((set, get) => ({
     }
   },
 }));
-
+ 
 if (typeof window !== "undefined") {
   const cleanupInactiveTabs = () => {
     const accounts = getActiveAccounts();
     const cutoffTime = Date.now() - 24 * 60 * 60 * 1000;
-
+ 
     Object.keys(accounts).forEach((tabId) => {
       if (accounts[tabId].lastActive < cutoffTime) {
         localStorage.removeItem(`auth_${tabId}`);
         delete accounts[tabId];
       }
     });
-
+ 
     localStorage.setItem("activeAccounts", JSON.stringify(accounts));
   };
-
+ 
   cleanupInactiveTabs();
-
+ 
   window.addEventListener("beforeunload", () => {
     const tabId = getTabId();
     removeActiveAccount(tabId);
   });
 }
-
+ 
 useStore.getState().checkAuth();
-
+ 
 export default useStore;
-
+ 
 export const getActiveAccountsList = () => {
   const accounts = getActiveAccounts();
-
+ 
   return Object.entries(accounts).map(([tabId, info]: [string, any]) => ({
     tabId,
     userId: info.userId,
-    username: info.username,
     roleId: info.roleId,
     lastActive: info.lastActive,
   }));
 };
-
+ 
 export const switchToAccount = (targetUserId: string) => {
   const accounts = getActiveAccounts();
-
+ 
   const targetAccount = Object.values(accounts).find(
     (acc: any) => acc.userId === targetUserId
   );
-
+ 
   if (targetAccount) {
-    useStore
-      .getState()
-      .switchAccount((targetAccount as any).token, (targetAccount as any).user);
+    useStore.getState().switchAccount((targetAccount as any).token);
   }
 };
+ 
+ 

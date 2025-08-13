@@ -994,7 +994,17 @@ const VendorManagement = () => {
             open={!!selectedVendor}
             onOpenChange={() => setSelectedVendor(null)}
           >
-            <DialogContent className="max-w-[95vw] sm:max-w-3xl lg:max-w-5xl max-h-[95vh] overflow-hidden p-0 bg-white/95 dark:bg-slate-900/95 border border-slate-200/50 dark:border-slate-700/50 shadow-2xl backdrop-blur-sm m-1 sm:m-2 lg:m-4 overflow-y-auto">
+           <DialogContent
+  className="
+    w-[90vw] sm:w-[80vw] md:w-[70vw] lg:w-[60vw] xl:w-[50vw] 
+    max-h-[95vh] overflow-hidden p-0 
+    bg-white/95 dark:bg-slate-900/95 
+    border border-slate-200/50 dark:border-slate-700/50 
+    shadow-2xl backdrop-blur-sm 
+    m-1 sm:m-2 lg:m-4 
+    overflow-y-auto
+  "
+>
               <div className="flex flex-col h-full">
                 <div className="bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-purple-500/10 border-b border-slate-200 dark:border-slate-700 p-3 sm:p-4 lg:p-6">
                   <DialogHeader>
@@ -1077,7 +1087,7 @@ const VendorManagement = () => {
                         activeTab === "overview" ? "block" : "hidden"
                       }`}
                     >
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
+                      <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
                         <Card className="bg-white/90 dark:bg-slate-800/90 border border-slate-200/50 dark:border-slate-700/50 shadow-sm">
                           <CardHeader className="pb-3">
                             <CardTitle className="text-lg font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
@@ -1094,14 +1104,7 @@ const VendorManagement = () => {
                                 {selectedVendor.email}
                               </p>
                             </div>
-                            <div>
-                              <label className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">
-                                Vendor ID
-                              </label>
-                              <p className="text-sm font-mono text-slate-900 dark:text-slate-100 mt-1">
-                                {selectedVendor.vendorId}
-                              </p>
-                            </div>
+                            
                             <div>
                               <label className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">
                                 Location
