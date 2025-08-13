@@ -42,7 +42,7 @@ export function LayoutContent({ children }: LayoutContentProps) {
       }, 150) // 150ms debounce
     }
     
-    // Initial check
+ 
     debouncedCheckScreenSize()
     
     window.addEventListener('resize', debouncedCheckScreenSize)
@@ -52,14 +52,10 @@ export function LayoutContent({ children }: LayoutContentProps) {
     }
   }, [])
 
-  // Close sidebar overlay when route changes on mobile/tablet
-  useEffect(() => {
-    if ((isMobile || isTablet) && sidebarOpen) {
-      setSidebarOpen(false)
-    }
-  }, [pathname, isMobile, isTablet, sidebarOpen])
 
-  // Don't render until we know the screen size
+
+
+
   if (!isClient) {
     return <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950" />
   }
@@ -80,16 +76,13 @@ export function LayoutContent({ children }: LayoutContentProps) {
 
   // Handle menu click based on screen size
   const handleMenuClick = () => {
-
-    console.log(sidebarOpen)
-    if (shouldUseOverlay) {
-      // Mobile/Tablet: Toggle overlay
-      setSidebarOpen(!sidebarOpen)
-    } else {
-      // Desktop: Toggle collapse/expand
-      setSidebarCollapsed(!sidebarCollapsed)
-    }
+  if (isMobile || isTablet) {
+    setSidebarOpen(prev => !prev)
+  } else {
+    setSidebarCollapsed(prev => !prev)
   }
+}
+
 
   // Close overlay
   const closeSidebar = () => {
@@ -123,20 +116,19 @@ export function LayoutContent({ children }: LayoutContentProps) {
       {shouldUseOverlay && (
         <>
           {/* Sidebar Overlay */}
-          <div className={`
-            fixed inset-y-0 left-0 z-50 w-64
-            ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-            transition-transform duration-300 ease-in-out
-          `}>
-            <Sidebar 
-              isOpen={sidebarOpen}
-              onClose={closeSidebar}
-              isMobile={shouldUseOverlay}
-              isCollapsed={false}
-              onMenuClick={handleMenuClick}
-              isOverlay={true}
-            />
-          </div>
+         <div className={`fixed inset-y-0 left-0 z-50 w-64 transform ${
+  sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+} transition-transform duration-300 ease-in-out`}>
+  <Sidebar 
+    isOpen={sidebarOpen}
+    onClose={closeSidebar}
+    isMobile={shouldUseOverlay}
+    isCollapsed={false}
+    onMenuClick={handleMenuClick}
+    isOverlay={true}
+  />
+</div>
+
 
           {/* Backdrop Overlay */}
           {sidebarOpen && (

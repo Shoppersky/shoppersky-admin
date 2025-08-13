@@ -695,7 +695,7 @@ const handleEditIndustry = (industry: Industry) => {
         </div>
 
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           <StatCard
             title="Total Industries"
             value={stats.total.toString()}
@@ -719,9 +719,9 @@ const handleEditIndustry = (industry: Industry) => {
         {/* Filters and Search */}
         <Card className="backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border-0 shadow-xl rounded-2xl">
           <CardContent className="p-4 sm:p-6">
-            <div className="flex flex-col gap-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+            <div className="justify-between items-start grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6">
+              <div className="relative w-full max-w-screen-md mx-auto">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4 " />
                 <Input
                   placeholder="Search industries by name or slug..."
                   value={searchTerm}
@@ -729,11 +729,11 @@ const handleEditIndustry = (industry: Industry) => {
                   className="pl-10 h-10 sm:h-12 bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                 />
               </div>
-              <div className="flex flex-col gap-3 sm:gap-4">
-                <div className="flex flex-col xs:flex-row gap-3 w-full">
+              <div className="grid grid-cols-2 gap-2 sm:gap-6">
+                <div className="grid grid-cols-1 xs:flex-row gap-3 w-full">
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-full xs:w-40 h-10 sm:h-12 bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 rounded-xl text-sm sm:text-base">
-                      <Filter className="w-4 h-4 mr-2" />
+                    <SelectTrigger className="relative w-full max-w-screen-md mx-auto xs:w-40 h-20 bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 rounded-xl text-sm sm:text-base">
+                      <Filter className="w-4 h-6 mr-2" />
                       <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
@@ -743,7 +743,7 @@ const handleEditIndustry = (industry: Industry) => {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="flex items-center justify-between w-full gap-3">
+                <div className=" justify-end flex items-center relative w-full max-w-screen-md mx-auto justify-between w-full gap-3">
                   <div className="flex items-center gap-1 sm:gap-2 bg-slate-100/80 dark:bg-slate-800/80 rounded-xl p-1">
                     <Button
                       variant={viewMode === "cards" ? "default" : "ghost"}

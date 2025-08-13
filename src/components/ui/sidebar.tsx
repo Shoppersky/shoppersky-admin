@@ -184,8 +184,7 @@ export default function Sidebar({ isOpen = false, onClose, isMobile = false, isC
               );
             })}
           </div>
-
-          
+                    
         </nav>
       </aside>
     </>
