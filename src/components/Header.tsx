@@ -1,12 +1,18 @@
 "use client";
 
 import { useState, useEffect, memo } from "react";
-import { Bell, Search, User, Settings, AlertTriangle, XCircle, CheckCircle, Sidebar, ChevronLeft, ChevronRight } from "lucide-react";
+import { Bell, Search, AlertTriangle, XCircle, CheckCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from 'sonner';
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import useStore from "@/lib/Zustand";
 import axiosInstance from "@/lib/axiosInstance";
+
+
+
+
+
+
 interface HeaderProps {
   onMenuClick?: () => void;
   isMobile?: boolean;
@@ -30,7 +36,7 @@ const Header = memo(function Header({ onMenuClick, isMobile, sidebarCollapsed, i
   const [profileError, setProfileError] = useState<string | null>(null);
   const router = useRouter();
   const pathname = usePathname();
-  const { userId } = useStore();
+  const { userId, logout } = useStore();
   
   // Debug logging - only log when props actually change
   useEffect(() => {
@@ -91,10 +97,31 @@ const Header = memo(function Header({ onMenuClick, isMobile, sidebarCollapsed, i
 
 
 
-  const handleLogout = () => {
-    // Add any logout logic here, then redirect
-    router.push('/'); // Change to your desired route
-  };
+  const handleLogout = async () => {
+  try {
+    // Assume logoutUser is an API call that logs out on the server
+    // await logoutUser();
+
+    // If success, clear local state/store and redirect
+    const { logout } = useStore.getState();
+    logout();
+    localStorage.removeItem('id');
+
+    router.push('/');  // Redirect after successful logout
+  } catch (err) {
+    // Fallback: clear localStorage, Zustand store, and redirect
+    try {
+      const { logout } = useStore.getState();
+      logout();
+      localStorage.removeItem('id');
+    } catch {
+      // swallow any errors here silently
+    }
+    toast.error('Logout failed with server, fallback logout applied.');
+    window.location.href = '/';
+  }
+};
+
 
   useEffect(() => {
     fetchProfileData();

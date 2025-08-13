@@ -1,7 +1,6 @@
 "use client";
 
 import type React from "react";
-
 import { useState, useMemo, useEffect } from "react";
 import axiosInstance from "@/lib/axiosInstance";
 import { Button } from "@/components/ui/button";
@@ -73,6 +72,15 @@ interface ApiQuery {
   unread_count: number;
 }
 
+interface Pagination {
+  current_page: number;
+  total_pages: number;
+  total_items: number;
+  items_per_page: number;
+  has_next: boolean;
+  has_prev: boolean;
+}
+
 interface ApiResponse {
   statusCode: number;
   message: string;
@@ -80,11 +88,12 @@ interface ApiResponse {
   method: string;
   path: string;
   data: {
+    pagination: Pagination;
     queries: ApiQuery[];
   };
 }
 
-// Component interfaces (transformed from API data)
+// Component interfaces
 interface Query {
   id: string;
   title: string;
@@ -178,14 +187,10 @@ function SkeletonFilters() {
     <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm animate-pulse">
       <CardContent className="p-3 sm:p-4 lg:p-6">
         <div className="space-y-3 sm:space-y-4">
-          {/* Search Bar Skeleton */}
           <div className="relative w-full">
             <div className="h-9 sm:h-10 lg:h-11 bg-slate-200 dark:bg-slate-700 rounded-md"></div>
           </div>
-
-          {/* Filter Controls Skeleton */}
           <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-            {/* Filter Selects Skeleton */}
             <div className="flex flex-col space-y-2 sm:space-y-0 sm:flex-row sm:gap-3 flex-1">
               <div className="w-full sm:w-auto sm:min-w-[140px] lg:min-w-[160px]">
                 <div className="h-9 sm:h-10 lg:h-11 bg-slate-200 dark:bg-slate-700 rounded-md"></div>
@@ -194,8 +199,6 @@ function SkeletonFilters() {
                 <div className="h-9 sm:h-10 lg:h-11 bg-slate-200 dark:bg-slate-700 rounded-md"></div>
               </div>
             </div>
-
-            {/* Results Count Skeleton */}
             <div className="flex flex-col space-y-2 sm:space-y-0 sm:flex-row sm:items-center sm:gap-3">
               <div className="h-6 sm:h-7 w-24 sm:w-28 bg-slate-200 dark:bg-slate-700 rounded-md"></div>
             </div>
@@ -206,7 +209,6 @@ function SkeletonFilters() {
   );
 }
 
-// Enhanced StatCard Component
 function StatCard({
   title,
   value,
@@ -265,9 +267,7 @@ function StatCard({
                   }`}
                 >
                   <TrendingUp
-                    className={`w-3 h-3 mr-1 ${
-                      trend === "down" ? "rotate-180" : ""
-                    }`}
+                    className={`w-3 h-3 mr-1 ${trend === "down" ? "rotate-180" : ""}`}
                   />
                   <span className="hidden xs:inline">{trendValue}</span>
                 </div>
@@ -285,7 +285,6 @@ function StatCard({
   );
 }
 
-// Enhanced Query Card Component
 function QueryCard({ query, onClick }: { query: Query; onClick: () => void }) {
   const getStatusConfig = (status: string) => {
     switch (status) {
@@ -400,7 +399,6 @@ function QueryCard({ query, onClick }: { query: Query; onClick: () => void }) {
               </p>
             </div>
           </div>
-
           <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2">
             <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
               <Badge variant="outline" className="text-xs">
@@ -418,14 +416,12 @@ function QueryCard({ query, onClick }: { query: Query; onClick: () => void }) {
               {new Date(query.createdAt).toLocaleDateString()}
             </div>
           </div>
-
           {query.assignedTo && (
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <UserCheck className="w-3 h-3 flex-shrink-0" />
               <span className="truncate">Assigned to {query.assignedTo}</span>
             </div>
           )}
-
           {query.followUps.length > 0 && (
             <div className="flex items-center gap-2 text-xs text-blue-600">
               <MessageCircle className="w-3 h-3 flex-shrink-0" />
@@ -460,120 +456,117 @@ export default function AdminEnquiryManagement() {
     message: string;
     type: "success" | "error" | "info";
   } | null>(null);
-  // Get userId from Zustand store
   const { userId, isAuthenticated } = useStore();
 
-  // Notification function
   const showNotification = (
     message: string,
     type: "success" | "error" | "info"
   ) => {
     setNotification({ message, type });
-    setTimeout(() => setNotification(null), 5000); // Auto-hide after 5 seconds
+    setTimeout(() => setNotification(null), 5000);
   };
 
-  // API Functions
-  const transformApiQueryToQuery = (apiQuery: ApiQuery): Query => {
-    // Get the initial query message for description
-    const initialQuery = apiQuery.thread.find((msg) => msg.type === "query");
-    const description = initialQuery?.message || "";
+const transformApiQueryToQuery = (apiQuery: ApiQuery): Query => {
+  const initialQuery = apiQuery.thread.find((msg) => msg.type === "query");
+  const description = initialQuery?.message || "";
 
-    // Get vendor info from the first message
-    const vendorInfo = apiQuery.thread[0];
+  const vendorInfo = apiQuery.thread[0];
 
-    // Map API status to component status
-    const statusMap: Record<
-      string,
-      "pending" | "in-progress" | "resolved" | "closed"
-    > = {
-      open: "pending",
-      in_progress: "in-progress",
-      resolved: "resolved",
-      closed: "closed",
-    };
+  const statusMap: Record<
+    string,
+    "pending" | "in-progress" | "resolved" | "closed"
+  > = {
+    open: "pending",
+    in_progress: "in-progress",
+    resolved: "resolved",
+    closed: "closed",
+  };
 
-    // Assign priority based on category or other logic (since API doesn't provide priority)
-    const getPriority = (
-      category: string
-    ): "low" | "medium" | "high" | "urgent" => {
-      const lowerCategory = category.toLowerCase();
-      if (
-        lowerCategory.includes("urgent") ||
-        lowerCategory.includes("critical")
-      )
-        return "urgent";
-      if (
-        lowerCategory.includes("payment") ||
-        lowerCategory.includes("billing")
-      )
-        return "high";
-      if (
-        lowerCategory.includes("technical") ||
-        lowerCategory.includes("application")
-      )
-        return "medium";
-      return "low";
-    };
+  const getPriority = (
+    category: string
+  ): "low" | "medium" | "high" | "urgent" => {
+    const lowerCategory = category.toLowerCase();
+    if (
+      lowerCategory.includes("urgent") ||
+      lowerCategory.includes("critical")
+    )
+      return "urgent";
+    if (
+      lowerCategory.includes("payment") ||
+      lowerCategory.includes("billing")
+    )
+      return "high";
+    if (
+      lowerCategory.includes("technical") ||
+      lowerCategory.includes("application")
+    )
+      return "medium";
+    return "low";
+  };
 
-    // Transform thread messages to follow-ups (excluding the initial query)
-    const followUps: FollowUp[] = apiQuery.thread
-      .filter((msg) => msg.type !== "query")
+  // Deduplicate thread messages based on message content, prioritizing the first occurrence
+  const uniqueThread = Array.from(
+    new Map(
+      apiQuery.thread.map((msg) => [
+        `${msg.message}-${msg.sender_type}-${msg.type}`,
+        msg,
+      ])
+    ).values()
+  );
+
+  const adminMessage = uniqueThread.find((msg) => msg.sender_type === "admin");
+
+  return {
+    id: apiQuery.id.toString(),
+    title: apiQuery.title,
+    category: apiQuery.category,
+    status: statusMap[apiQuery.query_status] || "pending",
+    priority: getPriority(apiQuery.category),
+    description,
+    vendorEmail: "",
+    vendorName: vendorInfo?.username || "Unknown Vendor",
+    createdAt: apiQuery.created_at,
+    updatedAt: apiQuery.updated_at,
+    adminResponse: adminMessage?.message,
+    adminName: adminMessage?.username,
+    assignedTo: apiQuery.receiver_user_id ? "Admin" : undefined,
+    followUps: uniqueThread
+      .filter((msg) => msg.type === "followup")
       .map((msg, index) => ({
         id: `${apiQuery.id}-${index}`,
         message: msg.message,
         sender: msg.sender_type,
         senderName: msg.username,
         createdAt: msg.timestamp,
-      }));
-
-    // Get admin response (first admin message)
-    const adminMessage = apiQuery.thread.find(
-      (msg) => msg.sender_type === "admin"
-    );
-
-    return {
-      id: apiQuery.id.toString(),
-      title: apiQuery.title,
-      category: apiQuery.category,
-      status: statusMap[apiQuery.query_status] || "pending",
-      priority: getPriority(apiQuery.category),
-      description,
-      vendorEmail: "", // API doesn't provide email, you might need to fetch this separately
-      vendorName: vendorInfo?.username || "Unknown Vendor",
-      createdAt: apiQuery.created_at,
-      updatedAt: apiQuery.updated_at,
-      adminResponse: adminMessage?.message,
-      adminName: adminMessage?.username,
-      assignedTo: apiQuery.receiver_user_id ? "Admin" : undefined, // You might need to map user IDs to names
-      followUps,
-      thread: apiQuery.thread,
-      lastMessage: apiQuery.last_message,
-      unreadCount: apiQuery.unread_count,
-    };
+      })),
+    thread: uniqueThread,
+    lastMessage: apiQuery.last_message,
+    unreadCount: apiQuery.unread_count,
   };
+};
 
   const fetchQueries = async (page: number = 1) => {
     try {
       setLoading(true);
       setError(null);
+      setQueries([]); // Clear existing queries
 
       const response = await axiosInstance.get<ApiResponse>(
         `/vendor/vendor_admin_queries/all?page=${page}&limit=${limit}`
       );
 
-      if (response.data.statusCode === 200) {
-        const transformedQueries = response.data.data.queries.map(
-          transformApiQueryToQuery
-        );
-        setQueries(transformedQueries);
+      console.log("API Response:", response.data);
 
-        // Calculate total pages (you might need to get this from API response if available)
-        // For now, assuming if we get less than limit, it's the last page
-        if (response.data.data.queries.length < limit) {
-          setTotalPages(page);
-        } else {
-          setTotalPages(page + 1); // This is a rough estimate
-        }
+      if (response.data.statusCode === 200) {
+        // Deduplicate queries based on id
+        const uniqueApiQueries = Array.from(
+          new Map(
+            response.data.data.queries.map((query) => [query.id, query])
+          ).values()
+        );
+        const transformedQueries = uniqueApiQueries.map(transformApiQueryToQuery);
+        setQueries(transformedQueries);
+        setTotalPages(response.data.data.pagination.total_pages || 1);
       } else {
         setError("Failed to fetch queries");
       }
@@ -592,7 +585,6 @@ export default function AdminEnquiryManagement() {
   ) => {
     try {
       setIsSubmitting(true);
-
       const response = await axiosInstance.post(
         `/vendor/vendor_admin_queries/messages/${queryId}`,
         {
@@ -601,22 +593,12 @@ export default function AdminEnquiryManagement() {
           message_type: messageType,
         }
       );
-
-      if (
-        response.data.statusCode === 200 ||
-        response.data.statusCode === 201
-      ) {
-        // Refresh the queries to get updated data
+      if (response.data.statusCode === 200 || response.data.statusCode === 201) {
         await fetchQueries(currentPage);
-
-        // Update selected query if it's the one we responded to
         if (selectedQuery?.id === queryId) {
           const updatedQuery = queries.find((q) => q.id === queryId);
-          if (updatedQuery) {
-            setSelectedQuery(updatedQuery);
-          }
+          if (updatedQuery) setSelectedQuery(updatedQuery);
         }
-
         setResponseMessage("");
         showNotification("Response sent successfully!", "success");
         return true;
@@ -637,7 +619,6 @@ export default function AdminEnquiryManagement() {
     }
   };
 
-  // Load queries on component mount and when page changes
   useEffect(() => {
     fetchQueries(currentPage);
   }, [currentPage]);
@@ -653,7 +634,7 @@ export default function AdminEnquiryManagement() {
   const admins = ["Sarah Admin", "Mike Admin", "Alex Rodriguez", "Emma Wilson"];
 
   const filteredQueries = useMemo(() => {
-    return queries.filter((query) => {
+    const result = queries.filter((query) => {
       const matchesSearch =
         query.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         query.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -665,10 +646,10 @@ export default function AdminEnquiryManagement() {
         priorityFilter === "all" || query.priority === priorityFilter;
       const matchesCategory =
         categoryFilter === "all" || query.category === categoryFilter;
-      return (
-        matchesSearch && matchesStatus && matchesPriority && matchesCategory
-      );
+      return matchesSearch && matchesStatus && matchesPriority && matchesCategory;
     });
+    // Ensure no duplicates by id
+    return Array.from(new Map(result.map((query) => [query.id, query])).values());
   }, [queries, searchTerm, statusFilter, priorityFilter, categoryFilter]);
 
   const stats = useMemo(() => {
@@ -677,12 +658,9 @@ export default function AdminEnquiryManagement() {
     const inProgressQueries = queries.filter(
       (q) => q.status === "in-progress"
     ).length;
-    const resolvedQueries = queries.filter(
-      (q) => q.status === "closed"
-    ).length;
+    const resolvedQueries = queries.filter((q) => q.status === "closed").length;
     const urgentQueries = queries.filter((q) => q.priority === "urgent").length;
-    const avgResponseTime = "2.5 hrs"; // Mock data
-
+    const avgResponseTime = "2.5 hrs";
     return {
       total: totalQueries,
       pending: pendingQueries,
@@ -697,11 +675,7 @@ export default function AdminEnquiryManagement() {
     setQueries(
       queries.map((query) =>
         query.id === queryId
-          ? {
-              ...query,
-              status: newStatus as any,
-              updatedAt: new Date().toISOString(),
-            }
+          ? { ...query, status: newStatus as any, updatedAt: new Date().toISOString() }
           : query
       )
     );
@@ -718,11 +692,7 @@ export default function AdminEnquiryManagement() {
     setQueries(
       queries.map((query) =>
         query.id === queryId
-          ? {
-              ...query,
-              assignedTo: adminName,
-              updatedAt: new Date().toISOString(),
-            }
+          ? { ...query, assignedTo: adminName, updatedAt: new Date().toISOString() }
           : query
       )
     );
@@ -737,534 +707,333 @@ export default function AdminEnquiryManagement() {
 
   const handleSubmitResponse = async () => {
     if (!responseMessage.trim() || !selectedQuery) return;
-
-    const success = await sendResponse(
-      selectedQuery.id,
-      responseMessage,
-      "response"
-    );
-    if (success) {
-      // Response sent successfully, queries are already refreshed in sendResponse
-      console.log("Response sent successfully");
-    } else {
-      console.error("Failed to send response");
-    }
+    const success = await sendResponse(selectedQuery.id, responseMessage, "response");
+    if (success) console.log("Response sent successfully");
+    else console.error("Failed to send response");
   };
 
   const handleSubmitFollowUpResponse = async (followUpMessage: string) => {
     if (!followUpMessage.trim() || !selectedQuery) return;
-
-    const success = await sendResponse(
-      selectedQuery.id,
-      followUpMessage,
-      "followup"
-    );
-    if (success) {
-      console.log("Follow-up response sent successfully");
-    } else {
-      console.error("Failed to send follow-up response");
-    }
+    const success = await sendResponse(selectedQuery.id, followUpMessage, "followup");
+    if (success) console.log("Follow-up response sent successfully");
+    else console.error("Failed to send follow-up response");
   };
 
   if (currentView === "details" && selectedQuery) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 lg:py-6 space-y-4 sm:space-y-6 max-w-5xl">
-          {/* Notification */}
-          {notification && (
-            <Card
-              className={`border-l-4 ${
-                notification.type === "success"
-                  ? "border-l-green-500 bg-green-50 dark:bg-green-900/20"
-                  : notification.type === "error"
-                  ? "border-l-red-500 bg-red-50 dark:bg-red-900/20"
-                  : "border-l-blue-500 bg-blue-50 dark:bg-blue-900/20"
-              }`}
-            >
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <p
-                    className={`font-medium ${
-                      notification.type === "success"
-                        ? "text-green-800 dark:text-green-200"
-                        : notification.type === "error"
-                        ? "text-red-800 dark:text-red-200"
-                        : "text-blue-800 dark:text-blue-200"
+    <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 lg:py-6 space-y-4 sm:space-y-6 max-w-5xl">
+      {notification && (
+        <Card
+          className={`border-l-4 ${
+            notification.type === "success"
+              ? "border-l-green-500 bg-green-50 dark:bg-green-900/20"
+              : notification.type === "error"
+              ? "border-l-red-500 bg-red-50 dark:bg-red-900/20"
+              : "border-l-blue-500 bg-blue-50 dark:bg-blue-900/20"
+          }`}
+        >
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <p
+                className={`font-medium ${
+                  notification.type === "success"
+                    ? "text-green-800 dark:text-green-200"
+                    : notification.type === "error"
+                    ? "text-red-800 dark:text-red-200"
+                    : "text-blue-800 dark:text-blue-200"
+                }`}
+              >
+                {notification.message}
+              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setNotification(null)}
+                className="h-6 w-6 p-0"
+              >
+                <XCircle className="h-4 w-4" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => setCurrentView("list")}
+          className="shrink-0 bg-transparent h-8 w-8 sm:h-9 sm:w-9"
+        >
+          <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4" />
+        </Button>
+        <div className="flex-1 min-w-0">
+          <h1 className="text-xl sm:text-2xl p-2 lg:text-3xl font-bold bg-gradient-to-r from-slate-900 via-violet-700 to-blue-700 bg-clip-text text-transparent">
+            Query Details
+          </h1>
+          <p className="text-sm sm:text-base text-muted-foreground mt-1">
+            Manage query communication and resolution
+          </p>
+        </div>
+      </div>
+      <div className="space-y-6">
+        <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
+          <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-violet-50 dark:from-slate-800 dark:to-violet-900/20 p-4 sm:p-6">
+            <div className="flex flex-col gap-3 sm:gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                <div className="space-y-2 sm:space-y-3 flex-1 min-w-0">
+                  <div className="flex flex-col xs:flex-row xs:items-center gap-2 xs:gap-3">
+                    <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-900 dark:text-slate-100 truncate">
+                      {selectedQuery.title}
+                    </h2>
+                    <Badge className="bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400 text-xs sm:text-sm self-start xs:self-auto">
+                      {selectedQuery.id}
+                    </Badge>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 self-start sm:self-auto">
+                  <Badge
+                    variant="outline"
+                    className={`text-xs sm:text-sm ${
+                      selectedQuery.status === "pending"
+                        ? "border-amber-200 bg-amber-50 text-amber-700"
+                        : selectedQuery.status === "in-progress"
+                        ? "border-blue-200 bg-blue-50 text-blue-700"
+                        : selectedQuery.status === "resolved"
+                        ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                        : "border-slate-200 bg-slate-50 text-slate-700"
                     }`}
                   >
-                    {notification.message}
-                  </p>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setNotification(null)}
-                    className="h-6 w-6 p-0"
-                  >
-                    <XCircle className="h-4 w-4" />
-                  </Button>
+                    {selectedQuery.status}
+                  </Badge>
                 </div>
-              </CardContent>
-            </Card>
-          )}
-          {/* Header */}
-          <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => setCurrentView("list")}
-              className="shrink-0 bg-transparent h-8 w-8 sm:h-9 sm:w-9"
-            >
-              <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4" />
-            </Button>
-            <div className="flex-1 min-w-0">
-              <h1 className="text-xl sm:text-2xl p-2 lg:text-3xl font-bold bg-gradient-to-r from-slate-900 via-violet-700 to-blue-700 bg-clip-text text-transparent">
-                Query Details
-              </h1>
-              <p className="text-sm sm:text-base text-muted-foreground mt-1">
-                Manage query communication and resolution
-              </p>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <User className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                  <span className="truncate">{selectedQuery.vendorName}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Mail className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                  <span className="truncate">{selectedQuery.vendorEmail}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                  <span>
+                    {new Date(selectedQuery.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
             </div>
-          </div>
-
-          <div className="space-y-6">
-            {/* Query Information */}
-            <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
-              <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-violet-50 dark:from-slate-800 dark:to-violet-900/20 p-4 sm:p-6">
-                <div className="flex flex-col gap-3 sm:gap-4">
-                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                    <div className="space-y-2 sm:space-y-3 flex-1 min-w-0">
-                      <div className="flex flex-col xs:flex-row xs:items-center gap-2 xs:gap-3">
-                        <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-900 dark:text-slate-100 truncate">
-                          {selectedQuery.title}
-                        </h2>
-                        <Badge className="bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400 text-xs sm:text-sm self-start xs:self-auto">
-                          {selectedQuery.id}
-                        </Badge>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 self-start sm:self-auto">
-                      <Badge
-                        variant="outline"
-                        className={`text-xs sm:text-sm ${
-                          selectedQuery.status === "pending"
-                            ? "border-amber-200 bg-amber-50 text-amber-700"
-                            : selectedQuery.status === "in-progress"
-                            ? "border-blue-200 bg-blue-50 text-blue-700"
-                            : selectedQuery.status === "resolved"
-                            ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                            : "border-slate-200 bg-slate-50 text-slate-700"
-                        }`}
-                      >
-                        {selectedQuery.status}
-                      </Badge>
-                    </div>
-                  </div>
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                      <User className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                      <span className="truncate">
-                        {selectedQuery.vendorName}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Mail className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                      <span className="truncate">
-                        {selectedQuery.vendorEmail}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                      <span>
-                        {new Date(selectedQuery.createdAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                  </div>
+          </CardHeader>
+          <CardContent className="p-4 sm:p-6">
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-2 text-sm sm:text-base">
+                  Description
+                </h4>
+                <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
+                  {selectedQuery.description}
+                </p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 pt-4 border-t">
+                <div>
+                  <span className="text-xs sm:text-sm font-medium text-muted-foreground">
+                    Category
+                  </span>
+                  <p className="text-slate-900 dark:text-slate-100 text-sm sm:text-base">
+                    {selectedQuery.category}
+                  </p>
                 </div>
-              </CardHeader>
-              <CardContent className="p-4 sm:p-6">
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-2 text-sm sm:text-base">
-                      Description
-                    </h4>
-                    <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
+                <div>
+                  <span className="text-xs sm:text-sm font-medium text-muted-foreground">
+                    Priority
+                  </span>
+                  <p className="text-slate-900 dark:text-slate-100 capitalize text-sm sm:text-base">
+                    {selectedQuery.priority}
+                  </p>
+                </div>
+                <div>
+                  <span className="text-xs sm:text-sm font-medium text-muted-foreground">
+                    Assigned To
+                  </span>
+                  <p className="text-slate-900 dark:text-slate-100 text-sm sm:text-base">
+                    {selectedQuery.assignedTo || "Unassigned"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
+          <CardHeader className="p-4 sm:p-6">
+            <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+              <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-violet-600" />
+              Conversation Thread
+            </h3>
+          </CardHeader>
+          <CardContent className="p-4 sm:p-6">
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex gap-3 sm:gap-4">
+                <Avatar className="h-8 w-8 sm:h-10 sm:w-10 shrink-0">
+                  <AvatarFallback className="bg-gradient-to-br from-blue-400 to-violet-400 text-white text-xs sm:text-sm">
+                    {selectedQuery.vendorName
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")
+                      .toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 space-y-2 min-w-0">
+                  <div className="flex flex-col xs:flex-row xs:items-center gap-1 xs:gap-2">
+                    <span className="font-semibold text-slate-900 dark:text-slate-100 text-sm sm:text-base truncate">
+                      {selectedQuery.vendorName}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(selectedQuery.createdAt).toLocaleString()}
+                    </span>
+                    <Badge
+                      variant="outline"
+                      className="text-xs self-start xs:self-auto"
+                    >
+                      Original Query
+                    </Badge>
+                  </div>
+                  <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-3 sm:p-4">
+                    <p className="text-slate-700 dark:text-slate-300 text-sm sm:text-base">
                       {selectedQuery.description}
                     </p>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 pt-4 border-t">
-                    <div>
-                      <span className="text-xs sm:text-sm font-medium text-muted-foreground">
-                        Category
-                      </span>
-                      <p className="text-slate-900 dark:text-slate-100 text-sm sm:text-base">
-                        {selectedQuery.category}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-xs sm:text-sm font-medium text-muted-foreground">
-                        Priority
-                      </span>
-                      <p className="text-slate-900 dark:text-slate-100 capitalize text-sm sm:text-base">
-                        {selectedQuery.priority}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-xs sm:text-sm font-medium text-muted-foreground">
-                        Assigned To
-                      </span>
-                      <p className="text-slate-900 dark:text-slate-100 text-sm sm:text-base">
-                        {selectedQuery.assignedTo || "Unassigned"}
-                      </p>
-                    </div>
-                  </div>
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Conversation Thread */}
-            <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
-              <CardHeader className="p-4 sm:p-6">
-                <h3 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                  <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-violet-600" />
-                  Conversation Thread
-                </h3>
-              </CardHeader>
-              <CardContent className="p-4 sm:p-6">
-                <div className="space-y-4 sm:space-y-6">
-                  {/* Original Query */}
-                  <div className="flex gap-3 sm:gap-4">
-                    <Avatar className="h-8 w-8 sm:h-10 sm:w-10 shrink-0">
-                      <AvatarFallback className="bg-gradient-to-br from-blue-400 to-violet-400 text-white text-xs sm:text-sm">
-                        {selectedQuery.vendorName
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")
-                          .toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 space-y-2 min-w-0">
-                      <div className="flex flex-col xs:flex-row xs:items-center gap-1 xs:gap-2">
-                        <span className="font-semibold text-slate-900 dark:text-slate-100 text-sm sm:text-base truncate">
-                          {selectedQuery.vendorName}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          {new Date(selectedQuery.createdAt).toLocaleString()}
-                        </span>
-                        <Badge
-                          variant="outline"
-                          className="text-xs self-start xs:self-auto"
-                        >
-                          Original Query
-                        </Badge>
-                      </div>
-                      <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-3 sm:p-4">
-                        <p className="text-slate-700 dark:text-slate-300 text-sm sm:text-base">
-                          {selectedQuery.description}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Admin Response */}
-                  {selectedQuery.adminResponse && (
-                    <div className="flex gap-4">
-                      <Avatar className="h-10 w-10 shrink-0">
-                        <AvatarFallback className="bg-gradient-to-br from-emerald-400 to-blue-400 text-white">
-                          {selectedQuery.adminName
-                            ?.split(" ")
-                            .map((n) => n[0])
-                            .join("")
-                            .toUpperCase() || "A"}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 space-y-2">
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-slate-900 dark:text-slate-100">
-                            {selectedQuery.adminName}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            {new Date(selectedQuery.updatedAt).toLocaleString()}
-                          </span>
-                          <Badge
-                            variant="outline"
-                            className="text-xs bg-emerald-50 text-emerald-700 border-emerald-200"
-                          >
-                            Admin Response
-                          </Badge>
-                        </div>
-                        <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-lg p-4 border border-emerald-200 dark:border-emerald-800">
-                          <p className="text-slate-700 dark:text-slate-300">
-                            {selectedQuery.adminResponse}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Thread Messages */}
-                  {selectedQuery.thread &&
-                    selectedQuery.thread.slice(1).map((message, index) => (
-                      <div
-                        key={`${message.user_id}-${index}`}
-                        className="flex gap-4"
+              </div>
+              {selectedQuery.thread.slice(1).map((message, index) => (
+                <div
+                  key={`${message.user_id}-${index}-${message.timestamp}`} // Unique key to prevent React re-rendering issues
+                  className="flex gap-4"
+                >
+                  <Avatar className="h-10 w-10 shrink-0">
+                    <AvatarFallback
+                      className={`${
+                        message.sender_type === "vendor"
+                          ? "bg-gradient-to-br from-blue-400 to-violet-400"
+                          : "bg-gradient-to-br from-emerald-400 to-blue-400"
+                      } text-white`}
+                    >
+                      {message.username
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")
+                        .toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-slate-900 dark:text-slate-100">
+                        {message.username}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {new Date(message.timestamp).toLocaleString()}
+                      </span>
+                      <Badge
+                        variant="outline"
+                        className={`text-xs ${
+                          message.sender_type === "vendor"
+                            ? "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400"
+                            : "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400"
+                        }`}
                       >
-                        <Avatar className="h-10 w-10 shrink-0">
-                          <AvatarFallback
-                            className={`${
-                              message.sender_type === "vendor"
-                                ? "bg-gradient-to-br from-blue-400 to-violet-400"
-                                : "bg-gradient-to-br from-emerald-400 to-blue-400"
-                            } text-white`}
-                          >
-                            {message.username
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")
-                              .toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 space-y-2">
-                          <div className="flex items-center gap-2">
-                            <span className="font-semibold text-slate-900 dark:text-slate-100">
-                              {message.username}
-                            </span>
-                            <span className="text-xs text-muted-foreground">
-                              {new Date(message.timestamp).toLocaleString()}
-                            </span>
-                            <Badge
-                              variant="outline"
-                              className={`text-xs ${
-                                message.sender_type === "vendor"
-                                  ? "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400"
-                                  : "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400"
-                              }`}
-                            >
-                              {message.type === "query"
-                                ? "Query"
-                                : message.type === "response"
-                                ? "Response"
-                                : message.type === "followup"
-                                ? "Follow-up"
-                                : message.type}
-                            </Badge>
-                          </div>
-                          <div
-                            className={`rounded-lg p-4 border ${
-                              message.sender_type === "vendor"
-                                ? "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
-                                : "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800"
-                            }`}
-                          >
-                            <p className="text-slate-700 dark:text-slate-300">
-                              {message.message}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-
-                  {/* Legacy Follow-ups (fallback for old data structure) */}
-                  {selectedQuery.followUps &&
-                    selectedQuery.followUps.length > 0 &&
-                    selectedQuery.followUps.map((followUp) => (
-                      <div key={followUp.id} className="flex gap-4">
-                        <Avatar className="h-10 w-10 shrink-0">
-                          <AvatarFallback
-                            className={`${
-                              followUp.sender === "vendor"
-                                ? "bg-gradient-to-br from-blue-400 to-violet-400"
-                                : "bg-gradient-to-br from-emerald-400 to-blue-400"
-                            } text-white`}
-                          >
-                            {followUp.senderName
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")
-                              .toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 space-y-2">
-                          <div className="flex items-center gap-2">
-                            <span className="font-semibold text-slate-900 dark:text-slate-100">
-                              {followUp.senderName}
-                            </span>
-                            <span className="text-xs text-muted-foreground">
-                              {new Date(followUp.createdAt).toLocaleString()}
-                            </span>
-                            <Badge
-                              variant="outline"
-                              className={`text-xs ${
-                                followUp.sender === "vendor"
-                                  ? "bg-blue-50 text-blue-700 border-blue-200"
-                                  : "bg-emerald-50 text-emerald-700 border-emerald-200"
-                              }`}
-                            >
-                              {followUp.sender === "vendor"
-                                ? "Follow-up"
-                                : "Admin Follow-up"}
-                            </Badge>
-                          </div>
-                          <div
-                            className={`rounded-lg p-4 border ${
-                              followUp.sender === "vendor"
-                                ? "bg-slate-50 dark:bg-slate-800"
-                                : "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800"
-                            }`}
-                          >
-                            <p className="text-slate-700 dark:text-slate-300">
-                              {followUp.message}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-
-                  {/* Response Form */}
-                  <div className="border-t pt-4 sm:pt-6">
-                    <div className="flex gap-3 sm:gap-4">
-                      <Avatar className="h-8 w-8 sm:h-10 sm:w-10 shrink-0">
-                        <AvatarFallback className="bg-gradient-to-br from-violet-400 to-blue-400 text-white text-xs sm:text-sm">
-                          CA
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 space-y-3 sm:space-y-4 min-w-0">
-                        <div className="flex flex-col xs:flex-row xs:items-center gap-1 xs:gap-2">
-                          <span className="font-semibold text-slate-900 dark:text-slate-100 text-sm sm:text-base">
-                            Current Admin
-                          </span>
-                          <Badge
-                            variant="outline"
-                            className="text-xs self-start xs:self-auto"
-                          >
-                            Composing Response
-                          </Badge>
-                        </div>
-                        <Textarea
-                          placeholder="Type your response here..."
-                          value={responseMessage}
-                          onChange={(e) => setResponseMessage(e.target.value)}
-                          className="min-h-[100px] sm:min-h-[120px] resize-none text-sm sm:text-base"
-                        />
-                        <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2 xs:gap-3">
-                          <Button
-                            onClick={handleSubmitResponse}
-                            disabled={!responseMessage.trim() || isSubmitting}
-                            className="bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700 h-9 sm:h-10 text-sm sm:text-base"
-                          >
-                            {isSubmitting ? (
-                              <>
-                                <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4 mr-2 animate-spin" />
-                                <span className="hidden xs:inline">
-                                  Sending...
-                                </span>
-                                <span className="xs:hidden">Send...</span>
-                              </>
-                            ) : (
-                              <>
-                                <Send className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
-                                <span className="hidden xs:inline">
-                                  Send Response
-                                </span>
-                                <span className="xs:hidden">Send</span>
-                              </>
-                            )}
-                          </Button>
-                          <Button
-                            variant="outline"
-                            onClick={() => setResponseMessage("")}
-                            className="h-9 sm:h-10 text-sm sm:text-base"
-                          >
-                            Clear
-                          </Button>
-                        </div>
-                      </div>
+                        {message.type === "query"
+                          ? "Query"
+                          : message.type === "response"
+                          ? "Response"
+                          : message.type === "followup"
+                          ? "Follow-up"
+                          : message.type}
+                      </Badge>
+                    </div>
+                    <div
+                      className={`rounded-lg p-4 border ${
+                        message.sender_type === "vendor"
+                          ? "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                          : "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800"
+                      }`}
+                    >
+                      <p className="text-slate-700 dark:text-slate-300">
+                        {message.message}
+                      </p>
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Actions
-            <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
-              <CardContent className="p-4 sm:p-6">
-                <div className="flex flex-col xs:flex-row flex-wrap gap-2 xs:gap-3">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline">
-                        <RefreshCw className="w-4 h-4 mr-2" />
-                        Change Status
+              ))}
+              <div className="border-t pt-4 sm:pt-6">
+                <div className="flex gap-3 sm:gap-4">
+                  <Avatar className="h-8 w-8 sm:h-10 sm:w-10 shrink-0">
+                    <AvatarFallback className="bg-gradient-to-br from-violet-400 to-blue-400 text-white text-xs sm:text-sm">
+                      CA
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 space-y-3 sm:space-y-4 min-w-0">
+                    <div className="flex flex-col xs:flex-row xs:items-center gap-1 xs:gap-2">
+                      <span className="font-semibold text-slate-900 dark:text-slate-100 text-sm sm:text-base">
+                        Current Admin
+                      </span>
+                      <Badge
+                        variant="outline"
+                        className="text-xs self-start xs:self-auto"
+                      >
+                        Composing Response
+                      </Badge>
+                    </div>
+                    <Textarea
+                      placeholder="Type your response here..."
+                      value={responseMessage}
+                      onChange={(e) => setResponseMessage(e.target.value)}
+                      className="min-h-[100px] sm:min-h-[120px] resize-none text-sm sm:text-base"
+                    />
+                    <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2 xs:gap-3">
+                      <Button
+                        onClick={handleSubmitResponse}
+                        disabled={!responseMessage.trim() || isSubmitting}
+                        className="bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700 h-9 sm:h-10 text-sm sm:text-base"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4 mr-2 animate-spin" />
+                            <span className="hidden xs:inline">Sending...</span>
+                            <span className="xs:hidden">Send...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Send className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
+                            <span className="hidden xs:inline">Send Response</span>
+                            <span className="xs:hidden">Send</span>
+                          </>
+                        )}
                       </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <DropdownMenuItem
-                        onClick={() =>
-                          handleStatusChange(selectedQuery.id, "pending")
-                        }
+                      <Button
+                        variant="outline"
+                        onClick={() => setResponseMessage("")}
+                        className="h-9 sm:h-10 text-sm sm:text-base"
                       >
-                        <Clock className="w-4 h-4 mr-2" />
-                        Pending
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() =>
-                          handleStatusChange(selectedQuery.id, "in-progress")
-                        }
-                      >
-                        <RefreshCw className="w-4 h-4 mr-2" />
-                        In Progress
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() =>
-                          handleStatusChange(selectedQuery.id, "resolved")
-                        }
-                      >
-                        <CheckCircle className="w-4 h-4 mr-2" />
-                        Resolved
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() =>
-                          handleStatusChange(selectedQuery.id, "closed")
-                        }
-                      >
-                        <Archive className="w-4 h-4 mr-2" />
-                        Closed
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline">
-                        <User className="w-4 h-4 mr-2" />
-                        Assign To
+                        Clear
                       </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      {admins.map((admin) => (
-                        <DropdownMenuItem
-                          key={admin}
-                          onClick={() =>
-                            handleAssignQuery(selectedQuery.id, admin)
-                          }
-                        >
-                          <UserCheck className="w-4 h-4 mr-2" />
-                          {admin}
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                    </div>
+                  </div>
                 </div>
-              </CardContent>
-            </Card> */}
-          </div>
-        </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
-    );
-  }
+    </div>
+  </div>
+)}
+  
+
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 lg:py-6 space-y-4 sm:space-y-6">
-        {/* Notification */}
         {notification && (
           <Card
             className={`border-l-4 ${
@@ -1300,7 +1069,6 @@ export default function AdminEnquiryManagement() {
             </CardContent>
           </Card>
         )}
-        {/* Page Header */}
         <div className="relative z-50 flex flex-col gap-3 sm:gap-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-slate-800/50 dark:to-slate-700/50 p-4 sm:p-6 rounded-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20 shadow-lg">
           <div className="flex items-center justify-between">
             <div className="flex-1 min-w-0">
@@ -1318,35 +1086,25 @@ export default function AdminEnquiryManagement() {
               className="flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800 transition-all duration-300 h-8 sm:h-9 lg:h-10"
             >
               <RefreshCw
-                className={`w-3 h-3 sm:w-4 sm:h-4 ${
-                  loading ? "animate-spin" : ""
-                }`}
+                className={`w-3 h-3 sm:w-4 sm:h-4 ${loading ? "animate-spin" : ""}`}
               />
               <span className="hidden sm:inline">Refresh</span>
             </Button>
           </div>
         </div>
-
-        {/* Loading State - Skeleton */}
         {loading && (
           <>
-            {/* Statistics Skeleton */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 lg:gap-6">
               {Array.from({ length: 6 }).map((_, index) => (
                 <SkeletonCard key={index} />
               ))}
             </div>
-
-            {/* Filters Skeleton */}
             <SkeletonFilters />
-
-            {/* Queries Section Skeleton */}
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="h-8 bg-slate-200 dark:bg-slate-700 rounded w-32 animate-pulse"></div>
                 <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded w-20 animate-pulse"></div>
               </div>
-
               <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                 {Array.from({ length: 9 }).map((_, index) => (
                   <SkeletonQueryCard key={index} />
@@ -1355,9 +1113,6 @@ export default function AdminEnquiryManagement() {
             </div>
           </>
         )}
-
-        {/* Statistics */}
-
         <div
           className="
     grid
@@ -1400,13 +1155,10 @@ export default function AdminEnquiryManagement() {
             trendValue="+15%"
           />
         </div>
-
-        {/* Filters */}
         {!loading && !error && (
           <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
             <CardContent className="p-3 sm:p-4 lg:p-6">
               <div className="space-y-3 sm:space-y-4">
-                {/* Search Bar */}
                 <div className="relative w-full">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4 z-10" />
                   <Input
@@ -1416,10 +1168,7 @@ export default function AdminEnquiryManagement() {
                     className="pl-10 h-9 sm:h-10 lg:h-11 w-full text-sm sm:text-base"
                   />
                 </div>
-
-                {/* Filter Controls */}
                 <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-                  {/* Filter Selects */}
                   <div className="flex flex-col space-y-2 sm:space-y-0 sm:flex-row sm:gap-3 flex-1">
                     <div className="w-full sm:w-auto sm:min-w-[140px] lg:min-w-[160px]">
                       <Select
@@ -1432,15 +1181,12 @@ export default function AdminEnquiryManagement() {
                         <SelectContent>
                           <SelectItem value="all">All Status</SelectItem>
                           <SelectItem value="pending">Pending</SelectItem>
-                          <SelectItem value="in-progress">
-                            In Progress
-                          </SelectItem>
+                          <SelectItem value="in-progress">In Progress</SelectItem>
                           <SelectItem value="resolved">Resolved</SelectItem>
                           <SelectItem value="closed">Closed</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
-
                     <div className="w-full sm:w-auto sm:min-w-[140px] lg:min-w-[160px]">
                       <Select
                         value={categoryFilter}
@@ -1460,19 +1206,13 @@ export default function AdminEnquiryManagement() {
                       </Select>
                     </div>
                   </div>
-
-                  {/* Results Count and Clear Filters */}
                   <div className="flex flex-col space-y-2 sm:space-y-0 sm:flex-row sm:items-center sm:gap-3">
                     <div className="flex items-center justify-center sm:justify-start text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-medium">
                       <span className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-md">
                         {filteredQueries.length} queries found
                       </span>
                     </div>
-
-                    {/* Clear Filters Button - Show when filters are active */}
-                    {(searchTerm ||
-                      statusFilter !== "all" ||
-                      categoryFilter !== "all") && (
+                    {(searchTerm || statusFilter !== "all" || categoryFilter !== "all") && (
                       <Button
                         variant="outline"
                         size="sm"
@@ -1493,8 +1233,6 @@ export default function AdminEnquiryManagement() {
             </CardContent>
           </Card>
         )}
-
-        {/* Queries Display */}
         {!loading && !error && (
           <div className="space-y-4 sm:space-y-6">
             <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2">
@@ -1508,7 +1246,6 @@ export default function AdminEnquiryManagement() {
                 {filteredQueries.length} queries
               </Badge>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
               {filteredQueries.map((query) => (
                 <QueryCard
@@ -1523,8 +1260,6 @@ export default function AdminEnquiryManagement() {
             </div>
           </div>
         )}
-
-        {/* Empty State */}
         {!loading && !error && filteredQueries.length === 0 && (
           <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
             <CardContent className="py-12 sm:py-16 text-center px-4 sm:px-6">
@@ -1542,10 +1277,7 @@ export default function AdminEnquiryManagement() {
                   ? "Try adjusting your search or filter criteria"
                   : "No queries have been submitted yet"}
               </p>
-              {(searchTerm ||
-                statusFilter !== "all" ||
-                priorityFilter !== "all" ||
-                categoryFilter !== "all") && (
+              {(searchTerm || statusFilter !== "all" || priorityFilter !== "all" || categoryFilter !== "all") && (
                 <Button
                   variant="outline"
                   onClick={() => {
@@ -1562,8 +1294,6 @@ export default function AdminEnquiryManagement() {
             </CardContent>
           </Card>
         )}
-
-        {/* Pagination */}
         {!loading && !error && queries.length > 0 && (
           <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
             <CardContent className="p-4">
@@ -1575,9 +1305,7 @@ export default function AdminEnquiryManagement() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.max(1, prev - 1))
-                    }
+                    onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                     disabled={currentPage === 1 || loading}
                     className="h-8 sm:h-9 px-3 sm:px-4 text-xs sm:text-sm"
                   >
@@ -1587,9 +1315,7 @@ export default function AdminEnquiryManagement() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.min(totalPages, prev + 1))
-                    }
+                    onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
                     disabled={currentPage === totalPages || loading}
                     className="h-8 sm:h-9 px-3 sm:px-4 text-xs sm:text-sm"
                   >

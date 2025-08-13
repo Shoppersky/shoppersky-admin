@@ -63,7 +63,7 @@ const AuthGuard = ({ children }: AuthGuardProps) => {
     } else if (isAuthenticated && (pathname === '/')) {
       // User is authenticated and on public route, redirect to dashboard
       console.log('Redirecting to dashboard - already authenticated');
-      router.push('/Dashboard');
+      router.push('/home');
     }
   }, [isAuthenticated, isPublicRoute, pathname, router, isInitialized, isLoading]);
  

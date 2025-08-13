@@ -230,11 +230,16 @@ export default function ProfilePage() {
       toast.success(response.data.message || "Password changed successfully! Please login again");
       router.push("/")
 
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to change password");
-      console.error("Error changing password:", error);
-    }
-  };
+    }  catch (error: any) {
+  if (error.response?.status === 401) {
+    // Use the message from the API response
+    toast.error(error.response.data?.message || "Current password is incorrect");
+  } else {
+    toast.error(error.response?.data?.message || "Failed to change password");
+  }
+  console.error("Error changing password:", error);
+}
+  }
 
   const ValidationItem = ({ isValid, text }: { isValid: boolean; text: string }) => (
     <div
