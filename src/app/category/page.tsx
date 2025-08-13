@@ -314,7 +314,7 @@ export default function CategoriesPage() {
 
     const fetchIndustries = async () => {
       try {
-        const response = await axiosInstance.get("/industries", {
+        const response = await axiosInstance.get("/industries/", {
           params: { is_active: null },
         });
         if (response.data.statusCode === 200) {

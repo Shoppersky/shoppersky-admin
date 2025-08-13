@@ -88,7 +88,7 @@ export default function ChangePasswordPage() {
     return true
   }
 
- const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError("")
 
@@ -194,7 +194,7 @@ export default function ChangePasswordPage() {
 
                   {/* Change Password Form */}
                   <form onSubmit={handleSubmit} className="space-y-6">
-                   
+
 
                     {/* New Password Field */}
                     <div className="space-y-3">
@@ -231,15 +231,14 @@ export default function ChangePasswordPage() {
                           <div className="flex items-center justify-between text-sm">
                             <span className="text-slate-600 dark:text-slate-400">Password strength:</span>
                             <span
-                              className={`font-medium ${
-                                passwordStrength < 25
+                              className={`font-medium ${passwordStrength < 25
                                   ? "text-red-600"
                                   : passwordStrength < 50
                                     ? "text-orange-600"
                                     : passwordStrength < 75
                                       ? "text-yellow-600"
                                       : "text-green-600"
-                              }`}
+                                }`}
                             >
                               {getPasswordStrengthText()}
                             </span>
@@ -307,14 +306,18 @@ export default function ChangePasswordPage() {
                         Password Requirements:
                       </h4>
                       <ul className="space-y-1 text-xs text-blue-700 dark:text-blue-300">
-                        <li className={`flex items-center gap-2 ${password.length >= 8 ? "text-green-600" : ""}`}>
-                          {password.length >= 8 ? (
+                        <li
+                          className={`flex items-center gap-2 ${password.length >= 8 && password.length <= 12 ? "text-green-600" : ""
+                            }`}
+                        >
+                          {password.length >= 8 && password.length <= 12 ? (
                             <CheckCircle className="w-3 h-3" />
                           ) : (
                             <div className="w-3 h-3 rounded-full border border-current" />
                           )}
-                          At least-8 characters
+                          Between 8–12 characters
                         </li>
+
                         <li className={`flex items-center gap-2 ${/[A-Z]/.test(password) ? "text-green-600" : ""}`}>
                           {/[A-Z]/.test(password) ? (
                             <CheckCircle className="w-3 h-3" />
