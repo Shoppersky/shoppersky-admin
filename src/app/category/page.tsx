@@ -1059,7 +1059,7 @@ export default function CategoriesPage() {
                     </SelectContent>
                   </Select>
 
-                  <Select value={sortBy} onValueChange={setSortBy}>
+                  {/* <Select value={sortBy} onValueChange={setSortBy}>
                     <SelectTrigger className="w-full sm:w-40 h-10 sm:h-12 bg-white/80 dark:bg-slate-800/80 border-indigo-200 dark:border-indigo-800 rounded-xl">
                       <ArrowUpDown className="w-4 h-4 mr-2" />
                       <SelectValue placeholder="Sort by" />
@@ -1070,7 +1070,7 @@ export default function CategoriesPage() {
                       <SelectItem value="revenue">Revenue</SelectItem>
                       <SelectItem value="date">Last Updated</SelectItem>
                     </SelectContent>
-                  </Select>
+                  </Select> */}
 
                   {/* View Mode */}
                   <div className="flex items-center gap-1 bg-white/80 dark:bg-slate-800/80 border border-indigo-200 dark:border-indigo-800 rounded-xl p-1">
@@ -1153,7 +1153,7 @@ export default function CategoriesPage() {
                       </p>
                     )}
 
-                    {category.subcategories.length > 0 && (
+                    {/* {category.subcategories.length > 0 && (
                       <Accordion type="single" collapsible className="w-full">
                         <AccordionItem value={`subcategories-${category.id}`}>
                           <AccordionTrigger className="text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">
@@ -1171,7 +1171,8 @@ export default function CategoriesPage() {
                           </AccordionContent>
                         </AccordionItem>
                       </Accordion>
-                    )}
+                    )} */}
+
 
                     <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-800">
                       <div className="flex items-center gap-2">
@@ -1490,14 +1491,14 @@ export default function CategoriesPage() {
                             </div>
                           </div>
                           <div className="space-y-4">
-                            <div className="bg-white/80 dark:bg-slate-800/80 rounded-xl p-4">
+                            {/* <div className="bg-white/80 dark:bg-slate-800/80 rounded-xl p-4">
                               <Label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                                 Category ID
                               </Label>
                               <p className="text-lg font-mono text-gray-900 dark:text-white mt-1">
                                 {editingCategory.id}
                               </p>
-                            </div>
+                            </div> */}
                             <div className="bg-white/80 dark:bg-slate-800/80 rounded-xl p-4">
                               <Label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                                 Created Date
@@ -1596,7 +1597,7 @@ export default function CategoriesPage() {
                                 className="mt-2 h-12 bg-white/80 dark:bg-slate-800/80 border-indigo-200 dark:border-indigo-800 rounded-xl"
                               />
                             </div>
-                            <div>
+                            {/* <div>
                               <Label
                                 htmlFor="edit-industry"
                                 className="text-sm font-semibold text-gray-700 dark:text-gray-300"
@@ -1626,7 +1627,9 @@ export default function CategoriesPage() {
                                   ))}
                                 </SelectContent>
                               </Select>
-                            </div>
+                            </div> */}
+
+                           
                             <div>
                               <Label
                                 htmlFor="edit-status"
@@ -1816,13 +1819,13 @@ export default function CategoriesPage() {
                               Subcategories
                             </h4>
                             <Link href={`/add-subcategory?categoryId=${editingCategory.id}`} passHref>
-                              <Button
+                              {/* <Button
                                 size="sm"
                                 className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
                               >
                                 <Plus className="w-4 h-4 mr-2" />
                                 Add Subcategory
-                              </Button>
+                              </Button> */}
                             </Link>
                           </div>
                           {editingCategory.subcategories.length > 0 ? (

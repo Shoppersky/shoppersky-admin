@@ -231,12 +231,17 @@ export default function ProfilePage() {
       router.push("/")
 
     }  catch (error: any) {
-  if (error.response?.status === 401) {
-    // Use the message from the API response
-    toast.error(error.response.data?.message || "Current password is incorrect");
-  } else {
-    toast.error(error.response?.data?.message || "Failed to change password");
-  }
+  console.log(error.response)
+
+  if (error.response?.data?.statusCode === 401) {
+
+    
+
+  toast.error(error.response.data?.message || "Current password is incorrect");
+} else {
+  toast.error(error.response?.data?.message || "Failed to change password");
+}
+
   console.error("Error changing password:", error);
 }
   }

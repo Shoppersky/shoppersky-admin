@@ -23,12 +23,14 @@ const AuthGuard = ({ children }: AuthGuardProps) => {
     '/',
     '/forgotpassword',
     '/resetpassword',
+    '/changepassword'
   
   ];
  
   const isPublicRoute = publicRoutes.includes(pathname) ||
                        pathname.startsWith('/resetpassword') ||
-                       pathname.startsWith('/forgotPassword');
+                       pathname.startsWith('/changepassword') ||
+                       pathname.startsWith('/forgotpassword');
  
   useEffect(() => {
     const initializeAuth = async () => {

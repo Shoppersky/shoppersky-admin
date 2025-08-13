@@ -83,10 +83,12 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
         router.push("/home");
       }
     } catch (error: any) {
+      console.log(error.response);
       if (error.response?.status === 423) {
         toast.success("Your account has been locked. Please contact support.");
       }
       if (error.response?.status === 428) {
+       
         router.push(`/changepassword?email=${encodeURIComponent(email)}`);
       }
       if (error.response?.status === 403) {
