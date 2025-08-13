@@ -276,21 +276,21 @@ function ProductCard({ product }: { product: Product }) {
           className="w-full h-40 sm:h-48 object-cover transition-transform duration-500 group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex gap-1 sm:gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        {/* <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex gap-1 sm:gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <Button size="icon" variant="secondary" className="h-6 w-6 sm:h-8 sm:w-8 bg-white/90 hover:bg-white">
             <Heart className="h-3 w-3 sm:h-4 sm:w-4" />
           </Button>
           <Button size="icon" variant="secondary" className="h-6 w-6 sm:h-8 sm:w-8 bg-white/90 hover:bg-white">
             <Share2 className="h-3 w-3 sm:h-4 sm:w-4" />
           </Button>
-        </div>
-        <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        </div> */}
+        {/* <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <Button size="sm" className="bg-white text-slate-900 hover:bg-slate-100 h-7 sm:h-8 px-2 sm:px-3 text-xs sm:text-sm">
             <Eye className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
             <span className="hidden xs:inline">View Details</span>
             <span className="xs:hidden">View</span>
           </Button>
-        </div>
+        </div> */}
       </div>
       <CardContent className="p-3 sm:p-4">
         <div className="space-y-2 sm:space-y-3">
@@ -319,10 +319,10 @@ function ProductCard({ product }: { product: Product }) {
               <Building2 className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
               <span className="truncate">{product.storeName || "Unknown Store"}</span>
             </div>
-            <div className="flex items-center gap-1 flex-shrink-0">
+            {/* <div className="flex items-center gap-1 flex-shrink-0">
               <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-amber-400 text-amber-400" />
               <span className="text-xs sm:text-sm font-medium">4.5</span>
-            </div>
+            </div> */}
           </div>
         </div>
       </CardContent>

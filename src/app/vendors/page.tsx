@@ -1,5 +1,3 @@
-
-
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
@@ -113,19 +111,27 @@ function StatCard({
       <CardContent className="p-3 sm:p-4 lg:p-5">
         <div className="flex items-center justify-between gap-2 sm:gap-3">
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-medium text-gray-600 dark:text-gray-400 truncate">{title}</p>
-            <p className="text-base sm:text-lg lg:text-xl xl:text-2xl font-bold text-gray-900 dark:text-white mt-1">{value}</p>
+            <p className="text-xs font-medium text-gray-600 dark:text-gray-400 truncate">
+              {title}
+            </p>
+            <p className="text-base sm:text-lg lg:text-xl xl:text-2xl font-bold text-gray-900 dark:text-white mt-1">
+              {value}
+            </p>
           </div>
-          <div className={`p-1.5 sm:p-2 lg:p-3 bg-gradient-to-br rounded-lg sm:rounded-xl group-hover:scale-110 transition-transform duration-300 flex-shrink-0 ${
-            color === 'blue' ? 'from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30' :
-            color === 'green' ? 'from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30' :
-            color === 'yellow' ? 'from-yellow-100 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30' :
-            color === 'red' ? 'from-red-100 to-rose-100 dark:from-red-900/30 dark:to-rose-900/30' :
-            'from-purple-100 to-violet-100 dark:from-purple-900/30 dark:to-violet-900/30'
-          }`}>
-            <div className={colorClasses[color]}>
-              {icon}
-            </div>
+          <div
+            className={`p-1.5 sm:p-2 lg:p-3 bg-gradient-to-br rounded-lg sm:rounded-xl group-hover:scale-110 transition-transform duration-300 flex-shrink-0 ${
+              color === "blue"
+                ? "from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30"
+                : color === "green"
+                ? "from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30"
+                : color === "yellow"
+                ? "from-yellow-100 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30"
+                : color === "red"
+                ? "from-red-100 to-rose-100 dark:from-red-900/30 dark:to-rose-900/30"
+                : "from-purple-100 to-violet-100 dark:from-purple-900/30 dark:to-violet-900/30"
+            }`}
+          >
+            <div className={colorClasses[color]}>{icon}</div>
           </div>
         </div>
       </CardContent>
@@ -271,6 +277,9 @@ const VendorManagement = () => {
     fetchData();
   }, []);
 
+  const getVendorStatus = (isActive: boolean) =>
+    isActive ? "Inactive" : "Active";
+
   // Filtered vendors
   const filteredVendors = useMemo(() => {
     return vendors.filter((vendor) => {
@@ -411,17 +420,17 @@ const VendorManagement = () => {
       const response = await axiosInstance.post(
         `/admin/vendor/approve?user_id=${vendor.id}`
       );
-      if (response.data.message === "Vendor approved successfully") {
+      if (response.status === 200) {
         setVendors((prev) =>
           prev.map((v) =>
             v.id === vendor.id
-              ? { ...v, status: "approved", isActive: true }
+              ? { ...v, status: "approved", isActive: false }
               : v
           )
         );
         setSelectedVendor((prev) =>
           prev && prev.id === vendor.id
-            ? { ...prev, status: "approved", isActive: true }
+            ? { ...prev, status: "approved", isActive: false }
             : prev
         );
         toast.success("Vendor approved successfully!");
@@ -495,7 +504,7 @@ const VendorManagement = () => {
             comment: rejectionComment.trim(),
           }
         );
-        if (response.status === 200){
+        if (response.status === 200) {
           setVendors((prev) =>
             prev.map((v) =>
               v.id === vendorToReject.id
@@ -540,14 +549,12 @@ const VendorManagement = () => {
         if (response.data.message.includes("successfully")) {
           setVendors((prev) =>
             prev.map((v) =>
-              v.id === vendorToDelete.id
-                ? { ...v, isActive: false, status: "rejected" }
-                : v
+              v.id === vendorToDelete.id ? { ...v, isActive: true } : v
             )
           );
           setSelectedVendor((prev) =>
             prev && prev.id === vendorToDelete.id
-              ? { ...prev, isActive: false, status: "rejected" }
+              ? { ...prev, isActive: true }
               : prev
           );
           toast.success("Vendor deactivated successfully!");
@@ -613,9 +620,8 @@ const VendorManagement = () => {
   const handleExportVendors = () => {
     const csvContent = [
       [
-        
         "Email",
-       
+
         "Role",
         "Store Name",
         "Store URL",
@@ -628,13 +634,12 @@ const VendorManagement = () => {
         "ABN Type",
         "ABN Location",
         "Registration Date",
-       
+
         "Status",
       ],
       ...filteredVendors.map((vendor) => [
-        
         vendor.email,
-       
+
         vendor.role,
         vendor.storeName,
         vendor.storeUrl,
@@ -730,35 +735,33 @@ const VendorManagement = () => {
           </div>
         </div>
 
-
-
         {/* Stats Cards */}
-  <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4 sm:gap-6">
-  <StatCard
-    title="Total Vendors"
-    value={stats.total.toString()}
-    icon={<Users className="w-6 h-6" />}
-    color="blue"
-  />
-  <StatCard
-    title="Approved"
-    value={stats.approved.toString()}
-    icon={<CheckCircle className="w-6 h-6" />}
-    color="green"
-  />
-  <StatCard
-    title="Pending"
-    value={stats.pending.toString()}
-    icon={<Clock className="w-6 h-6" />}
-    color="yellow"
-  />
-  <StatCard
-    title="Rejected"
-    value={stats.rejected.toString()}
-    icon={<XCircle className="w-6 h-6" />}
-    color="red"
-  />
-</div>
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4 sm:gap-6">
+          <StatCard
+            title="Total Vendors"
+            value={stats.total.toString()}
+            icon={<Users className="w-6 h-6" />}
+            color="blue"
+          />
+          <StatCard
+            title="Approved"
+            value={stats.approved.toString()}
+            icon={<CheckCircle className="w-6 h-6" />}
+            color="green"
+          />
+          <StatCard
+            title="Pending"
+            value={stats.pending.toString()}
+            icon={<Clock className="w-6 h-6" />}
+            color="yellow"
+          />
+          <StatCard
+            title="Rejected"
+            value={stats.rejected.toString()}
+            icon={<XCircle className="w-6 h-6" />}
+            color="red"
+          />
+        </div>
 
         <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-lg sm:rounded-xl lg:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl">
           <CardContent className="p-2 sm:p-3 lg:p-6">
@@ -785,7 +788,6 @@ const VendorManagement = () => {
                       <SelectItem value="pending">Pending</SelectItem>
                       <SelectItem value="rejected">Rejected</SelectItem>
                       <SelectItem value="onhold">On Hold</SelectItem>
-                     
                     </SelectContent>
                   </Select>
                   <Select value={roleFilter} onValueChange={setRoleFilter}>
@@ -831,10 +833,13 @@ const VendorManagement = () => {
                       Industry
                     </th>
                     <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
-                      Status
+                      Approval Status
                     </th>
-                    <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 hidden lg:table-cell text-xs sm:text-sm">
+                    {/* <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 hidden lg:table-cell text-xs sm:text-sm">
                       Role
+                    </th> */}
+                    <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
+                      Active Status
                     </th>
                     <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
                       Actions
@@ -880,10 +885,20 @@ const VendorManagement = () => {
                           {vendor.industryName}
                         </p>
                       </td>
-                      <td className="p-2 sm:p-3 lg:p-4">{getStatusBadge(vendor.status)}</td>
-                      <td className="p-2 sm:p-3 lg:p-4 hidden lg:table-cell">
-                        {getRoleBadge(vendor.role)}
+                      <td className="p-2 sm:p-3 lg:p-4">
+                        {getStatusBadge(vendor.status)}
                       </td>
+                      <td>
+                        <Badge
+                          variant={vendor.isActive ? "destructive" : "success"}
+                        >
+                          {getVendorStatus(vendor.isActive)}
+                        </Badge>
+                      </td>
+
+                      {/* <td className="p-2 sm:p-3 lg:p-4 hidden lg:table-cell">
+                        {getRoleBadge(vendor.role)}
+                      </td> */}
                       <td className="p-2 sm:p-3 lg:p-4">
                         <div className="flex items-center gap-1 sm:gap-2">
                           <Button
@@ -942,9 +957,11 @@ const VendorManagement = () => {
                                 <>
                                   <DropdownMenuSeparator />
                                   {vendor.isActive ? (
-                                     <DropdownMenuItem
+                                    <DropdownMenuItem
                                       className="text-green-600"
-                                      onClick={() => handleRestoreVendor(vendor)}
+                                      onClick={() =>
+                                        handleRestoreVendor(vendor)
+                                      }
                                     >
                                       <RotateCcw className="w-4 h-4 mr-2" />
                                       Restore
@@ -957,7 +974,6 @@ const VendorManagement = () => {
                                       <Trash2 className="w-4 h-4 mr-2" />
                                       Deactivate
                                     </DropdownMenuItem>
-                                   
                                   )}
                                 </>
                               )}
@@ -994,8 +1010,8 @@ const VendorManagement = () => {
             open={!!selectedVendor}
             onOpenChange={() => setSelectedVendor(null)}
           >
-           <DialogContent
-  className="
+            <DialogContent
+              className="
     w-[90vw] sm:w-[80vw] md:w-[70vw] lg:w-[60vw] xl:w-[50vw] 
     max-h-[95vh] overflow-hidden p-0 
     bg-white/95 dark:bg-slate-900/95 
@@ -1004,7 +1020,7 @@ const VendorManagement = () => {
     m-1 sm:m-2 lg:m-4 
     overflow-y-auto
   "
->
+            >
               <div className="flex flex-col h-full">
                 <div className="bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-purple-500/10 border-b border-slate-200 dark:border-slate-700 p-3 sm:p-4 lg:p-6">
                   <DialogHeader>
@@ -1104,7 +1120,7 @@ const VendorManagement = () => {
                                 {selectedVendor.email}
                               </p>
                             </div>
-                            
+
                             <div>
                               <label className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">
                                 Location
@@ -1426,7 +1442,6 @@ const VendorManagement = () => {
                             <RotateCcw className="w-4 h-4" />
                             Restore
                           </Button>
-                          
                         ) : (
                           <Button
                             variant="outline"
@@ -1458,7 +1473,9 @@ const VendorManagement = () => {
                     Reject Vendor
                   </AlertDialogTitle>
                   <AlertDialogDescription className="text-slate-600 dark:text-slate-400 mt-1">
-                    Are you sure you want to reject this vendor? This action will mark the vendor as rejected and deactivate their account.
+                    Are you sure you want to reject this vendor? This action
+                    will mark the vendor as rejected and deactivate their
+                    account.
                   </AlertDialogDescription>
                 </div>
               </div>
@@ -1521,7 +1538,9 @@ const VendorManagement = () => {
                     Place Vendor on Hold
                   </AlertDialogTitle>
                   <AlertDialogDescription className="text-slate-600 dark:text-slate-400 mt-1">
-                    Are you sure you want to place this vendor on hold? This action will mark the vendor as on hold and deactivate their account.
+                    Are you sure you want to place this vendor on hold? This
+                    action will mark the vendor as on hold and deactivate their
+                    account.
                   </AlertDialogDescription>
                 </div>
               </div>
@@ -1573,7 +1592,9 @@ const VendorManagement = () => {
                     Restore Vendor
                   </AlertDialogTitle>
                   <AlertDialogDescription className="text-slate-600 dark:text-slate-400 mt-1">
-                    Are you sure you want to restore this vendor? This action will reactivate their account and set their status to approved.
+                    Are you sure you want to restore this vendor? This action
+                    will reactivate their account and set their status to
+                    approved.
                   </AlertDialogDescription>
                 </div>
               </div>
@@ -1622,7 +1643,8 @@ const VendorManagement = () => {
                     Deactivate Vendor
                   </AlertDialogTitle>
                   <AlertDialogDescription className="text-slate-600 dark:text-slate-400 mt-1">
-                    Are you sure you want to deactivate this vendor? This will mark the vendor as rejected and deactivate their account.
+                    Are you sure you want to deactivate this vendor? This will
+                    mark the vendor as rejected and deactivate their account.
                   </AlertDialogDescription>
                 </div>
               </div>

@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { useState, useMemo, useEffect } from "react"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { useState, useMemo, useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -13,9 +13,15 @@ import {
   DialogFooter,
   DialogClose,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 import {
   Plus,
   Search,
@@ -30,8 +36,7 @@ import {
   XCircle,
   Sparkles,
   RotateCcw,
-
-} from "lucide-react"
+} from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -41,17 +46,17 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import axiosInstance from "@/lib/axiosInstance"
-import { toast } from "sonner"
+} from "@/components/ui/alert-dialog";
+import axiosInstance from "@/lib/axiosInstance";
+import { toast } from "sonner";
 
 interface Industry {
-  id: string
-  name: string
-  slug: string
-  status: "Active" | "Inactive"
-  createdDate: string
-  lastUpdated: string
+  id: string;
+  name: string;
+  slug: string;
+  status: "Active" | "Inactive";
+  createdDate: string;
+  lastUpdated: string;
 }
 
 // Simplified StatCard Component with consistent theme
@@ -61,33 +66,39 @@ function StatCard({
   icon,
   color = "blue",
 }: {
-  title: string
-  value: string
-  icon: React.ReactNode
-  color?: "blue" | "indigo" | "purple" | "green"
+  title: string;
+  value: string;
+  icon: React.ReactNode;
+  color?: "blue" | "indigo" | "purple" | "green";
 }) {
   const colorClasses = {
     blue: "text-blue-600 dark:text-blue-400",
     indigo: "text-indigo-600 dark:text-indigo-400",
     purple: "text-purple-600 dark:text-purple-400",
     green: "text-green-600 dark:text-green-400",
-  }
+  };
 
   return (
     <Card className="bg-white/80 dark:bg-slate-900/80 border-0 shadow-lg rounded-2xl hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
       <CardContent className="p-4 sm:p-6">
         <div className="flex items-center justify-between">
           <div className="space-y-1 sm:space-y-2">
-            <p className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400">{title}</p>
-            <p className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">{value}</p>
+            <p className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400">
+              {title}
+            </p>
+            <p className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">
+              {value}
+            </p>
           </div>
-          <div className={`p-2 sm:p-3 bg-slate-100/80 dark:bg-slate-800/80 rounded-xl sm:rounded-2xl shadow-lg ${colorClasses[color]}`}>
+          <div
+            className={`p-2 sm:p-3 bg-slate-100/80 dark:bg-slate-800/80 rounded-xl sm:rounded-2xl shadow-lg ${colorClasses[color]}`}
+          >
             {icon}
           </div>
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 // Simplified IndustryCard Component
@@ -96,29 +107,31 @@ function IndustryCard({
   onEdit,
   onDelete,
   onRestore,
-
 }: {
-  industry: Industry
-  onEdit: (industry: Industry) => void
-  onDelete: (industry: Industry) => void
-  onRestore: (industry: Industry) => void
-  onView: (industry: Industry) => void
+  industry: Industry;
+  onEdit: (industry: Industry) => void;
+  onDelete: (industry: Industry) => void;
+  onRestore: (industry: Industry) => void;
+  onView: (industry: Industry) => void;
 }) {
   return (
     <Card className="bg-white/80 dark:bg-slate-900/80 border-0 shadow-lg rounded-2xl hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
       <CardHeader className="pb-3 p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-0">
           <div className="space-y-1 flex-1 min-w-0">
-            <CardTitle className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 truncate">{industry.name}</CardTitle>
+            <CardTitle className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100 truncate">
+              {industry.name}
+            </CardTitle>
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-mono bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded truncate">
               {industry.slug}
             </p>
           </div>
           <Badge
-            className={`${industry.status === "Active"
+            className={`${
+              industry.status === "Active"
                 ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
                 : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
-              } border-0 text-xs flex-shrink-0 self-start sm:self-auto`}
+            } border-0 text-xs flex-shrink-0 self-start sm:self-auto`}
           >
             {industry.status === "Active" ? (
               <CheckCircle className="w-3 h-3 mr-1" />
@@ -131,8 +144,12 @@ function IndustryCard({
       </CardHeader>
       <CardContent className="space-y-3 sm:space-y-4 p-4 sm:p-6 pt-0">
         <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-1 xs:gap-0 text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200/50 dark:border-slate-700/50">
-          <span className="truncate">Created: {new Date(industry.createdDate).toLocaleDateString()}</span>
-          <span className="truncate">Updated: {new Date(industry.lastUpdated).toLocaleDateString()}</span>
+          <span className="truncate">
+            Created: {new Date(industry.createdDate).toLocaleDateString()}
+          </span>
+          <span className="truncate">
+            Updated: {new Date(industry.lastUpdated).toLocaleDateString()}
+          </span>
         </div>
         <div className="flex items-center gap-2 pt-2">
           <Button
@@ -167,128 +184,149 @@ function IndustryCard({
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 export default function IndustriesPage() {
-  const [open, setOpen] = useState(false)
-  const [viewOpen, setViewOpen] = useState(false)
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [restoreDialogOpen, setRestoreDialogOpen] = useState(false)
-  const [editingIndustry, setEditingIndustry] = useState<Industry | null>(null)
-  const [viewingIndustry, setViewingIndustry] = useState<Industry | null>(null)
-  const [industryToDelete, setIndustryToDelete] = useState<Industry | null>(null)
-  const [industryToRestore, setIndustryToRestore] = useState<Industry | null>(null)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [viewMode, setViewMode] = useState<"cards" | "table">("cards")
-  const [industries, setIndustries] = useState<Industry[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [isSlugManuallyEdited, setIsSlugManuallyEdited] = useState(false)
+  const [open, setOpen] = useState(false);
+  const [viewOpen, setViewOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [restoreDialogOpen, setRestoreDialogOpen] = useState(false);
+  const [editingIndustry, setEditingIndustry] = useState<Industry | null>(null);
+  const [viewingIndustry, setViewingIndustry] = useState<Industry | null>(null);
+  const [industryToDelete, setIndustryToDelete] = useState<Industry | null>(
+    null
+  );
+  const [industryToRestore, setIndustryToRestore] = useState<Industry | null>(
+    null
+  );
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [viewMode, setViewMode] = useState<"cards" | "table">("cards");
+  const [industries, setIndustries] = useState<Industry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isSlugManuallyEdited, setIsSlugManuallyEdited] = useState(false);
 
   const [newIndustry, setNewIndustry] = useState({
     name: "",
     slug: "",
     status: "Active" as "Active" | "Inactive",
-  })
+  });
 
   // Auto-generate slug from name
   const generateSlug = (name: string) => {
     return name
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "")
-  }
+      .replace(/(^-|-$)/g, "");
+  };
 
   // Fetch industries on mount
   useEffect(() => {
     const fetchIndustries = async () => {
       try {
-        setLoading(true)
-        const params: { is_active?: boolean } = {}
+        setLoading(true);
+        const params: { is_active?: boolean } = {};
         if (statusFilter === "active") {
-          params.is_active = false
+          params.is_active = false;
         } else if (statusFilter === "inactive") {
-          params.is_active = true
+          params.is_active = true;
         }
         // When statusFilter is "all", omit is_active to fetch all industries
-        const response = await axiosInstance.get("/industries/", { params })
+        const response = await axiosInstance.get("/industries/", { params });
         if (response.data.statusCode === 200) {
-          const fetchedIndustries: Industry[] = response.data.data.map((ind: any) => ({
-            id: ind.industry_id,
-            name: ind.industry_name,
-            slug: ind.industry_slug,
-            status: ind.is_active ? "Inactive" : "Active", // Corrected status mapping
-            createdDate: ind.timestamp.split("T")[0],
-            lastUpdated: ind.timestamp.split("T")[0],
-          }))
-          setIndustries(fetchedIndustries)
-          setError(null)
+          const fetchedIndustries: Industry[] = response.data.data.map(
+            (ind: any) => ({
+              id: ind.industry_id,
+              name: ind.industry_name,
+              slug: ind.industry_slug,
+              status: ind.is_active ? "Inactive" : "Active", // Corrected status mapping
+              createdDate: ind.timestamp.split("T")[0],
+              lastUpdated: ind.timestamp.split("T")[0],
+            })
+          );
+          setIndustries(fetchedIndustries);
+          setError(null);
         } else {
-          throw new Error(response.data.message || "Failed to fetch industries")
+          throw new Error(
+            response.data.message || "Failed to fetch industries"
+          );
         }
       } catch (err: any) {
-        console.log(err.response?.data?.message || "Failed to fetch industries. Please try again.")
-        console.error(err)
+        console.log(
+          err.response?.data?.message ||
+            "Failed to fetch industries. Please try again."
+        );
+        console.error(err);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchIndustries()
-  }, [statusFilter])
-
+    fetchIndustries();
+  }, [statusFilter]);
 
   // Filtered industries
   const filteredIndustries = useMemo(() => {
     return industries.filter((industry) => {
       const matchesSearch =
         industry.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        industry.slug.toLowerCase().includes(searchTerm.toLowerCase())
-      const matchesStatus = statusFilter === "all" || industry.status.toLowerCase() === statusFilter
-      return matchesSearch && matchesStatus
-    })
-  }, [industries, searchTerm, statusFilter])
+        industry.slug.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus =
+        statusFilter === "all" ||
+        industry.status.toLowerCase() === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [industries, searchTerm, statusFilter]);
 
   // Statistics
   const stats = useMemo(() => {
-    const totalIndustries = industries.length
-    const activeIndustries = industries.filter((i) => i.status === "Active").length
-    const inactiveIndustries = industries.filter((i) => i.status === "Inactive").length
+    const totalIndustries = industries.length;
+    const activeIndustries = industries.filter(
+      (i) => i.status === "Active"
+    ).length;
+    const inactiveIndustries = industries.filter(
+      (i) => i.status === "Inactive"
+    ).length;
 
     return {
       total: totalIndustries,
       active: activeIndustries,
       inactive: inactiveIndustries,
-    }
-  }, [industries])
-
+    };
+  }, [industries]);
 
   const handleAddIndustry = async () => {
     if (!newIndustry.name.trim()) {
-      toast.error("Industry name is required")
-      return
+      toast.error("Industry name is required");
+      return;
     }
 
-    const finalSlug = newIndustry.slug || generateSlug(newIndustry.name)
+    const finalSlug = newIndustry.slug || generateSlug(newIndustry.name);
 
     try {
       const payload = {
         industry_name: newIndustry.name,
         industry_slug: finalSlug,
-      }
+      };
 
-      let response
+      let response;
       if (editingIndustry) {
-        response = await axiosInstance.put(`/industries/${editingIndustry.id}`, payload)
+        response = await axiosInstance.put(
+          `/industries/${editingIndustry.id}`,
+          payload
+        );
       } else {
-        response = await axiosInstance.post("/industries/", payload)
+        response = await axiosInstance.post("/industries/", payload);
       }
 
-      if (response.data.statusCode === 200 || response.data.statusCode === 201) {
-        const industryData = response.data.data
-        const currentDate = new Date().toISOString().split("T")[0]
+      if (
+        response.data.statusCode === 200 ||
+        response.data.statusCode === 201
+      ) {
+        const industryData = response.data.data;
+        const currentDate = new Date().toISOString().split("T")[0];
 
         if (editingIndustry) {
           const updatedIndustry: Industry = {
@@ -296,39 +334,50 @@ export default function IndustriesPage() {
             name: newIndustry.name,
             slug: finalSlug,
             status: editingIndustry ? newIndustry.status : "Active",
-            createdDate: editingIndustry ? editingIndustry.createdDate : currentDate,
+            createdDate: editingIndustry
+              ? editingIndustry.createdDate
+              : currentDate,
             lastUpdated: currentDate,
-          }
+          };
 
           // Update status if editing and status has changed
-          if (editingIndustry && editingIndustry.status !== newIndustry.status) {
-            await axiosInstance.patch(`/industries/status/${industryData.industry_id}`, null, {
-              params: { is_active: newIndustry.status === "Active" },
-            })
+          if (
+            editingIndustry &&
+            editingIndustry.status !== newIndustry.status
+          ) {
+            await axiosInstance.patch(
+              `/industries/status/${industryData.industry_id}`,
+              null,
+              {
+                params: { is_active: newIndustry.status === "Active" },
+              }
+            );
           }
 
           setIndustries((prev) =>
             prev.map((industry) =>
               industry.id === editingIndustry.id ? updatedIndustry : industry
             )
-          )
-          toast.success("Industry updated successfully!")
+          );
+          toast.success("Industry updated successfully!");
         } else {
-          const existingIndex = industries.findIndex((i) => i.id === industryData.industry_id)
+          const existingIndex = industries.findIndex(
+            (i) => i.id === industryData.industry_id
+          );
           if (existingIndex !== -1) {
             // Restored existing deactivated industry
             setIndustries((prev) => {
-              const newList = [...prev]
+              const newList = [...prev];
               newList[existingIndex] = {
                 ...newList[existingIndex],
                 name: newIndustry.name,
                 slug: finalSlug,
                 status: "Active",
                 lastUpdated: currentDate,
-              }
-              return newList
-            })
-            toast.success("Industry restored successfully!")
+              };
+              return newList;
+            });
+            toast.success("Industry restored successfully!");
           } else {
             // Truly new industry
             const newIndustryEntry: Industry = {
@@ -338,9 +387,9 @@ export default function IndustriesPage() {
               status: "Active",
               createdDate: currentDate,
               lastUpdated: currentDate,
-            }
-            setIndustries([...industries, newIndustryEntry])
-            toast.success("Industry created successfully!")
+            };
+            setIndustries([...industries, newIndustryEntry]);
+            toast.success("Industry created successfully!");
           }
         }
 
@@ -348,113 +397,135 @@ export default function IndustriesPage() {
           name: "",
           slug: "",
           status: "Active",
-        })
-        setIsSlugManuallyEdited(false)
-        setOpen(false)
-        setEditingIndustry(null)
+        });
+        setIsSlugManuallyEdited(false);
+        setOpen(false);
+        setEditingIndustry(null);
       } else {
-        throw new Error(response.data.message || "Failed to save industry")
+        throw new Error(response.data.message || "Failed to save industry");
       }
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to save industry. Please try again.")
-      console.error(error)
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to save industry. Please try again."
+      );
+      console.error(error);
     }
-  }
-
+  };
 
   const handleOpenAddDialog = () => {
-    console.log("Opening add dialog, editingIndustry:", editingIndustry)
-    setEditingIndustry(null)
-    setNewIndustry({ name: "", slug: "", status: "Active" })
-    setIsSlugManuallyEdited(false)
-    setOpen(true)
-  }
+    console.log("Opening add dialog, editingIndustry:", editingIndustry);
+    setEditingIndustry(null);
+    setNewIndustry({ name: "", slug: "", status: "Active" });
+    setIsSlugManuallyEdited(false); // Correctly resetting to false
+    setOpen(true);
+  };
 
   const handleEditIndustry = (industry: Industry) => {
-    console.log("Opening edit dialog for industry:", industry)
-    setEditingIndustry(industry)
+    console.log("Opening edit dialog for industry:", industry);
+    setEditingIndustry(industry);
     setNewIndustry({
       name: industry.name,
       slug: industry.slug,
       status: industry.status,
-    })
-    setIsSlugManuallyEdited(true)
-    setOpen(true)
-  }
-
+    });
+    // Remove setting isSlugManuallyEdited to true here
+    setOpen(true);
+  };
 
   const handleViewIndustry = (industry: Industry) => {
-    setViewingIndustry(industry)
-    setViewOpen(true)
-  }
+    setViewingIndustry(industry);
+    setViewOpen(true);
+  };
 
   const handleDeleteIndustry = (industry: Industry) => {
-    setIndustryToDelete(industry)
-    setDeleteDialogOpen(true)
-  }
+    setIndustryToDelete(industry);
+    setDeleteDialogOpen(true);
+  };
 
   const handleRestoreIndustry = (industry: Industry) => {
-    setIndustryToRestore(industry)
-    setRestoreDialogOpen(true)
-  }
+    setIndustryToRestore(industry);
+    setRestoreDialogOpen(true);
+  };
 
   const confirmDeleteIndustry = async () => {
     if (industryToDelete) {
       try {
-        const response = await axiosInstance.patch(`/industries/status/${industryToDelete.id}`, null, {
-          params: { is_active: true },
-        })
+        const response = await axiosInstance.patch(
+          `/industries/status/${industryToDelete.id}`,
+          null,
+          {
+            params: { is_active: true },
+          }
+        );
         if (response.data.statusCode === 200) {
           setIndustries((prev) =>
             prev.map((industry) =>
-              industry.id === industryToDelete.id ? { ...industry, status: "Inactive" } : industry
+              industry.id === industryToDelete.id
+                ? { ...industry, status: "Inactive" }
+                : industry
             )
-          )
-          toast.success("Industry deactivated successfully!")
+          );
+          toast.success("Industry deactivated successfully!");
         } else {
-          throw new Error(response.data.message || "Failed to deactivate industry")
+          throw new Error(
+            response.data.message || "Failed to deactivate industry"
+          );
         }
       } catch (error: any) {
-        toast.error(error.response?.data?.message || "Failed to deactivate industry. Please try again.")
-        console.error(error)
+        toast.error(
+          error.response?.data?.message ||
+            "Failed to deactivate industry. Please try again."
+        );
+        console.error(error);
       } finally {
-        setDeleteDialogOpen(false)
-        setIndustryToDelete(null)
+        setDeleteDialogOpen(false);
+        setIndustryToDelete(null);
       }
     }
-  }
+  };
 
   const confirmRestoreIndustry = async () => {
     if (industryToRestore) {
       try {
-        const response = await axiosInstance.patch(`/industries/status/${industryToRestore.id}`, null, {
-          params: { is_active: false },
-        })
+        const response = await axiosInstance.patch(
+          `/industries/status/${industryToRestore.id}`,
+          null,
+          {
+            params: { is_active: false },
+          }
+        );
         if (response.data.statusCode === 200) {
           setIndustries((prev) =>
             prev.map((industry) =>
-              industry.id === industryToRestore.id ? { ...industry, status: "Active" } : industry
+              industry.id === industryToRestore.id
+                ? { ...industry, status: "Active" }
+                : industry
             )
-          )
-          toast.success("Industry restored successfully!")
+          );
+          toast.success("Industry restored successfully!");
         } else {
-          throw new Error(response.data.message || "Failed to restore industry")
+          throw new Error(
+            response.data.message || "Failed to restore industry"
+          );
         }
       } catch (error: any) {
-        toast.error(error.response?.data?.message || "Failed to restore industry. Please try again.")
-        console.error(error)
+        toast.error(
+          error.response?.data?.message ||
+            "Failed to restore industry. Please try again."
+        );
+        console.error(error);
       } finally {
-        setRestoreDialogOpen(false)
-        setIndustryToRestore(null)
+        setRestoreDialogOpen(false);
+        setIndustryToRestore(null);
       }
     }
-  }
+  };
 
   const handleExportIndustries = () => {
     const csvContent = [
       ["Name", "Slug", "Status", "Created Date", "Last Updated"],
       ...filteredIndustries.map((industry) => [
-
         industry.name,
         industry.slug,
         industry.status,
@@ -463,16 +534,16 @@ export default function IndustriesPage() {
       ]),
     ]
       .map((row) => row.join(","))
-      .join("\n")
+      .join("\n");
 
-    const blob = new Blob([csvContent], { type: "text/csv" })
-    const url = window.URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = "industries.csv"
-    a.click()
-    window.URL.revokeObjectURL(url)
-  }
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "industries.csv";
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
 
   if (loading) {
     return (
@@ -486,7 +557,7 @@ export default function IndustriesPage() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -500,8 +571,12 @@ export default function IndustriesPage() {
                 <XCircle className="h-8 w-8 text-red-600 dark:text-red-400" />
               </div>
               <div>
-                <h3 className="font-semibold text-red-900 dark:text-red-100">Error Loading Data</h3>
-                <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
+                <h3 className="font-semibold text-red-900 dark:text-red-100">
+                  Error Loading Data
+                </h3>
+                <p className="text-sm text-red-700 dark:text-red-300">
+                  {error}
+                </p>
                 <Button
                   onClick={() => window.location.reload()}
                   variant="outline"
@@ -526,8 +601,6 @@ export default function IndustriesPage() {
             </p>
           </div>
 
-
-
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-end justify-end gap-3 sm:gap-4 px-4 sm:px-0">
             <Button
@@ -539,18 +612,22 @@ export default function IndustriesPage() {
               <span className="hidden xs:inline">Export Data</span>
               <span className="xs:hidden">Export</span>
             </Button>
-            <Dialog open={open} onOpenChange={(isOpen) => {
-              setOpen(isOpen)
-              if (!isOpen) {
-                setNewIndustry({ name: "", slug: "", status: "Active" })
-                setIsSlugManuallyEdited(false)
-                setEditingIndustry(null)
-              }
-            }}>
+            <Dialog
+              open={open}
+              onOpenChange={(isOpen) => {
+                setOpen(isOpen);
+                if (!isOpen) {
+                  setNewIndustry({ name: "", slug: "", status: "Active" });
+                  setIsSlugManuallyEdited(false);
+                  setEditingIndustry(null);
+                }
+              }}
+            >
               <DialogTrigger asChild>
                 <Button
                   onClick={handleOpenAddDialog}
-                  className="flex items-center justify-center gap-2 px-4 sm:px-6 py-3 h-11 sm:h-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 text-sm sm:text-base">
+                  className="flex items-center justify-center gap-2 px-4 sm:px-6 py-3 h-11 sm:h-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 text-sm sm:text-base"
+                >
                   <Plus className="w-4 h-4" />
                   <span className="hidden xs:inline">Add New Industry</span>
                   <span className="xs:hidden">Add Industry</span>
@@ -562,45 +639,53 @@ export default function IndustriesPage() {
                     {editingIndustry ? "Edit Industry" : "Add New Industry"}
                   </DialogTitle>
                 </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                      Industry Name *
-                    </Label>
-                    <Input
-                      id="name"
-                      value={newIndustry.name}
-                      onChange={(e) => {
-                        const name = e.target.value
-                        setNewIndustry({
-                          ...newIndustry,
-                          name,
-                          slug: isSlugManuallyEdited ? newIndustry.slug : generateSlug(name),
-                        })
-                      }}
-                      placeholder="e.g., Technology"
-                      className="h-10 sm:h-12 bg-white/80 dark:bg-slate-800/80 border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="slug" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                      Slug *
-                    </Label>
-                    <Input
-                      id="slug"
-                      value={newIndustry.slug}
-                      onChange={(e) => {
-                        setNewIndustry({ ...newIndustry, slug: e.target.value })
-                        setIsSlugManuallyEdited(true)
-                      }}
-                      placeholder="e.g., technology"
-                      className="h-10 sm:h-12 bg-white/80 dark:bg-slate-800/80 border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
-                    />
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
-                      URL-friendly version of the name (auto-generated unless manually edited)
-                    </p>
-                  </div>
-
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="name"
+                    className="text-sm font-semibold text-slate-700 dark:text-slate-300"
+                  >
+                    Industry Name *
+                  </Label>
+                  <Input
+                    id="name"
+                    value={newIndustry.name}
+                    onChange={(e) => {
+                      const name = e.target.value;
+                      setNewIndustry({
+                        ...newIndustry,
+                        name,
+                        slug: isSlugManuallyEdited
+                          ? newIndustry.slug
+                          : generateSlug(name),
+                      });
+                    }}
+                    placeholder="e.g., Technology"
+                    className="h-10 sm:h-12 bg-white/80 dark:bg-slate-800/80 border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="slug"
+                    className="text-sm font-semibold text-slate-700 dark:text-slate-300"
+                  >
+                    Slug *
+                  </Label>
+                  <Input
+                    id="slug"
+                    value={newIndustry.slug}
+                    onChange={(e) => {
+                      setNewIndustry({ ...newIndustry, slug: e.target.value });
+                      setIsSlugManuallyEdited(true); // Set to true only when slug is manually edited
+                    }}
+                    placeholder="e.g., technology"
+                    disabled
+                    className="h-10 sm:h-12 bg-white/80 dark:bg-slate-800/80 border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+                  />
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    URL-friendly version of the name (auto-generated unless
+                    manually edited)
+                  </p>
+                  
                 </div>
                 <DialogFooter className="flex flex-col sm:flex-row gap-3">
                   <DialogClose asChild>
@@ -613,7 +698,9 @@ export default function IndustriesPage() {
                   </DialogClose>
                   <Button
                     onClick={handleAddIndustry}
-                    disabled={!newIndustry.name.trim() || !newIndustry.slug.trim()}
+                    disabled={
+                      !newIndustry.name.trim() || !newIndustry.slug.trim()
+                    }
                     className="flex-1 h-10 sm:h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl text-sm sm:text-base"
                   >
                     {editingIndustry ? "Update Industry" : "Add Industry"}
@@ -696,7 +783,6 @@ export default function IndustriesPage() {
                 </div>
               </div>
             </div>
-
           </CardContent>
         </Card>
 
@@ -722,16 +808,24 @@ export default function IndustriesPage() {
                   <table className="w-full">
                     <thead className="bg-slate-50/80 dark:bg-slate-800/80 border-b border-slate-200/50 dark:border-slate-700/50">
                       <tr>
-                        <th className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">Name</th>
-                        <th className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm hidden xs:table-cell">Slug</th>
-                        <th className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">Status</th>
+                        <th className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
+                          Name
+                        </th>
+                        <th className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm hidden xs:table-cell">
+                          Slug
+                        </th>
+                        <th className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
+                          Status
+                        </th>
                         <th className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm hidden md:table-cell">
                           Created
                         </th>
                         <th className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm hidden lg:table-cell">
                           Updated
                         </th>
-                        <th className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">Actions</th>
+                        <th className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
+                          Actions
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -741,7 +835,9 @@ export default function IndustriesPage() {
                           className="border-b border-slate-200/50 dark:border-slate-700/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/50"
                         >
                           <td className="p-2 sm:p-4">
-                            <div className="font-medium text-slate-900 dark:text-slate-100 text-xs sm:text-sm truncate max-w-[120px] sm:max-w-none">{industry.name}</div>
+                            <div className="font-medium text-slate-900 dark:text-slate-100 text-xs sm:text-sm truncate max-w-[120px] sm:max-w-none">
+                              {industry.name}
+                            </div>
                             <div className="xs:hidden mt-1">
                               <code className="text-xs bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded text-slate-700 dark:text-slate-300 truncate block max-w-[100px]">
                                 {industry.slug}
@@ -755,25 +851,34 @@ export default function IndustriesPage() {
                           </td>
                           <td className="p-2 sm:p-4">
                             <Badge
-                              className={`text-xs border-0 ${industry.status === "Active"
+                              className={`text-xs border-0 ${
+                                industry.status === "Active"
                                   ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
                                   : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
-                                }`}
+                              }`}
                             >
                               {industry.status === "Active" ? (
                                 <CheckCircle className="w-2 h-2 sm:w-3 sm:h-3 mr-1" />
                               ) : (
                                 <XCircle className="w-2 h-2 sm:w-3 sm:h-3 mr-1" />
                               )}
-                              <span className="hidden sm:inline">{industry.status}</span>
-                              <span className="sm:hidden">{industry.status === "Active" ? "A" : "I"}</span>
+                              <span className="hidden sm:inline">
+                                {industry.status}
+                              </span>
+                              <span className="sm:hidden">
+                                {industry.status === "Active" ? "A" : "I"}
+                              </span>
                             </Badge>
                           </td>
                           <td className="p-2 sm:p-4 text-xs sm:text-sm text-slate-600 dark:text-slate-400 hidden md:table-cell">
-                            {new Date(industry.createdDate).toLocaleDateString()}
+                            {new Date(
+                              industry.createdDate
+                            ).toLocaleDateString()}
                           </td>
                           <td className="p-2 sm:p-4 text-xs sm:text-sm text-slate-600 dark:text-slate-400 hidden lg:table-cell">
-                            {new Date(industry.lastUpdated).toLocaleDateString()}
+                            {new Date(
+                              industry.lastUpdated
+                            ).toLocaleDateString()}
                           </td>
                           <td className="p-2 sm:p-4">
                             <div className="flex items-center gap-1">
@@ -798,7 +903,9 @@ export default function IndustriesPage() {
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  onClick={() => handleRestoreIndustry(industry)}
+                                  onClick={() =>
+                                    handleRestoreIndustry(industry)
+                                  }
                                   className="h-6 w-6 sm:h-8 sm:w-8 p-0 hover:bg-green-50 dark:hover:bg-green-950/50"
                                 >
                                   <RotateCcw className="w-3 h-3 sm:w-4 sm:h-4 text-green-600" />
@@ -818,13 +925,14 @@ export default function IndustriesPage() {
           <Card className="backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border-0 shadow-xl rounded-2xl">
             <CardContent className="flex flex-col items-center justify-center py-16">
               <Building2 className="w-16 h-16 text-slate-400 mb-4" />
-              <h3 className="text-xl font-semibold text-slate-600 dark:text-slate-300 mb-2">No Industries Found</h3>
+              <h3 className="text-xl font-semibold text-slate-600 dark:text-slate-300 mb-2">
+                No Industries Found
+              </h3>
               <p className="text-slate-500 dark:text-slate-400 text-center mb-6 max-w-md">
                 {searchTerm || statusFilter !== "all"
                   ? "No industries match your current filters. Try adjusting your search criteria."
                   : "Get started by adding your first industry to organize your business sectors."}
               </p>
-
             </CardContent>
           </Card>
         )}
@@ -840,8 +948,12 @@ export default function IndustriesPage() {
                       <Building2 className="w-6 h-6 text-slate-600 dark:text-slate-400" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">{viewingIndustry.name}</h3>
-                      <p className="text-sm text-slate-500 font-mono">{viewingIndustry.slug}</p>
+                      <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">
+                        {viewingIndustry.name}
+                      </h3>
+                      <p className="text-sm text-slate-500 font-mono">
+                        {viewingIndustry.slug}
+                      </p>
                     </div>
                   </>
                 )}
@@ -851,13 +963,16 @@ export default function IndustriesPage() {
               <div className="space-y-4">
                 <div className="bg-slate-50/80 dark:bg-slate-800/80 rounded-xl p-4 space-y-3">
                   <div>
-                    <Label className="text-sm font-medium text-slate-600 dark:text-slate-400">Status</Label>
+                    <Label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                      Status
+                    </Label>
                     <div className="mt-1">
                       <Badge
-                        className={`text-xs border-0 ${viewingIndustry.status === "Active"
+                        className={`text-xs border-0 ${
+                          viewingIndustry.status === "Active"
                             ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
                             : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
-                          }`}
+                        }`}
                       >
                         {viewingIndustry.status === "Active" ? (
                           <CheckCircle className="w-3 h-3 mr-1" />
@@ -870,15 +985,23 @@ export default function IndustriesPage() {
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <Label className="text-sm font-medium text-slate-600 dark:text-slate-400">Created</Label>
+                      <Label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                        Created
+                      </Label>
                       <p className="text-sm mt-1 text-slate-900 dark:text-slate-100">
-                        {new Date(viewingIndustry.createdDate).toLocaleDateString()}
+                        {new Date(
+                          viewingIndustry.createdDate
+                        ).toLocaleDateString()}
                       </p>
                     </div>
                     <div>
-                      <Label className="text-sm font-medium text-slate-600 dark:text-slate-400">Updated</Label>
+                      <Label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                        Updated
+                      </Label>
                       <p className="text-sm mt-1 text-slate-900 dark:text-slate-100">
-                        {new Date(viewingIndustry.lastUpdated).toLocaleDateString()}
+                        {new Date(
+                          viewingIndustry.lastUpdated
+                        ).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
@@ -895,7 +1018,9 @@ export default function IndustriesPage() {
                 </Button>
               </DialogClose>
               <Button
-                onClick={() => viewingIndustry && handleEditIndustry(viewingIndustry)}
+                onClick={() =>
+                  viewingIndustry && handleEditIndustry(viewingIndustry)
+                }
                 className="flex-1 h-10 sm:h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl text-sm sm:text-base"
               >
                 <Pencil className="w-4 h-4 mr-2" />
@@ -930,8 +1055,12 @@ export default function IndustriesPage() {
                     <Building2 className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-900 dark:text-slate-100">{industryToDelete.name}</p>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 font-mono">{industryToDelete.slug}</p>
+                    <p className="font-semibold text-slate-900 dark:text-slate-100">
+                      {industryToDelete.name}
+                    </p>
+                    <p className="text-sm text-slate-600 dark:text-slate-400 font-mono">
+                      {industryToDelete.slug}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -953,7 +1082,10 @@ export default function IndustriesPage() {
         </AlertDialog>
 
         {/* Restore Confirmation Dialog */}
-        <AlertDialog open={restoreDialogOpen} onOpenChange={setRestoreDialogOpen}>
+        <AlertDialog
+          open={restoreDialogOpen}
+          onOpenChange={setRestoreDialogOpen}
+        >
           <AlertDialogContent className="border border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 shadow-2xl backdrop-blur-sm max-w-md mx-4 sm:mx-auto">
             <AlertDialogHeader className="space-y-4">
               <div className="flex items-center gap-4">
@@ -977,8 +1109,12 @@ export default function IndustriesPage() {
                     <Building2 className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-900 dark:text-slate-100">{industryToRestore.name}</p>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 font-mono">{industryToRestore.slug}</p>
+                    <p className="font-semibold text-slate-900 dark:text-slate-100">
+                      {industryToRestore.name}
+                    </p>
+                    <p className="text-sm text-slate-600 dark:text-slate-400 font-mono">
+                      {industryToRestore.slug}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -1000,5 +1136,5 @@ export default function IndustriesPage() {
         </AlertDialog>
       </div>
     </div>
-  )
+  );
 }

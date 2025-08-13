@@ -590,7 +590,7 @@ export default function UsersPage() {
     </div>
   ) : viewMode === "grid" ? (
     <div className="p-3 sm:p-4 lg:p-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-3 sm:gap-4">
         {filteredUsers.map((user) => (
           <UserCard
             key={user.user_id}

@@ -225,12 +225,12 @@ const Header = memo(function Header({ onMenuClick, isMobile, sidebarCollapsed, i
     if (!showNotifications) {
       setShowAllNotifications(false);
     }
-    toast.info('Notifications panel toggled');
+    // toast.info('Notifications panel toggled');
   };
 
   const handleViewAllNotifications = () => {
     setShowAllNotifications(!showAllNotifications);
-    toast.info(showAllNotifications ? 'Showing recent notifications' : 'Showing all notifications');
+    // toast.info(showAllNotifications ? 'Showing recent notifications' : 'Showing all notifications');
   };
 
   const handleProfileClick = () => {
