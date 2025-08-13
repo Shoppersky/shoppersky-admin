@@ -48,7 +48,7 @@ export const logoutUser = async () => {
     localStorage.removeItem('id'); // Keep this in localStorage as it's user data
    
     // Redirect to login page
-    window.location.href = '/login';
+    window.location.href = '/';
   }
 };
  

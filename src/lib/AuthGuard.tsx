@@ -21,15 +21,14 @@ const AuthGuard = ({ children }: AuthGuardProps) => {
   // Define public routes that don't require authentication
   const publicRoutes = [
     '/',
-    '/login',
-    '/forgot-password',
-    '/reset-password',
-    '/ResetPassword'
+    '/forgotpassword',
+    '/resetpassword',
+  
   ];
  
   const isPublicRoute = publicRoutes.includes(pathname) ||
-                       pathname.startsWith('/reset-password') ||
-                       pathname.startsWith('/ResetPassword');
+                       pathname.startsWith('/resetpassword') ||
+                       pathname.startsWith('/forgotPassword');
  
   useEffect(() => {
     const initializeAuth = async () => {
@@ -60,8 +59,8 @@ const AuthGuard = ({ children }: AuthGuardProps) => {
     if (!isAuthenticated && !isPublicRoute) {
       // User is not authenticated and trying to access protected route
       console.log('Redirecting to login - not authenticated');
-      router.push('/login');
-    } else if (isAuthenticated && (pathname === '/' || pathname === '/login')) {
+      router.push('/');
+    } else if (isAuthenticated && (pathname === '/')) {
       // User is authenticated and on public route, redirect to dashboard
       console.log('Redirecting to dashboard - already authenticated');
       router.push('/Dashboard');
