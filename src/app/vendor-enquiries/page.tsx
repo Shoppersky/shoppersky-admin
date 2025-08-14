@@ -873,156 +873,158 @@ const transformApiQueryToQuery = (apiQuery: ApiQuery): Query => {
             </h3>
           </CardHeader>
           <CardContent className="p-4 sm:p-6">
-            <div className="space-y-4 sm:space-y-6">
-              <div className="flex gap-3 sm:gap-4">
-                <Avatar className="h-8 w-8 sm:h-10 sm:w-10 shrink-0">
-                  <AvatarFallback className="bg-gradient-to-br from-blue-400 to-violet-400 text-white text-xs sm:text-sm">
-                    {selectedQuery.vendorName
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")
-                      .toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 space-y-2 min-w-0">
-                  <div className="flex flex-col xs:flex-row xs:items-center gap-1 xs:gap-2">
-                    <span className="font-semibold text-slate-900 dark:text-slate-100 text-sm sm:text-base truncate">
-                      {selectedQuery.vendorName}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {new Date(selectedQuery.createdAt).toLocaleString()}
-                    </span>
-                    <Badge
-                      variant="outline"
-                      className="text-xs self-start xs:self-auto"
-                    >
-                      Original Query
-                    </Badge>
-                  </div>
-                  <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-3 sm:p-4">
-                    <p className="text-slate-700 dark:text-slate-300 text-sm sm:text-base">
-                      {selectedQuery.description}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              {selectedQuery.thread.slice(1).map((message, index) => (
-                <div
-                  key={`${message.user_id}-${index}-${message.timestamp}`} // Unique key to prevent React re-rendering issues
-                  className="flex gap-4"
-                >
-                  <Avatar className="h-10 w-10 shrink-0">
-                    <AvatarFallback
-                      className={`${
-                        message.sender_type === "vendor"
-                          ? "bg-gradient-to-br from-blue-400 to-violet-400"
-                          : "bg-gradient-to-br from-emerald-400 to-blue-400"
-                      } text-white`}
-                    >
-                      {message.username
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")
-                        .toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 space-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-slate-900 dark:text-slate-100">
-                        {message.username}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {new Date(message.timestamp).toLocaleString()}
-                      </span>
-                      <Badge
-                        variant="outline"
-                        className={`text-xs ${
-                          message.sender_type === "vendor"
-                            ? "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400"
-                            : "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400"
-                        }`}
-                      >
-                        {message.type === "query"
-                          ? "Query"
-                          : message.type === "response"
-                          ? "Response"
-                          : message.type === "followup"
-                          ? "Follow-up"
-                          : message.type}
-                      </Badge>
-                    </div>
-                    <div
-                      className={`rounded-lg p-4 border ${
-                        message.sender_type === "vendor"
-                          ? "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
-                          : "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800"
-                      }`}
-                    >
-                      <p className="text-slate-700 dark:text-slate-300">
-                        {message.message}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-              <div className="border-t pt-4 sm:pt-6">
-                <div className="flex gap-3 sm:gap-4">
-                  <Avatar className="h-8 w-8 sm:h-10 sm:w-10 shrink-0">
-                    <AvatarFallback className="bg-gradient-to-br from-violet-400 to-blue-400 text-white text-xs sm:text-sm">
-                      CA
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 space-y-3 sm:space-y-4 min-w-0">
-                    <div className="flex flex-col xs:flex-row xs:items-center gap-1 xs:gap-2">
-                      <span className="font-semibold text-slate-900 dark:text-slate-100 text-sm sm:text-base">
-                        Current Admin
-                      </span>
-                      <Badge
-                        variant="outline"
-                        className="text-xs self-start xs:self-auto"
-                      >
-                        Composing Response
-                      </Badge>
-                    </div>
-                    <Textarea
-                      placeholder="Type your response here..."
-                      value={responseMessage}
-                      onChange={(e) => setResponseMessage(e.target.value)}
-                      className="min-h-[100px] sm:min-h-[120px] resize-none text-sm sm:text-base"
-                    />
-                    <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2 xs:gap-3">
-                      <Button
-                        onClick={handleSubmitResponse}
-                        disabled={!responseMessage.trim() || isSubmitting}
-                        className="bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700 h-9 sm:h-10 text-sm sm:text-base"
-                      >
-                        {isSubmitting ? (
-                          <>
-                            <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4 mr-2 animate-spin" />
-                            <span className="hidden xs:inline">Sending...</span>
-                            <span className="xs:hidden">Send...</span>
-                          </>
-                        ) : (
-                          <>
-                            <Send className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
-                            <span className="hidden xs:inline">Send Response</span>
-                            <span className="xs:hidden">Send</span>
-                          </>
-                        )}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        onClick={() => setResponseMessage("")}
-                        className="h-9 sm:h-10 text-sm sm:text-base"
-                      >
-                        Clear
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+  <div className="space-y-4 sm:space-y-6">
+    <div className="flex gap-3 sm:gap-4">
+      <Avatar className="h-8 w-8 sm:h-10 sm:w-10 shrink-0">
+        <AvatarFallback className="bg-gradient-to-br from-blue-400 to-violet-400 text-white text-xs sm:text-sm">
+          {selectedQuery.vendorName
+            .split(" ")
+            .map((n) => n[0])
+            .join("")
+            .toUpperCase()}
+        </AvatarFallback>
+      </Avatar>
+      <div className="flex-1 space-y-2 min-w-0">
+        <div className="flex flex-col xs:flex-row xs:items-center gap-1 xs:gap-2">
+          <span className="font-semibold text-slate-900 dark:text-slate-100 text-sm sm:text-base truncate">
+            {selectedQuery.vendorName}
+          </span>
+          <span className="text-xs text-muted-foreground">
+            {new Date(selectedQuery.createdAt).toLocaleString()}
+          </span>
+          <Badge
+            variant="outline"
+            className="text-xs self-start xs:self-auto"
+          >
+            Original Query
+          </Badge>
+        </div>
+        <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-3 sm:p-4">
+          <p className="text-slate-700 dark:text-slate-300 text-sm sm:text-base">
+            {selectedQuery.description}
+          </p>
+        </div>
+      </div>
+    </div>
+    {selectedQuery.thread.slice(1).map((message, index) => (
+      <div
+        key={`${message.user_id}-${index}-${message.timestamp}`}
+        className="flex gap-4"
+      >
+        <Avatar className="h-10 w-10 shrink-0">
+          <AvatarFallback
+            className={`${
+              message.sender_type === "vendor"
+                ? "bg-gradient-to-br from-blue-400 to-violet-400"
+                : "bg-gradient-to-br from-emerald-400 to-blue-400"
+            } text-white`}
+          >
+            {message.username
+              .split(" ")
+              .map((n) => n[0])
+              .join("")
+              .toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
+        <div className="flex-1 space-y-2">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold text-slate-900 dark:text-slate-100">
+              {message.username}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              {new Date(message.timestamp).toLocaleString()}
+            </span>
+            <Badge
+              variant="outline"
+              className={`text-xs ${
+                message.sender_type === "vendor"
+                  ? "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400"
+                  : "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400"
+              }`}
+            >
+              {message.type === "query"
+                ? "Query"
+                : message.type === "response"
+                ? "Response"
+                : message.type === "followup"
+                ? "Follow-up"
+                : message.type}
+            </Badge>
+          </div>
+          <div
+            className={`rounded-lg p-4 border ${
+              message.sender_type === "vendor"
+                ? "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                : "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800"
+            }`}
+          >
+            <p className="text-slate-700 dark:text-slate-300">
+              {message.message}
+            </p>
+          </div>
+        </div>
+      </div>
+    ))}
+    {selectedQuery.status !== "closed" && (
+      <div className="border-t pt-4 sm:pt-6">
+        <div className="flex gap-3 sm:gap-4">
+          <Avatar className="h-8 w-8 sm:h-10 sm:w-10 shrink-0">
+            <AvatarFallback className="bg-gradient-to-br from-violet-400 to-blue-400 text-white text-xs sm:text-sm">
+              CA
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1 space-y-3 sm:space-y-4 min-w-0">
+            <div className="flex flex-col xs:flex-row xs:items-center gap-1 xs:gap-2">
+              <span className="font-semibold text-slate-900 dark:text-slate-100 text-sm sm:text-base">
+                Current Admin
+              </span>
+              <Badge
+                variant="outline"
+                className="text-xs self-start xs:self-auto"
+              >
+                Composing Response
+              </Badge>
             </div>
-          </CardContent>
+            <Textarea
+              placeholder="Type your response here..."
+              value={responseMessage}
+              onChange={(e) => setResponseMessage(e.target.value)}
+              className="min-h-[100px] sm:min-h-[120px] resize-none text-sm sm:text-base"
+            />
+            <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2 xs:gap-3">
+              <Button
+                onClick={handleSubmitResponse}
+                disabled={!responseMessage.trim() || isSubmitting}
+                className="bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700 h-9 sm:h-10 text-sm sm:text-base"
+              >
+                {isSubmitting ? (
+                  <>
+                    <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4 mr-2 animate-spin" />
+                    <span className="hidden xs:inline">Sending...</span>
+                    <span className="xs:hidden">Send...</span>
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
+                    <span className="hidden xs:inline">Send Response</span>
+                    <span className="xs:hidden">Send</span>
+                  </>
+                )}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setResponseMessage("")}
+                className="h-9 sm:h-10 text-sm sm:text-base"
+              >
+                Clear
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
+</CardContent>
         </Card>
       </div>
     </div>

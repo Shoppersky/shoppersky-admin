@@ -591,13 +591,13 @@ const VendorManagement = () => {
           setVendors((prev) =>
             prev.map((v) =>
               v.id === vendorToRestore.id
-                ? { ...v, isActive: true, status: "approved" }
+                ? { ...v, isActive: false }
                 : v
             )
           );
           setSelectedVendor((prev) =>
             prev && prev.id === vendorToRestore.id
-              ? { ...prev, isActive: true, status: "approved" }
+              ? { ...prev, isActive: false}
               : prev
           );
           toast.success("Vendor restored successfully!");
