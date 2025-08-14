@@ -45,7 +45,7 @@ export default function Sidebar({ isOpen = false, onClose, isMobile = false, isC
 
   const navItems = [
     { label: "home", icon: Home, path: "/home" },
-    { label: "employees", icon: ShieldUser  , path: "/employees" },
+    // { label: "employees", icon: ShieldUser  , path: "/employees" },
     { label: "vendors", icon: SquareUserRound  , path: "/vendors" },
     { label: "end users", icon: UsersRound , path: "/customers" },
     // { label: "orders", icon: Box, path: "/orders" },

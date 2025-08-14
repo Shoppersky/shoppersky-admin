@@ -458,7 +458,7 @@ const VendorManagement = () => {
           `/admin/vendor/onhold?user_id=${vendorToHold.id}`
         );
 
-        if (response.data.message === "Vendor placed on hold successfully") {
+        if (response.status === 200) {
           setVendors((prev) =>
             prev.map((v) =>
               v.id === vendorToHold.id
