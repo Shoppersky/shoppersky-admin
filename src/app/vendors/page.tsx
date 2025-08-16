@@ -790,7 +790,7 @@ const VendorManagement = () => {
                       <SelectItem value="onhold">On Hold</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Select value={roleFilter} onValueChange={setRoleFilter}>
+                  {/* <Select value={roleFilter} onValueChange={setRoleFilter}>
                     <SelectTrigger className="w-full xs:w-36 sm:w-40 h-9 sm:h-10 lg:h-12 bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 rounded-lg sm:rounded-xl text-xs sm:text-sm">
                       <SelectValue placeholder="Role" />
                     </SelectTrigger>
@@ -802,7 +802,7 @@ const VendorManagement = () => {
                       </SelectItem>
                       <SelectItem value="Partner">Partner</SelectItem>
                     </SelectContent>
-                  </Select>
+                  </Select> */}
                 </div>
                 <span className="text-slate-500 text-xs sm:text-sm">
                   {filteredVendors.length} of {vendors.length}
@@ -826,6 +826,9 @@ const VendorManagement = () => {
                     <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
                       Vendor's Email
                     </th>
+                     <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
+                      Vendor's Store
+                    </th>
                     <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 hidden sm:table-cell text-xs sm:text-sm">
                       Location
                     </th>
@@ -835,9 +838,7 @@ const VendorManagement = () => {
                     <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
                       Approval Status
                     </th>
-                    {/* <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 hidden lg:table-cell text-xs sm:text-sm">
-                      Role
-                    </th> */}
+                    
                     <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
                       Active Status
                     </th>
@@ -870,10 +871,15 @@ const VendorManagement = () => {
                               {vendor.email}
                             </p>
                             <p className="text-xs text-slate-500 dark:text-slate-400 truncate sm:hidden">
-                              {vendor.location}
+                              {vendor.storeName}
                             </p>
                           </div>
                         </div>
+                      </td>
+                       <td className="p-2 sm:p-3 lg:p-4 hidden sm:table-cell">
+                        <p className="font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm">
+                          {vendor.storeName}
+                        </p>
                       </td>
                       <td className="p-2 sm:p-3 lg:p-4 hidden sm:table-cell">
                         <p className="font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm">
@@ -896,9 +902,6 @@ const VendorManagement = () => {
                         </Badge>
                       </td>
 
-                      {/* <td className="p-2 sm:p-3 lg:p-4 hidden lg:table-cell">
-                        {getRoleBadge(vendor.role)}
-                      </td> */}
                       <td className="p-2 sm:p-3 lg:p-4">
                         <div className="flex items-center gap-1 sm:gap-2">
                           <Button

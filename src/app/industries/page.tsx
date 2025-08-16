@@ -142,7 +142,7 @@ function IndustryCard({
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="space-y-3 sm:space-y-4 p-4 sm:p-6 pt-0">
+      <CardContent className="space-y-3 sm:space-y-4 p-2 sm:p-2 pt-0">
         <div className="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-1 xs:gap-0 text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200/50 dark:border-slate-700/50">
           <span className="truncate">
             Created: {new Date(industry.createdDate).toLocaleDateString()}
@@ -838,11 +838,7 @@ export default function IndustriesPage() {
                             <div className="font-medium text-slate-900 dark:text-slate-100 text-xs sm:text-sm truncate max-w-[120px] sm:max-w-none">
                               {industry.name}
                             </div>
-                            <div className="xs:hidden mt-1">
-                              <code className="text-xs bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded text-slate-700 dark:text-slate-300 truncate block max-w-[100px]">
-                                {industry.slug}
-                              </code>
-                            </div>
+                           
                           </td>
                           <td className="p-2 sm:p-4 hidden xs:table-cell">
                             <code className="text-xs sm:text-sm bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-slate-700 dark:text-slate-300 truncate block max-w-[120px] sm:max-w-none">
