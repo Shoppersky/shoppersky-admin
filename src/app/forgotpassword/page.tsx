@@ -127,7 +127,7 @@ export default function ForgotPasswordPage() {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-cyan-50 to-blue-100 dark:from-slate-950 dark:via-slate-900 dark:to-blue-950 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-100 dark:from-slate-950 dark:via-slate-900 dark:to-blue-950 flex items-center justify-center p-4">
         {/* Background Pattern */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent_50%)] dark:bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.05),transparent_50%)] pointer-events-none" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(147,51,234,0.1),transparent_50%)] dark:bg-[radial-gradient(circle_at_70%_80%,rgba(147,51,234,0.05),transparent_50%)] pointer-events-none" />
@@ -153,16 +153,16 @@ export default function ForgotPasswordPage() {
 
               {/* Instructions */}
               <div className="space-y-6 mb-8">
-                <div className="p-6 bg-gradient-to-r from-cyan-50/80 to-blue-50/80 dark:from-cyan-950/30 dark:to-blue-950/30 rounded-2xl border border-cyan-200/50 dark:border-cyan-800/50">
+                <div className="p-6 bg-gradient-to-r from-purple-50/80 to-blue-50/80 dark:from-purple-950/30 dark:to-blue-950/30 rounded-2xl border border-purple-200/50 dark:border-purple-800/50">
                   <div className="flex items-start gap-4">
-                    <div className="p-2 bg-cyan-100 dark:bg-cyan-900/50 rounded-xl">
-                      <Mail className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
+                    <div className="p-2 bg-purple-100 dark:bg-purple-900/50 rounded-xl">
+                      <Mail className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-cyan-900 dark:text-cyan-100 mb-2">
+                      <h3 className="font-semibold text-purple-900 dark:text-purple-100 mb-2">
                         Check your inbox
                       </h3>
-                      <p className="text-sm text-cyan-700 dark:text-cyan-300">
+                      <p className="text-sm text-purple-700 dark:text-purple-300">
                         Click the reset link in the email to create a new
                         password. The link will expire in 60 minutes.
                       </p>
@@ -227,7 +227,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-cyan-50 to-blue-100 dark:from-slate-950 dark:via-slate-900 dark:to-blue-950 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-100 dark:from-slate-950 dark:via-slate-900 dark:to-blue-950 flex items-center justify-center p-4">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent_50%)] dark:bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.05),transparent_50%)] pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(85, 83, 233, 0.1),transparent_50%)] dark:bg-[radial-gradient(circle_at_70%_80%,rgba(114, 150, 230, 0.05),transparent_50%)] pointer-events-none" />
@@ -236,14 +236,14 @@ export default function ForgotPasswordPage() {
         <Card className="backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border-0 shadow-2xl rounded-3xl overflow-hidden">
           <CardContent className="grid lg:grid-cols-2 p-0 min-h-[600px]">
             {/* Left Side - Forgot Password Form */}
-         <div className="bg-gradient-to-br from-cyan-500/10 via-blue-500/10 to-cyan-500/10 dark:from-cyan-950/30 dark:via-blue-950/30 dark:to-cyan-950/30 p-8 lg:p-12 flex flex-col justify-center relative overflow-hidden">
+         <div className="bg-gradient-to-br from-purple-500/10 via-blue-500/10 to-purple-500/10 dark:from-purple-950/30 dark:via-blue-950/30 dark:to-purple-950/30 p-8 lg:p-12 flex flex-col justify-center relative overflow-hidden">
               {/* Background Pattern */}
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.1),transparent_70%)] dark:bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.05),transparent_70%)]" />
 
               <div className="relative z-10">
                 {/* Main Feature */}
                 <div className="text-center mb-12">
-                  <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-3xl shadow-2xl mb-6">
+                  <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-purple-500 to-blue-500 rounded-3xl shadow-2xl mb-6">
                     <Shield className="w-10 h-10 text-white" />
                   </div>
                   <h2 className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">
@@ -286,7 +286,7 @@ export default function ForgotPasswordPage() {
                   </div>
 
                   <div className="flex items-center gap-4 p-4 bg-white/60 dark:bg-slate-800/60 rounded-2xl backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
-                    <div className="p-3 bg-gradient-to-r from-cyan-500 to-pink-500 rounded-xl shadow-lg">
+                    <div className="p-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl shadow-lg">
                       <Shield className="w-6 h-6 text-white" />
                     </div>
                     <div>
@@ -331,11 +331,11 @@ export default function ForgotPasswordPage() {
               {/* Header */}
               <div className="text-center mb-8">
                 <div className="inline-flex items-center gap-3 mb-6">
-                  <div className="p-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl shadow-lg">
+                  <div className="p-3 bg-gradient-to-r from-purple-500 to-blue-500 rounded-2xl shadow-lg">
                     <Mail className="w-8 h-8 text-white" />
                   </div>
                   <div className="text-left">
-                    <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-cyan-600 via-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                    <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-purple-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
                       Forgot Password?
                     </h1>
                     <p className="text-slate-600 dark:text-slate-400 font-medium">
@@ -369,7 +369,7 @@ export default function ForgotPasswordPage() {
                     htmlFor="email"
                     className="text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2"
                   >
-                    <Mail className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+                    <Mail className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                     Email Address
                   </Label>
                   <div className="relative">
@@ -380,7 +380,7 @@ export default function ForgotPasswordPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="h-14 pl-12 bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-200 text-base"
+                      className="h-14 pl-12 bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 text-base"
                     />
                     <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
                   </div>
@@ -390,7 +390,7 @@ export default function ForgotPasswordPage() {
                 <Button
                   type="submit"
                   disabled={isLoading || !email}
-                  className="w-full h-14 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-base font-semibold"
+                  className="w-full h-14 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-base font-semibold"
                 >
                   {isLoading ? (
                     <div className="flex items-center gap-2">
