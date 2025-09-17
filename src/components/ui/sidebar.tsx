@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect,useRef } from "react";
 import {
   Home,
   MessageCircleQuestionMark,
@@ -32,17 +32,22 @@ export default function Sidebar({ isOpen = false, onClose, isMobile = false, isC
   const pathname = usePathname();
 
   // Debug logging
-  useEffect(() => {
-    console.log('Sidebar props changed:', { isOpen, isMobile });
-  }, [isOpen, isMobile]);
+
 
   // Close mobile menu when route changes
-  useEffect(() => {
-    if (isMobile && onClose) {
-      onClose();
-    }
-  }, [pathname, isMobile, onClose]);
+  // useEffect(() => {
+  //   if (isMobile && onClose) {
+  //     onClose();
+  //   }
+  // }, [pathname, isMobile, onClose]);
+const prevPathname = useRef(pathname);
 
+useEffect(() => {
+  if (pathname !== prevPathname.current && isMobile && onClose) {
+    onClose();
+  }
+  prevPathname.current = pathname;
+}, [pathname, isMobile, onClose]);
   const navItems = [
     { label: "home", icon: Home, path: "/home" },
     // { label: "employees", icon: ShieldUser  , path: "/employees" },

@@ -488,7 +488,7 @@ export default function UsersPage() {
                   </SelectContent>
                 </Select>
 
-                <div className="flex items-center border rounded-lg p-0.5 sm:p-1">
+                {/* <div className="flex items-center border rounded-lg p-0.5 sm:p-1">
                   <Button
                     variant={viewMode === "table" ? "default" : "ghost"}
                     size="sm"
@@ -505,7 +505,7 @@ export default function UsersPage() {
                   >
                     <Grid3X3 className="w-3 h-3 sm:w-4 sm:h-4" />
                   </Button>
-                </div>
+                </div> */}
               </div>
 
               {/* Mobile Filters Toggle */}
@@ -519,7 +519,7 @@ export default function UsersPage() {
                   Filters
                 </Button>
 
-                <div className="flex items-center border rounded-lg p-0.5 sm:p-1">
+                {/* <div className="flex items-center border rounded-lg p-0.5 sm:p-1">
                   <Button
                     variant={viewMode === "table" ? "default" : "ghost"}
                     size="sm"
@@ -536,7 +536,7 @@ export default function UsersPage() {
                   >
                     <Grid3X3 className="w-3 h-3 sm:w-4 sm:h-4" />
                   </Button>
-                </div>
+                </div> */}
               </div>
             </div>
 

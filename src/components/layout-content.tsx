@@ -82,7 +82,7 @@ export function LayoutContent({ children }: LayoutContentProps) {
     setSidebarCollapsed(prev => !prev)
   }
 }
-
+console.log(isMobile,isTablet,sidebarOpen)
 
   // Close overlay
   const closeSidebar = () => {

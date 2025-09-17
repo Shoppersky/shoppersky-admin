@@ -39,13 +39,9 @@ const Header = memo(function Header({ onMenuClick, isMobile, sidebarCollapsed, i
   const { userId, logout } = useStore();
   
   // Debug logging - only log when props actually change
-  useEffect(() => {
-    console.log('Header props changed:', { isMobile, sidebarCollapsed, isTablet, sidebarOpen });
-  }, [isMobile, sidebarCollapsed, isTablet, sidebarOpen]);
   
-  useEffect(() => {
-    console.log('User ID from store:', userId);
-  }, [userId]);
+  
+ 
 
   const fetchProfileData = async () => {
     if (!userId) {
@@ -57,9 +53,9 @@ const Header = memo(function Header({ onMenuClick, isMobile, sidebarCollapsed, i
       setProfileLoading(true);
       setProfileError(null);
       
-      console.log('Fetching profile for userId:', userId);
+
       const response = await axiosInstance.get(`/admin-users/admin-profile-details/${userId}`);
-      console.log('Profile API response:', response.data);
+
       
       const { data } = response.data; // Assuming api_response structure
       setProfileData({
@@ -128,27 +124,10 @@ const Header = memo(function Header({ onMenuClick, isMobile, sidebarCollapsed, i
   }, [userId]);
 
   // Debug logging for profile data
-  useEffect(() => {
-    console.log('Profile state updated:', { profileData, profileLoading, profileError });
-  }, [profileData, profileLoading, profileError]);
-  // Close dropdowns when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Element;
-      if (showNotifications && !target.closest('.notifications-dropdown')) {
-        setShowNotifications(false);
-        setShowAllNotifications(false);
-      }
-      if (showProfileDropdown && !target.closest('.profile-dropdown')) {
-        setShowProfileDropdown(false);
-      }
-    };
+ useEffect(() => {
+  setShowProfileDropdown(false);
+}, [pathname]);
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showNotifications, showProfileDropdown]);
 
   // Mock system alerts data
   const systemAlerts = [

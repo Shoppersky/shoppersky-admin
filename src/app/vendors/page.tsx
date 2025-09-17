@@ -1015,13 +1015,13 @@ const VendorManagement = () => {
           >
             <DialogContent
               className="
-    w-[90vw] sm:w-[80vw] md:w-[70vw] lg:w-[60vw] xl:w-[50vw] 
+    w-[80vw] sm:w-[70vw] md:w-[60vw] lg:w-[60vw] xl:w-[50vw] 
     max-h-[95vh] overflow-hidden p-0 
     bg-white/95 dark:bg-slate-900/95 
     border border-slate-200/50 dark:border-slate-700/50 
     shadow-2xl backdrop-blur-sm 
     m-1 sm:m-2 lg:m-4 
-    overflow-y-auto
+    overflow-y-auto 
   "
             >
               <div className="flex flex-col h-full">
@@ -1064,7 +1064,7 @@ const VendorManagement = () => {
                   </DialogHeader>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6">
+                <div className="flex-1 overflow-y-auto  p-3 sm:p-4 lg:p-6">
                   <Tabs
                     value={activeTab}
                     onValueChange={setActiveTab}
@@ -1106,7 +1106,7 @@ const VendorManagement = () => {
                         activeTab === "overview" ? "block" : "hidden"
                       }`}
                     >
-                      <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
+                      <div className="space-y-4">
                         <Card className="bg-white/90 dark:bg-slate-800/90 border border-slate-200/50 dark:border-slate-700/50 shadow-sm">
                           <CardHeader className="pb-3">
                             <CardTitle className="text-lg font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">

@@ -1091,7 +1091,7 @@ export default function CategoriesPage() {
                       <SelectItem value="inactive">Inactive</SelectItem>
                     </SelectContent>
                   </Select>
-                  <div className="flex items-center gap-1 bg-white/80 dark:bg-slate-800/80 border border-indigo-200 dark:border-indigo-800 rounded-xl p-1">
+                  {/* <div className="flex items-center gap-1 bg-white/80 dark:bg-slate-800/80 border border-indigo-200 dark:border-indigo-800 rounded-xl p-1">
                     <Button
                       variant={viewMode === "grid" ? "default" : "ghost"}
                       size="sm"
@@ -1108,7 +1108,7 @@ export default function CategoriesPage() {
                     >
                       <List className="w-4 h-4" />
                     </Button>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </CardContent>
@@ -1116,7 +1116,7 @@ export default function CategoriesPage() {
         </div>
 
         {filteredCategories.length > 0 ? (
-          viewMode === "grid" ? (
+          viewMode === "list" ? (
             <div className="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-6">
               {filteredCategories.map((category, index) => (
                 <Card

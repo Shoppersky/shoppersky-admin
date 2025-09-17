@@ -202,7 +202,7 @@ export default function IndustriesPage() {
   );
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [viewMode, setViewMode] = useState<"cards" | "table">("cards");
+  const [viewMode, setViewMode] = useState<"table" | "table">("table");
   const [industries, setIndustries] = useState<Industry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -758,7 +758,7 @@ export default function IndustriesPage() {
                     <SelectItem value="inactive">Inactive</SelectItem>
                   </SelectContent>
                 </Select>
-                <div className="flex items-center justify-end gap-3 w-full">
+                {/* <div className="flex items-center justify-end gap-3 w-full">
                   <div className="flex items-center gap-1 sm:gap-2 bg-slate-100/80 dark:bg-slate-800/80 rounded-xl p-1 h-10 sm:h-12">
                     <Button
                       variant={viewMode === "cards" ? "default" : "ghost"}
@@ -780,7 +780,7 @@ export default function IndustriesPage() {
                   <span className="text-slate-500 text-xs sm:text-sm">
                     {filteredIndustries.length} of {industries.length}
                   </span>
-                </div>
+                </div> */}
               </div>
             </div>
           </CardContent>
