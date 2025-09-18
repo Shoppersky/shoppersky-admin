@@ -21,7 +21,7 @@ export function LayoutContent({ children }: LayoutContentProps) {
   // Check screen size and set mobile/tablet states
   useEffect(() => {
     setIsClient(true)
-    
+
     // Debounce function to limit resize event calls
     let timeoutId: NodeJS.Timeout
     const debouncedCheckScreenSize = () => {
@@ -30,21 +30,21 @@ export function LayoutContent({ children }: LayoutContentProps) {
         const width = window.innerWidth
         const mobile = width < 768 // Mobile: < 768px
         const tablet = width >= 768 && width < 1024 // Tablet: 768px - 1023px
-        
+
         // Only update if values actually changed
         setIsMobile(prev => prev !== mobile ? mobile : prev)
         setIsTablet(prev => prev !== tablet ? tablet : prev)
-        
+
         // Close sidebar overlay when switching to desktop
         if (width >= 1024) {
           setSidebarOpen(false)
         }
       }, 150) // 150ms debounce
     }
-    
- 
+
+
     debouncedCheckScreenSize()
-    
+
     window.addEventListener('resize', debouncedCheckScreenSize)
     return () => {
       window.removeEventListener('resize', debouncedCheckScreenSize)
@@ -76,13 +76,13 @@ export function LayoutContent({ children }: LayoutContentProps) {
 
   // Handle menu click based on screen size
   const handleMenuClick = () => {
-  if (isMobile || isTablet) {
-    setSidebarOpen(prev => !prev)
-  } else {
-    setSidebarCollapsed(prev => !prev)
+    if (isMobile || isTablet) {
+      setSidebarOpen(prev => !prev)
+    } else {
+      setSidebarCollapsed(prev => !prev)
+    }
   }
-}
-console.log(isMobile,isTablet,sidebarOpen)
+  console.log(isMobile, isTablet, sidebarOpen)
 
   // Close overlay
   const closeSidebar = () => {
@@ -91,18 +91,17 @@ console.log(isMobile,isTablet,sidebarOpen)
 
   // Render with sidebar and header for all other pages
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950">
+    <div className="flex min-h-screen">
       {/* Desktop Sidebar - Always visible, can collapse */}
       {isDesktop && (
         <div className="relative">
-          <div className={`h-full transition-all duration-300 ${
-            sidebarCollapsed 
-              ? 'w-16' 
+          <div className={`h-full transition-all duration-300 ${sidebarCollapsed
+              ? 'w-16'
               : 'w-64'
-          }`}>
-            <Sidebar 
+            }`}>
+            <Sidebar
               isOpen={true}
-              onClose={() => {}}
+              onClose={() => { }}
               isMobile={false}
               isCollapsed={sidebarCollapsed}
               onMenuClick={handleMenuClick}
@@ -116,23 +115,22 @@ console.log(isMobile,isTablet,sidebarOpen)
       {shouldUseOverlay && (
         <>
           {/* Sidebar Overlay */}
-         <div className={`fixed inset-y-0 left-0 z-50 w-64 transform ${
-  sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-} transition-transform duration-300 ease-in-out`}>
-  <Sidebar 
-    isOpen={sidebarOpen}
-    onClose={closeSidebar}
-    isMobile={shouldUseOverlay}
-    isCollapsed={false}
-    onMenuClick={handleMenuClick}
-    isOverlay={true}
-  />
-</div>
+          <div className={`fixed inset-y-0 left-0 z-50 w-64 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+            } transition-transform duration-300 ease-in-out`}>
+            <Sidebar
+              isOpen={sidebarOpen}
+              onClose={closeSidebar}
+              isMobile={shouldUseOverlay}
+              isCollapsed={false}
+              onMenuClick={handleMenuClick}
+              isOverlay={true}
+            />
+          </div>
 
 
           {/* Backdrop Overlay */}
           {sidebarOpen && (
-            <div 
+            <div
               className="fixed inset-0 bg-black/50 z-40"
               onClick={closeSidebar}
             />
@@ -141,7 +139,7 @@ console.log(isMobile,isTablet,sidebarOpen)
       )}
 
       {/* Fixed Header */}
-      <Header 
+      <Header
         onMenuClick={handleMenuClick}
         isMobile={isMobile}
         isTablet={isTablet}
@@ -150,15 +148,14 @@ console.log(isMobile,isTablet,sidebarOpen)
       />
 
       {/* Main content */}
-      <main className={`flex-1 flex flex-col overflow-hidden pt-16 lg:pt-20 ${
-        shouldUseOverlay ? 'w-full' : ''
-      }`}>
+      <main className={`flex-1 flex flex-col overflow-hidden pt-16 lg:pt-20 ${shouldUseOverlay ? 'w-full' : ''
+        }`}>
         {/* Content area */}
         <div className="flex-1 overflow-y-auto relative">
           {/* Subtle animated background pattern */}
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-100/20 via-transparent to-indigo-100/20 dark:from-blue-900/10 dark:via-transparent dark:to-indigo-900/10 pointer-events-none" />
+          {/* <div className="absolute inset-0 bg-gradient-to-br from-blue-100/20 via-transparent to-indigo-100/20 dark:from-blue-900/10 dark:via-transparent dark:to-indigo-900/10 pointer-events-none" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.05),transparent_50%)] dark:bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.02),transparent_50%)] pointer-events-none" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(147,51,234,0.05),transparent_50%)] dark:bg-[radial-gradient(circle_at_70%_80%,rgba(147,51,234,0.02),transparent_50%)] pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(147,51,234,0.05),transparent_50%)] dark:bg-[radial-gradient(circle_at_70%_80%,rgba(147,51,234,0.02),transparent_50%)] pointer-events-none" /> */}
 
           {/* Content wrapper */}
           <div className="relative z-10 p-4 lg:p-8">
