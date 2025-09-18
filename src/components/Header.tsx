@@ -20,28 +20,28 @@ interface HeaderProps {
   isTablet?: boolean;
   sidebarOpen?: boolean;
 }
-  type ProfileData = {
-    name: string,
-    email: string,
-    role: string,
-    avatar: string,
-    joinDate: string
-  }
+type ProfileData = {
+  name: string,
+  email: string,
+  role: string,
+  avatar: string,
+  joinDate: string
+}
 const Header = memo(function Header({ onMenuClick, isMobile, sidebarCollapsed, isTablet, sidebarOpen }: HeaderProps) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showAllNotifications, setShowAllNotifications] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
-  const [profileData, setProfileData] = useState<ProfileData | null>(null); 
+  const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileError, setProfileError] = useState<string | null>(null);
   const router = useRouter();
   const pathname = usePathname();
   const { userId, logout } = useStore();
-  
+
   // Debug logging - only log when props actually change
-  
-  
- 
+
+
+
 
   const fetchProfileData = async () => {
     if (!userId) {
@@ -52,11 +52,11 @@ const Header = memo(function Header({ onMenuClick, isMobile, sidebarCollapsed, i
     try {
       setProfileLoading(true);
       setProfileError(null);
-      
+
 
       const response = await axiosInstance.get(`/admin-users/admin-profile-details/${userId}`);
 
-      
+
       const { data } = response.data; // Assuming api_response structure
       setProfileData({
         name: data.username || "Unknown",
@@ -65,7 +65,7 @@ const Header = memo(function Header({ onMenuClick, isMobile, sidebarCollapsed, i
         avatar: data.profile_picture_url || "/placeholder.svg?height=120&width=120&text=JD",
         joinDate: data.join_date || "Unknown",
       });
-     
+
     } catch (error: any) {
       console.error("Error fetching profile:", error);
       setProfileError(error.response?.data?.message || 'Failed to fetch profile');
@@ -94,29 +94,29 @@ const Header = memo(function Header({ onMenuClick, isMobile, sidebarCollapsed, i
 
 
   const handleLogout = async () => {
-  try {
-    // Assume logoutUser is an API call that logs out on the server
-    // await logoutUser();
-
-    // If success, clear local state/store and redirect
-    const { logout } = useStore.getState();
-    logout();
-    localStorage.removeItem('id');
-
-    router.push('/');  // Redirect after successful logout
-  } catch (err) {
-    // Fallback: clear localStorage, Zustand store, and redirect
     try {
+      // Assume logoutUser is an API call that logs out on the server
+      // await logoutUser();
+
+      // If success, clear local state/store and redirect
       const { logout } = useStore.getState();
       logout();
       localStorage.removeItem('id');
-    } catch {
-      // swallow any errors here silently
+
+      router.push('/');  // Redirect after successful logout
+    } catch (err) {
+      // Fallback: clear localStorage, Zustand store, and redirect
+      try {
+        const { logout } = useStore.getState();
+        logout();
+        localStorage.removeItem('id');
+      } catch {
+        // swallow any errors here silently
+      }
+      toast.error('Logout failed with server, fallback logout applied.');
+      window.location.href = '/';
     }
-    toast.error('Logout failed with server, fallback logout applied.');
-    window.location.href = '/';
-  }
-};
+  };
 
 
   useEffect(() => {
@@ -124,9 +124,9 @@ const Header = memo(function Header({ onMenuClick, isMobile, sidebarCollapsed, i
   }, [userId]);
 
   // Debug logging for profile data
- useEffect(() => {
-  setShowProfileDropdown(false);
-}, [pathname]);
+  useEffect(() => {
+    setShowProfileDropdown(false);
+  }, [pathname]);
 
 
   // Mock system alerts data
@@ -223,7 +223,7 @@ const Header = memo(function Header({ onMenuClick, isMobile, sidebarCollapsed, i
         <div className={`flex items-center gap-4 transition-all duration-300 ${
           // Only apply margin on desktop when sidebar is not overlay
           (!isMobile && !isTablet) ? (sidebarCollapsed ? 'ml-16' : 'ml-64') : 'ml-0'
-        }`}>
+          }`}>
           {/* Menu Toggle Button */}
           <button
             onClick={() => {
@@ -280,7 +280,7 @@ const Header = memo(function Header({ onMenuClick, isMobile, sidebarCollapsed, i
 
           {/* Notifications */}
           <div className="relative notifications-dropdown">
-            <button 
+            <button
               onClick={handleNotificationClick}
               className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
             >
@@ -289,12 +289,11 @@ const Header = memo(function Header({ onMenuClick, isMobile, sidebarCollapsed, i
                 {systemAlerts.length}
               </span>
             </button>
-            
+
             {/* Notifications Dropdown */}
             {showNotifications && (
-              <div className={`absolute top-full right-0 mt-2 w-80 bg-white dark:bg-slate-800 rounded-lg shadow-2xl border border-gray-200 dark:border-slate-700 z-[9999] overflow-y-auto transition-all duration-300 ${
-                showAllNotifications ? 'max-h-[500px]' : 'max-h-96'
-              }`}>
+              <div className={`absolute top-full right-0 mt-2 w-80 bg-white dark:bg-slate-800 rounded-lg shadow-2xl border border-gray-200 dark:border-slate-700 z-[9999] overflow-y-auto transition-all duration-300 ${showAllNotifications ? 'max-h-[500px]' : 'max-h-96'
+                }`}>
                 <div className="p-4 border-b border-gray-200 dark:border-slate-700">
                   <div className="flex items-center justify-between">
                     <h3 className="font-semibold text-gray-900 dark:text-white">Notifications</h3>
@@ -307,12 +306,11 @@ const Header = memo(function Header({ onMenuClick, isMobile, sidebarCollapsed, i
                   {(showAllNotifications ? systemAlerts : systemAlerts.slice(0, 3)).map((alert, index) => (
                     <div key={index} className="p-3 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-md cursor-pointer transition-colors duration-200">
                       <div className="flex items-start gap-3">
-                        <div className={`p-1 rounded-full flex-shrink-0 ${
-                          alert.type === 'warning' ? 'bg-yellow-100 dark:bg-yellow-900/30' :
-                          alert.type === 'error' ? 'bg-red-100 dark:bg-red-900/30' :
-                          alert.type === 'success' ? 'bg-green-100 dark:bg-green-900/30' :
-                          'bg-blue-100 dark:bg-blue-900/30'
-                        }`}>
+                        <div className={`p-1 rounded-full flex-shrink-0 ${alert.type === 'warning' ? 'bg-yellow-100 dark:bg-yellow-900/30' :
+                            alert.type === 'error' ? 'bg-red-100 dark:bg-red-900/30' :
+                              alert.type === 'success' ? 'bg-green-100 dark:bg-green-900/30' :
+                                'bg-blue-100 dark:bg-blue-900/30'
+                          }`}>
                           {getAlertIcon(alert.type)}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -324,7 +322,7 @@ const Header = memo(function Header({ onMenuClick, isMobile, sidebarCollapsed, i
                     </div>
                   ))}
                   <div className="p-3 text-center border-t border-gray-200 dark:border-slate-700 mt-2">
-                    <button 
+                    <button
                       className="text-sm text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 transition-colors duration-200"
                       onClick={handleViewAllNotifications}
                     >
@@ -343,14 +341,14 @@ const Header = memo(function Header({ onMenuClick, isMobile, sidebarCollapsed, i
 
           {/* Profile */}
           <div className="relative profile-dropdown">
-            <button 
+            <button
               onClick={handleProfileClick}
               className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
             >
               {profileData?.avatar ? (
-                <img 
-                  src={profileData.avatar} 
-                  alt={profileData.name || 'Profile'} 
+                <img
+                  src={profileData.avatar}
+                  alt={profileData.name || 'Profile'}
                   className="w-8 h-8 rounded-full object-cover"
                 />
               ) : (
@@ -362,7 +360,7 @@ const Header = memo(function Header({ onMenuClick, isMobile, sidebarCollapsed, i
                 {profileLoading ? 'Loading...' : (profileData?.name || 'Admin')}
               </span>
             </button>
-            
+
             {/* Profile Dropdown */}
             {showProfileDropdown && (
               <div className="absolute top-full right-0 mt-2 w-64 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-slate-700 z-[9999]">
@@ -388,20 +386,20 @@ const Header = memo(function Header({ onMenuClick, isMobile, sidebarCollapsed, i
                   )}
                 </div>
                 <div className="p-2">
-                <Link href="/profile" passHref>
-  <button className="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md">
-    Profile
-  </button>
-</Link>
+                  <Link href="/profile" passHref>
+                    <button className="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md">
+                      Profile
+                    </button>
+                  </Link>
                   {/* <button className="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md">
                     Account Settings
                   </button> */}
-                 <button
-      onClick={handleLogout}
-      className="w-full text-left px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md"
-    >
-      Logout
-    </button>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md"
+                  >
+                    Logout
+                  </button>
                 </div>
               </div>
             )}

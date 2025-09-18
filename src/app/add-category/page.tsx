@@ -410,7 +410,7 @@
 
 //   if (loading) {
 //     return (
-//       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+//       <div className="min-h-screen">
 //         <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 lg:py-6 space-y-4 sm:space-y-6">
 //           <div className="text-center space-y-4">
 //             <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-slate-700/50">
@@ -435,7 +435,7 @@
 //   }
 
 //   return (
-//     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+//     <div className="min-h-screen">
 //       <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 lg:py-6 space-y-4 sm:space-y-6">
 //         {/* Error Message */}
 //         {error && (
@@ -1328,7 +1328,7 @@ export default function CategoryPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen">
         <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 lg:py-6 space-y-4 sm:space-y-6">
           <div className="text-center space-y-4">
             <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-slate-700/50">
@@ -1353,7 +1353,7 @@ export default function CategoryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen">
       <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 lg:py-6 space-y-4 sm:space-y-6">
         {/* Error Message */}
         {error && (
