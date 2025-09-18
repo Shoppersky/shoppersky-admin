@@ -426,6 +426,7 @@ import {
 } from 'recharts';
 import Image from 'next/image';
 import axiosInstance from '@/lib/axiosInstance';
+import Link from 'next/link';
 
 // Interface for API response
 interface AdminAnalytics {
@@ -651,14 +652,12 @@ const AdminDashboard = () => {
                 <CardTitle className="text-base sm:text-lg font-semibold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
                   Recent Orders
                 </CardTitle>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 text-xs sm:text-sm px-2 sm:px-3"
-                  onClick={() => handleViewAll('Recent Orders')}
-                >
-                  View All <ChevronRight className="ml-1 h-3 w-3 sm:h-4 sm:w-4" />
-                </Button>
+                <Link
+      href="/orders"
+      className="inline-flex items-center text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 text-xs sm:text-sm px-2 sm:px-3"
+    >
+      View All <ChevronRight className="ml-1 h-3 w-3 sm:h-4 sm:w-4" />
+    </Link>
               </CardHeader>
               <CardContent className="px-3 sm:px-6 pb-4 sm:pb-6">
                 <div className="overflow-x-auto">

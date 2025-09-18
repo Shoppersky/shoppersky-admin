@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
-import { useEffect,useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
   Home,
   MessageCircleQuestionMark,
@@ -27,12 +27,18 @@ interface SidebarProps {
   isOverlay?: boolean;
 }
 
-export default function Sidebar({ isOpen = false, onClose, isMobile = false, isCollapsed = false, onMenuClick, isOverlay = false }: SidebarProps) {
+export default function Sidebar({
+  isOpen = false,
+  onClose,
+  isMobile = false,
+  isCollapsed = false,
+  onMenuClick,
+  isOverlay = false,
+}: SidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
 
   // Debug logging
-
 
   // Close mobile menu when route changes
   // useEffect(() => {
@@ -40,48 +46,57 @@ export default function Sidebar({ isOpen = false, onClose, isMobile = false, isC
   //     onClose();
   //   }
   // }, [pathname, isMobile, onClose]);
-const prevPathname = useRef(pathname);
+  const prevPathname = useRef(pathname);
 
-useEffect(() => {
-  if (pathname !== prevPathname.current && isMobile && onClose) {
-    onClose();
-  }
-  prevPathname.current = pathname;
-}, [pathname, isMobile, onClose]);
+  useEffect(() => {
+    if (pathname !== prevPathname.current && isMobile && onClose) {
+      onClose();
+    }
+    prevPathname.current = pathname;
+  }, [pathname, isMobile, onClose]);
   const navItems = [
     { label: "home", icon: Home, path: "/home" },
     // { label: "employees", icon: ShieldUser  , path: "/employees" },
-    { label: "vendors", icon: SquareUserRound  , path: "/vendors" },
-    { label: "end users", icon: UsersRound , path: "/customers" },
-    // { label: "orders", icon: Box, path: "/orders" },
+    { label: "vendors", icon: SquareUserRound, path: "/vendors" },
+    { label: "end users", icon: UsersRound, path: "/customers" },
+    { label: "orders", icon: Box, path: "/orders" },
     // { label: "payments", icon: CreditCard, path: "/payments" },
     { label: "industries", icon: Factory, path: "/industries" },
-   { label: "category", icon: Box, path: "/category", relatedPaths: ["/add-category"] },
+    {
+      label: "category",
+      icon: Box,
+      path: "/category",
+      relatedPaths: ["/add-category"],
+    },
     { label: "products", icon: ShoppingBag, path: "/products" },
+    { label: "partners", icon: ShoppingBag, path: "/Partners" },
+    { label: "advertisements", icon: ShoppingBag, path: "/Advertisements" },
     {
       label: "Vendor Enquiries",
       icon: MessageCircleQuestionMark,
       path: "/vendor-enquiries",
     },
-    { label: "End User Queries", icon: BadgeQuestionMark , path: "/enduserqueries" },
-    { label: "partners", icon: ShoppingBag, path: "/Partners" },
-    { label: "advertisements", icon: ShoppingBag, path: "/Advertisements" },
+    {
+      label: "End User Queries",
+      icon: BadgeQuestionMark,
+      path: "/enduserqueries",
+    },
   ];
 
   // Get current page name
   const getCurrentPageName = () => {
-    const currentItem = navItems.find(item => item.path === pathname);
+    const currentItem = navItems.find((item) => item.path === pathname);
     return currentItem ? currentItem.label : "Dashboard";
   };
-
- 
 
   return (
     <>
       {/* Sidebar */}
       <aside
         id="sidebar"
-        className={`${isOverlay ? 'relative' : 'sticky top-0'} h-screen bg-gradient-to-b from-white to-gray-50/50 dark:from-zinc-900 dark:to-zinc-950/50 border-r border-gray-200/60 dark:border-zinc-800/60 backdrop-blur-xl shadow-2xl dark:shadow-black/20 flex flex-col z-[60] transition-all duration-300 ${
+        className={`${
+          isOverlay ? "relative" : "sticky top-0"
+        } h-screen bg-gradient-to-b from-white to-gray-50/50 dark:from-zinc-900 dark:to-zinc-950/50 border-r border-gray-200/60 dark:border-zinc-800/60 backdrop-blur-xl shadow-2xl dark:shadow-black/20 flex flex-col z-[60] transition-all duration-300 ${
           isCollapsed ? "w-16" : "w-64"
         }`}
       >
@@ -89,14 +104,16 @@ useEffect(() => {
         <div className="absolute inset-0 bg-gradient-to-br from-purple-500/[0.02] via-transparent to-blue-500/[0.02] pointer-events-none" />
 
         {/* Brand */}
-        <div className={`relative py-4 sm:py-6 border-b border-gray-200/60 dark:border-zinc-800/60 bg-gradient-to-r from-purple-50/30 to-blue-50/30 dark:from-purple-950/20 dark:to-blue-950/20 ${
-          isCollapsed ? 'px-2' : 'px-4 sm:px-6'
-        }`}>
-          <div 
+        <div
+          className={`relative py-4 sm:py-6 border-b border-gray-200/60 dark:border-zinc-800/60 bg-gradient-to-r from-purple-50/30 to-blue-50/30 dark:from-purple-950/20 dark:to-blue-950/20 ${
+            isCollapsed ? "px-2" : "px-4 sm:px-6"
+          }`}
+        >
+          <div
             className={`flex items-center text-xl sm:text-2xl font-bold tracking-tight select-none group cursor-pointer ${
-              isCollapsed ? 'justify-center gap-0' : 'gap-2 sm:gap-3'
+              isCollapsed ? "justify-center gap-0" : "gap-2 sm:gap-3"
             }`}
-            onClick={() => router.push('/home')}
+            onClick={() => router.push("/home")}
           >
             <div className="relative">
               <span className="text-2xl sm:text-3xl transform transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12 inline-block">
@@ -112,17 +129,17 @@ useEffect(() => {
           </div>
         </div>
 
-
-
         {/* Main Nav */}
-        <nav className={`flex-1 py-4 sm:py-6 relative overflow-y-auto ${
-          isCollapsed && !isMobile ? 'px-1' : 'px-2 sm:px-3'
-        }`}>
+        <nav
+          className={`flex-1 py-4 sm:py-6 relative overflow-y-auto ${
+            isCollapsed && !isMobile ? "px-1" : "px-2 sm:px-3"
+          }`}
+        >
           <div className="space-y-1 sm:space-y-2">
             {navItems.map((item, index) => {
               const active =
-    pathname === item.path ||
-    (item.relatedPaths && item.relatedPaths.includes(pathname));
+                pathname === item.path ||
+                (item.relatedPaths && item.relatedPaths.includes(pathname));
               return (
                 <div
                   key={item.label}
@@ -157,9 +174,13 @@ useEffect(() => {
                     {/* Background shimmer effect */}
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
 
-                    <div className={`relative flex items-center z-10 ${
-                      isCollapsed && !isMobile ? 'justify-center' : 'gap-2 sm:gap-3'
-                    }`}>
+                    <div
+                      className={`relative flex items-center z-10 ${
+                        isCollapsed && !isMobile
+                          ? "justify-center"
+                          : "gap-2 sm:gap-3"
+                      }`}
+                    >
                       <span
                         className={`p-1.5 sm:p-2 rounded-lg sm:rounded-xl transition-all duration-300 transform group-hover:rotate-6 group-hover:scale-110
                         ${
@@ -191,7 +212,6 @@ useEffect(() => {
               );
             })}
           </div>
-                    
         </nav>
       </aside>
     </>
