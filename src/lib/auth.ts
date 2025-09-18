@@ -18,14 +18,14 @@ export const logoutUser = async () => {
     // First try the new logout endpoint with access token
     if (token) {
       try {
-        await axiosInstance.post('/api/v1/admin/logout');
+        await axiosInstance.post('/admin/logout');
         console.log('Logout successful via /admin/logout');
       } catch (logoutError) {
         console.error('Error with /admin/logout, trying token revoke:', logoutError);
        
         // Fallback to token revoke if logout fails
         if (refreshToken) {
-          await axiosInstance.post('/api/v1/admin/token/revoke', {
+          await axiosInstance.post('/admin/token/revoke', {
             refresh_token: refreshToken
           });
           console.log('Token revoked successfully');
@@ -33,7 +33,7 @@ export const logoutUser = async () => {
       }
     } else if (refreshToken) {
       // If no access token but have refresh token, revoke it
-      await axiosInstance.post('/api/v1/admin/token/revoke', {
+      await axiosInstance.post('/admin/token/revoke', {
         refresh_token: refreshToken
       });
       console.log('Token revoked successfully');
@@ -80,7 +80,7 @@ export const refreshTokenIfNeeded = async (): Promise<boolean> => {
    
     // Refresh if token expires in the next 5 minutes (300 seconds)
     if (timeUntilExpiry < 300) {
-      const response = await axiosInstance.post('/api/v1/admin/token/refresh', {
+      const response = await axiosInstance.post('/admin/token/refresh', {
         refresh_token: refreshToken
       });
      

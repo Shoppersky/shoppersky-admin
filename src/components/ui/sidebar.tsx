@@ -64,6 +64,8 @@ useEffect(() => {
       path: "/vendor-enquiries",
     },
     { label: "End User Queries", icon: BadgeQuestionMark , path: "/enduserqueries" },
+    { label: "partners", icon: ShoppingBag, path: "/Partners" },
+    { label: "advertisements", icon: ShoppingBag, path: "/Advertisements" },
   ];
 
   // Get current page name
