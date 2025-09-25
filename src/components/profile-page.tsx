@@ -266,7 +266,7 @@ export default function ProfilePage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950">
+    <div className="min-h-screen">
       <div className="container mx-auto p-6 space-y-8">
         {/* Header */}
 
@@ -282,374 +282,347 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Profile Picture Section */}
-          <Card className="backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border-0 shadow-xl rounded-2xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r pt-6 from-indigo-500/5 to-purple-500/5 border-b border-indigo-100 dark:border-indigo-800/30">
-              <CardTitle className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent flex items-center gap-3">
-                <div className="p-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl flex-shrink-0">
-                  <Camera className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                </div>
-                Profile Picture
-              </CardTitle>
-            </CardHeader>
-
-            <CardContent className="p-6 sm:p-8 text-center space-y-6">
-              <div className="relative inline-block">
-                <Avatar className="w-24 h-24 sm:w-32 sm:h-32 border-4 border-white/50 dark:border-slate-700/50 shadow-2xl">
-                  <AvatarImage
-                    src={imagePreview || profileData.avatar || "/placeholder.svg"}
-                    alt={profileData.name}
-                    className="object-cover"
-                  />
-                  <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-purple-500 text-white text-2xl font-bold">
-                    {profileData.name.split(" ").map((n) => n[0]).join("")}
-                  </AvatarFallback>
-                </Avatar>
-
-                {imagePreview && (
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    className="absolute -top-2 -right-2 rounded-full w-8 h-8 p-0 shadow-lg"
-                    onClick={() => {
-                      setSelectedImage(null);
-                      setImagePreview(null);
-                    }}
-                  >
-                    <X className="w-4 h-4" />
-                  </Button>
-                )}
-              </div>
-
-              <div className="space-y-4">
-                <label
-                  htmlFor="avatar-upload"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 border border-indigo-200 dark:border-indigo-800 rounded-xl cursor-pointer hover:from-indigo-200 hover:to-purple-200 dark:hover:from-indigo-800/50 dark:hover:to-purple-800/50 transition-all duration-300 text-indigo-700 dark:text-indigo-300 font-medium text-sm sm:text-base"
-                >
-                  <Upload className="w-4 h-4 sm:w-5 sm:h-5" />
-                  Choose New Photo
-                </label>
-                <input
-                  type="file"
-                  id="avatar-upload"
-                  className="hidden"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                />
-                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                  PNG, JPG up to 5MB
-                </p>
-              </div>
-
-              {selectedImage && (
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setSelectedImage(null);
-                      setImagePreview(null);
-                    }}
-                    className="flex-1"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={handleUpdateProfilePicture}
-                    className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
-                  >
-                    Update Photo
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Profile Information Section */}
-          <Card className="lg:col-span-2 backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border-0 shadow-xl rounded-2xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r pt-6 from-indigo-500/5 to-purple-500/5 border-b border-indigo-100 dark:border-indigo-800/30">
-              <CardTitle className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent flex items-center gap-3">
-                <div className="p-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl">
-                  <User className="w-5 h-5 text-white" />
-                </div>
-                Profile Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-8 space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                {/* Name */}
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-1 sm:gap-2 font-semibold text-gray-700 dark:text-gray-300 text-[clamp(12px,1.5vw,16px)]">
-                    <User className="w-3 h-3 sm:w-4 sm:h-4" />
-                    Full Name
-                  </Label>
-
-                  <div className="h-10 sm:h-12 px-3 sm:px-4 bg-gray-50/80 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-lg sm:rounded-xl flex items-center">
-                    <span className="font-medium text-gray-900 dark:text-gray-100 text-[clamp(12px,1.4vw,16px)] truncate">
-                      {profileData.name}
-                    </span>
-                  </div>
-                </div>
-
-
-
-
-                {/* Email */}
-                <div className="space-y-2">
-                  <Label className="flex flex-wrap items-center gap-1 sm:gap-2 font-semibold text-gray-700 dark:text-gray-300 text-[clamp(12px,1.5vw,16px)]">
-                    <Mail className="w-3 h-3 sm:w-4 sm:h-4" />
-                    Email Address
-                  </Label>
-
-                  <div className="h-10 sm:h-12 px-3 sm:px-4 bg-gray-50/80 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-lg sm:rounded-xl flex items-center overflow-hidden">
-                    <span className="font-medium text-gray-900 dark:text-gray-100 text-[clamp(12px,1.4vw,16px)] truncate">
-                      {profileData.email}
-                    </span>
-                  </div>
-                </div>
-
-
-                {/* Role */}
-                <div className="space-y-2">
-                  <Label className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                    <Shield className="w-4 h-4" />
-                    Role
-                  </Label>
-                  <div className="h-12 px-4 bg-gray-50/80 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-xl flex items-center">
-                    <Badge className="bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 border-indigo-200 dark:from-indigo-900/30 dark:to-purple-900/30 dark:text-indigo-300 dark:border-indigo-800">
-                      {profileData.role}
-                    </Badge>
-                  </div>
-                </div>
-
-
-
-
-
-              </div>
-
-
-
-              {/* Additional Info */}
-              <div className="bg-gradient-to-r from-indigo-50/50 to-purple-50/50 dark:from-indigo-950/30 dark:to-purple-950/30 rounded-xl p-4 border border-indigo-100 dark:border-indigo-800/30">
-                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                  <Calendar className="w-4 h-4" />
-                  <span>Member since {profileData.joinDate}</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Security Section */}
-          <Card className="lg:col-span-3 backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border-0 shadow-xl rounded-2xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r pt-6 from-indigo-500/5 to-purple-500/5 border-b border-indigo-100 dark:border-indigo-800/30">
-              <CardTitle className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent flex items-center gap-3">
-                <div className="p-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl">
-                  <Key className="w-5 h-5 text-white" />
-                </div>
-                Security Settings
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-4 sm:p-8">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6 p-4 sm:p-6 bg-gradient-to-r from-indigo-50/50 to-purple-50/50 dark:from-indigo-950/30 dark:to-purple-950/30 rounded-xl border border-indigo-100 dark:border-indigo-800/30">
-
-                {/* Text */}
-                <div className="space-y-1 text-center sm:text-left">
-                  <h3 className="font-semibold text-[clamp(14px,2vw,18px)] text-gray-900 dark:text-gray-100">
-                    Password
-                  </h3>
-                  <p className="text-[clamp(12px,1.6vw,14px)] text-gray-600 dark:text-gray-400">
-                    Keep your account secure with a strong password
-                  </p>
-                </div>
-
-                {/* Button */}
-                <Button
-                  size="lg"
-                  onClick={() => setChangePasswordOpen(true)}
-                  className={cn(
-                    "w-full sm:w-auto text-[clamp(12px,1.6vw,14px)]",
-                    "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700",
-                    "shadow-lg hover:shadow-xl transition-all duration-300 text-white font-medium"
-                  )}
-                >
-                  <Key className="w-[clamp(14px,1.6vw,16px)] h-[clamp(14px,1.6vw,16px)] mr-2" />
-                  Change Password
-                </Button>
-              </div>
-            </CardContent>
-
-          </Card>
+       <div className="grid grid-cols-1 gap-8">
+  <div className="overflow-hidden">
+  {/* Profile Picture Section */}
+  <div className="border-b border-indigo-100 dark:border-indigo-800/30">
+    <div className="px-4 py-3 sm:px-6 sm:py-4">
+      <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent flex items-center gap-3">
+        <div className="p-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl flex-shrink-0">
+          <Camera className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
         </div>
+        Profile Picture
+      </h2>
+    </div>
+    <div className="p-6 sm:p-8 text-center space-y-6">
+      <div className="relative inline-block">
+        <Avatar className="w-24 h-24 sm:w-32 sm:h-32 border-4 border-white/50 dark:border-slate-700/50 shadow-2xl">
+          <AvatarImage
+            src={imagePreview || profileData.avatar || "/placeholder.svg"}
+            alt={profileData.name}
+            className="object-cover"
+          />
+          <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-purple-500 text-white text-2xl font-bold">
+            {profileData.name.split(" ").map((n) => n[0]).join("")}
+          </AvatarFallback>
+        </Avatar>
+        {imagePreview && (
+          <Button
+            size="sm"
+            variant="destructive"
+            className="absolute -top-2 -right-2 rounded-full w-8 h-8 p-0 shadow-lg"
+            onClick={() => {
+              setSelectedImage(null);
+              setImagePreview(null);
+            }}
+          >
+            <X className="w-4 h-4" />
+          </Button>
+        )}
+      </div>
+      <div className="space-y-4">
+        <label
+          htmlFor="avatar-upload"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 border border-indigo-200 dark:border-indigo-800 rounded-xl cursor-pointer hover:from-indigo-200 hover:to-purple-200 dark:hover:from-indigo-800/50 dark:hover:to-purple-800/50 transition-all duration-300 text-indigo-700 dark:text-indigo-300 font-medium text-sm sm:text-base"
+        >
+          <Upload className="w-4 h-4 sm:w-5 sm:h-5" />
+          Choose New Photo
+        </label>
+        <input
+          type="file"
+          id="avatar-upload"
+          className="hidden"
+          accept="image/*"
+          onChange={handleImageChange}
+        />
+        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+          PNG, JPG up to 5MB
+        </p>
+      </div>
+      {selectedImage && (
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Button
+            variant="outline"
+            onClick={() => {
+              setSelectedImage(null);
+              setImagePreview(null);
+            }}
+            className="flex-1"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleUpdateProfilePicture}
+            className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+          >
+            Update Photo
+          </Button>
+        </div>
+      )}
+    </div>
+  </div>
 
-        {/* Change Password Modal */}
-        <Dialog open={changePasswordOpen} onOpenChange={setChangePasswordOpen}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-3 text-xl font-bold">
-                <div className="p-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl">
-                  <Key className="w-5 h-5 text-white" />
-                </div>
-                Change Password
-              </DialogTitle>
-            </DialogHeader>
+  {/* Profile Information Section */}
+  <div className="border-b border-indigo-100 dark:border-indigo-800/30">
+    <div className="px-4 py-3 sm:px-6 sm:py-4">
+      <h2 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent flex items-center gap-3">
+        <div className="p-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl">
+          <User className="w-5 h-5 text-white" />
+        </div>
+        Profile Information
+      </h2>
+    </div>
+    <div className="p-8 space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+        {/* Name */}
+        <div className="space-y-2">
+          <Label className="flex items-center gap-1 sm:gap-2 font-semibold text-gray-700 dark:text-gray-300 text-[clamp(12px,1.5vw,16px)]">
+            <User className="w-3 h-3 sm:w-4 sm:h-4" />
+            Full Name
+          </Label>
+          <div className="h-10 sm:h-12 px-3 sm:px-4 bg-gray-50/80 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-lg sm:rounded-xl flex items-center">
+            <span className="font-medium text-gray-900 dark:text-gray-100 text-[clamp(12px,1.4vw,16px)] truncate">
+              {profileData.name}
+            </span>
+          </div>
+        </div>
+        {/* Email */}
+        <div className="space-y-2">
+          <Label className="flex flex-wrap items-center gap-1 sm:gap-2 font-semibold text-gray-700 dark:text-gray-300 text-[clamp(12px,1.5vw,16px)]">
+            <Mail className="w-3 h-3 sm:w-4 sm:h-4" />
+            Email Address
+          </Label>
+          <div className="h-10 sm:h-12 px-3 sm:px-4 bg-gray-50/80 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-lg sm:rounded-xl flex items-center overflow-hidden">
+            <span className="font-medium text-gray-900 dark:text-gray-100 text-[clamp(12px,1.4vw,16px)] truncate">
+              {profileData.email}
+            </span>
+          </div>
+        </div>
+        {/* Role */}
+        <div className="space-y-2">
+          <Label className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+            <Shield className="w-4 h-4" />
+            Role
+          </Label>
+          <div className="h-12 px-4 bg-gray-50/80 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-xl flex items-center">
+            <Badge className="bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 border-indigo-200 dark:from-indigo-900/30 dark:to-purple-900/30 dark:text-indigo-300 dark:border-indigo-800">
+              {profileData.role}
+            </Badge>
+          </div>
+        </div>
+      </div>
+      {/* Additional Info */}
+      <div className="bg-gradient-to-r from-indigo-50/50 to-purple-50/50 dark:from-indigo-950/30 dark:to-purple-950/30 rounded-xl p-4 border border-indigo-100 dark:border-indigo-800/30">
+        <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+          <Calendar className="w-4 h-4" />
+          <span>Member since {profileData.joinDate}</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
-            <div className="space-y-6 py-4">
-              {/* Current Password */}
-              <div className="space-y-2">
-                <Label htmlFor="old-password" className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                  Current Password
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="old-password"
-                    type={showPasswords.old ? "text" : "password"}
-                    value={passwordData.oldPassword}
-                    onChange={(e) => handlePasswordChange("oldPassword", e.target.value)}
-                    className="h-12 pr-12 bg-white/80 dark:bg-slate-800/80 border-indigo-200 dark:border-indigo-800 rounded-xl"
-                    placeholder="Enter current password"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
-                    onClick={() => setShowPasswords((prev) => ({ ...prev, old: !prev.old }))}
-                  >
-                    {showPasswords.old ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </Button>
-                </div>
-              </div>
+  {/* Security Settings Section */}
+  <div>
+    <div className="px-4 py-3 sm:px-6 sm:py-4">
+      <h2 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent flex items-center gap-3">
+        <div className="p-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl">
+          <Key className="w-5 h-5 text-white" />
+        </div>
+        Security Settings
+      </h2>
+    </div>
+    <div className="p-4 sm:p-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6 p-4 sm:p-6 bg-gradient-to-r from-indigo-50/50 to-purple-50/50 dark:from-indigo-950/30 dark:to-purple-950/30 rounded-xl border border-indigo-100 dark:border-indigo-800/30">
+        <div className="space-y-1 text-center sm:text-left">
+          <h3 className="font-semibold text-[clamp(14px,2vw,18px)] text-gray-900 dark:text-gray-100">
+            Password
+          </h3>
+          <p className="text-[clamp(12px,1.6vw,14px)] text-gray-600 dark:text-gray-400">
+            Keep your account secure with a strong password
+          </p>
+        </div>
+        <Button
+          size="lg"
+          onClick={() => setChangePasswordOpen(true)}
+          className={cn(
+            "w-full sm:w-auto text-[clamp(12px,1.6vw,14px)]",
+            "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700",
+            "shadow-lg hover:shadow-xl transition-all duration-300 text-white font-medium"
+          )}
+        >
+          <Key className="w-[clamp(14px,1.6vw,16px)] h-[clamp(14px,1.6vw,16px)] mr-2" />
+          Change Password
+        </Button>
+      </div>
+    </div>
+  </div>
+</div>
 
-              <Separator />
-
-              {/* New Password */}
-              <div className="space-y-2">
-                <Label htmlFor="new-password" className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                  New Password
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="new-password"
-                    type={showPasswords.new ? "text" : "password"}
-                    value={passwordData.newPassword}
-                    onChange={(e) => handlePasswordChange("newPassword", e.target.value)}
-                    className="h-12 pr-12 bg-white/80 dark:bg-slate-800/80 border-indigo-200 dark:border-indigo-800 rounded-xl"
-                    placeholder="Enter new password"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
-                    onClick={() => setShowPasswords((prev) => ({ ...prev, new: !prev.new }))}
-                  >
-                    {showPasswords.new ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </Button>
-                </div>
-              </div>
-
-              {/* Confirm New Password */}
-              <div className="space-y-2">
-                <Label htmlFor="confirm-password" className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                  Confirm New Password
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="confirm-password"
-                    type={showPasswords.confirm ? "text" : "password"}
-                    value={passwordData.confirmPassword}
-                    onChange={(e) => handlePasswordChange("confirmPassword", e.target.value)}
-                    className="h-12 pr-12 bg-white/80 dark:bg-slate-800/80 border-indigo-200 dark:border-indigo-800 rounded-xl"
-                    placeholder="Confirm new password"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
-                    onClick={() => setShowPasswords((prev) => ({ ...prev, confirm: !prev.confirm }))}
-                  >
-                    {showPasswords.confirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </Button>
-                </div>
-              </div>
-
-              {/* Password Requirements */}
-              {passwordData.newPassword && (
-                <div className="bg-gradient-to-r from-gray-50/50 to-indigo-50/50 dark:from-slate-800/50 dark:to-indigo-950/50 rounded-xl p-4 border border-gray-200/50 dark:border-slate-700/50">
-                  <div className="flex items-center gap-2 mb-3">
-                    <AlertCircle className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                    <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                      Password Requirements
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-1 gap-2">
-                    <ValidationItem isValid={passwordValidation.length} text="8-12 characters long" />
-                    <ValidationItem isValid={passwordValidation.uppercase} text="One uppercase letter" />
-                    <ValidationItem isValid={passwordValidation.lowercase} text="One lowercase letter" />
-                    <ValidationItem isValid={passwordValidation.digit} text="One number" />
-                    <ValidationItem isValid={passwordValidation.special} text="One special character" />
-                  </div>
-                </div>
-              )}
-
-              {/* Password Match Indicator */}
-              {passwordData.confirmPassword && (
-                <div
-                  className={`flex items-center gap-2 text-sm ${passwordData.newPassword === passwordData.confirmPassword
-                      ? "text-green-600 dark:text-green-400"
-                      : "text-red-600 dark:text-red-400"
-                    }`}
-                >
-                  {passwordData.newPassword === passwordData.confirmPassword ? (
-                    <Check className="w-4 h-4" />
-                  ) : (
-                    <X className="w-4 h-4" />
-                  )}
-                  <span>
-                    {passwordData.newPassword === passwordData.confirmPassword
-                      ? "Passwords match"
-                      : "Passwords do not match"}
-                  </span>
-                </div>
-              )}
+  {/* Change Password Modal */}
+  <Dialog open={changePasswordOpen} onOpenChange={setChangePasswordOpen}>
+    <DialogContent className="max-w-md">
+      <DialogHeader>
+        <DialogTitle className="flex items-center gap-3 text-xl font-bold">
+          <div className="p-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl">
+            <Key className="w-5 h-5 text-white" />
+          </div>
+          Change Password
+        </DialogTitle>
+      </DialogHeader>
+      <div className="space-y-6 py-4">
+        {/* Current Password */}
+        <div className="space-y-2">
+          <Label htmlFor="old-password" className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+            Current Password
+          </Label>
+          <div className="relative">
+            <Input
+              id="old-password"
+              type={showPasswords.old ? "text" : "password"}
+              value={passwordData.oldPassword}
+              onChange={(e) => handlePasswordChange("oldPassword", e.target.value)}
+              className="h-12 pr-12 bg-white/80 dark:bg-slate-800/80 border-indigo-200 dark:border-indigo-800 rounded-xl"
+              placeholder="Enter current password"
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
+              onClick={() => setShowPasswords((prev) => ({ ...prev, old: !prev.old }))}
+            >
+              {showPasswords.old ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </Button>
+          </div>
+        </div>
+        <Separator />
+        {/* New Password */}
+        <div className="space-y-2">
+          <Label htmlFor="new-password" className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+            New Password
+          </Label>
+          <div className="relative">
+            <Input
+              id="new-password"
+              type={showPasswords.new ? "text" : "password"}
+              value={passwordData.newPassword}
+              onChange={(e) => handlePasswordChange("newPassword", e.target.value)}
+              className="h-12 pr-12 bg-white/80 dark:bg-slate-800/80 border-indigo-200 dark:border-indigo-800 rounded-xl"
+              placeholder="Enter new password"
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
+              onClick={() => setShowPasswords((prev) => ({ ...prev, new: !prev.new }))}
+            >
+              {showPasswords.new ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </Button>
+          </div>
+        </div>
+        {/* Confirm New Password */}
+        <div className="space-y-2">
+          <Label htmlFor="confirm-password" className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+            Confirm New Password
+          </Label>
+          <div className="relative">
+            <Input
+              id="confirm-password"
+              type={showPasswords.confirm ? "text" : "password"}
+              value={passwordData.confirmPassword}
+              onChange={(e) => handlePasswordChange("confirmPassword", e.target.value)}
+              className="h-12 pr-12 bg-white/80 dark:bg-slate-800/80 border-indigo-200 dark:border-indigo-800 rounded-xl"
+              placeholder="Confirm new password"
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
+              onClick={() => setShowPasswords((prev) => ({ ...prev, confirm: !prev.confirm }))}
+            >
+              {showPasswords.confirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </Button>
+          </div>
+        </div>
+        {/* Password Requirements */}
+        {passwordData.newPassword && (
+          <div className="bg-gradient-to-r from-gray-50/50 to-indigo-50/50 dark:from-slate-800/50 dark:to-indigo-950/50 rounded-xl p-4 border border-gray-200/50 dark:border-slate-700/50">
+            <div className="flex items-center gap-2 mb-3">
+              <AlertCircle className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+              <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                Password Requirements
+              </span>
             </div>
+            <div className="grid grid-cols-1 gap-2">
+              <ValidationItem isValid={passwordValidation.length} text="8-12 characters long" />
+              <ValidationItem isValid={passwordValidation.uppercase} text="One uppercase letter" />
+              <ValidationItem isValid={passwordValidation.lowercase} text="One lowercase letter" />
+              <ValidationItem isValid={passwordValidation.digit} text="One number" />
+              <ValidationItem isValid={passwordValidation.special} text="One special character" />
+            </div>
+          </div>
+        )}
+        {/* Password Match Indicator */}
+        {passwordData.confirmPassword && (
+          <div
+            className={`flex items-center gap-2 text-sm ${
+              passwordData.newPassword === passwordData.confirmPassword
+                ? "text-green-600 dark:text-green-400"
+                : "text-red-600 dark:text-red-400"
+            }`}
+          >
+            {passwordData.newPassword === passwordData.confirmPassword ? (
+              <Check className="w-4 h-4" />
+            ) : (
+              <X className="w-4 h-4" />
+            )}
+            <span>
+              {passwordData.newPassword === passwordData.confirmPassword
+                ? "Passwords match"
+                : "Passwords do not match"}
+            </span>
+          </div>
+        )}
+      </div>
+      <DialogFooter className="gap-3">
+        <DialogClose asChild>
+          <Button
+            variant="outline"
+            className="flex-1"
+            onClick={() => {
+              setPasswordData({ oldPassword: "", newPassword: "", confirmPassword: "" });
+              setPasswordValidation({
+                length: false,
+                uppercase: false,
+                lowercase: false,
+                digit: false,
+                special: false,
+              });
+            }}
+          >
+            Cancel
+          </Button>
+        </DialogClose>
+        <Button
+          onClick={handleChangePassword}
+          disabled={
+            !passwordData.oldPassword ||
+            !Object.values(passwordValidation).every(Boolean) ||
+            passwordData.newPassword !== passwordData.confirmPassword
+          }
+          className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <Key className="w-4 h-4 mr-2" />
+          Change Password
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
+</div>
 
-            <DialogFooter className="gap-3">
-              <DialogClose asChild>
-                <Button
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => {
-                    setPasswordData({ oldPassword: "", newPassword: "", confirmPassword: "" });
-                    setPasswordValidation({
-                      length: false,
-                      uppercase: false,
-                      lowercase: false,
-                      digit: false,
-                      special: false,
-                    });
-                  }}
-                >
-                  Cancel
-                </Button>
-              </DialogClose>
-              <Button
-                onClick={handleChangePassword}
-                disabled={
-                  !passwordData.oldPassword ||
-                  !Object.values(passwordValidation).every(Boolean) ||
-                  passwordData.newPassword !== passwordData.confirmPassword
-                }
-                className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Key className="w-4 h-4 mr-2" />
-                Change Password
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+       
       </div>
     </div>
   );

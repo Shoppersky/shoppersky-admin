@@ -127,14 +127,11 @@ export default function ForgotPasswordPage() {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-100 dark:from-slate-950 dark:via-slate-900 dark:to-blue-950 flex items-center justify-center p-4">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent_50%)] dark:bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.05),transparent_50%)] pointer-events-none" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(147,51,234,0.1),transparent_50%)] dark:bg-[radial-gradient(circle_at_70%_80%,rgba(147,51,234,0.05),transparent_50%)] pointer-events-none" />
+      <div className="min-h-screen  flex items-center justify-center p-4">
+       
 
         <div className="w-full max-w-md mx-auto relative z-10">
-          <Card className="backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border-0 shadow-2xl rounded-3xl overflow-hidden">
-            <CardContent className="p-8 lg:p-12">
+        
               {/* Success Icon */}
               <div className="text-center mb-8">
                 <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-green-500 to-emerald-500 rounded-3xl shadow-2xl mb-6">
@@ -219,22 +216,17 @@ export default function ForgotPasswordPage() {
                   </Button>
                 </Link>
               </div>
-            </CardContent>
-          </Card>
+          
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-100 dark:from-slate-950 dark:via-slate-900 dark:to-blue-950 flex items-center justify-center p-4">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent_50%)] dark:bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.05),transparent_50%)] pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(85, 83, 233, 0.1),transparent_50%)] dark:bg-[radial-gradient(circle_at_70%_80%,rgba(114, 150, 230, 0.05),transparent_50%)] pointer-events-none" />
-
-      <div className="w-full max-w-6xl mx-auto relative z-10">
-        <Card className="backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border-0 shadow-2xl rounded-3xl overflow-hidden">
-          <CardContent className="grid lg:grid-cols-2 p-0 min-h-[600px]">
+    <div className="min-h-screen  flex items-center justify-center p-4">
+    
+      <div className="w-full max-w-6xl mx-auto relative z-10 grid lg:grid-cols-2 p-0 min-h-[600px]">
+       
             {/* Left Side - Forgot Password Form */}
          <div className="bg-gradient-to-br from-purple-500/10 via-blue-500/10 to-purple-500/10 dark:from-purple-950/30 dark:via-blue-950/30 dark:to-purple-950/30 p-8 lg:p-12 flex flex-col justify-center relative overflow-hidden">
               {/* Background Pattern */}
@@ -335,7 +327,7 @@ export default function ForgotPasswordPage() {
                     <Mail className="w-8 h-8 text-white" />
                   </div>
                   <div className="text-left">
-                    <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-purple-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-purple-600 via-blue-600 to-purple-600 bg-clip-text text-transparent p-5">
                       Forgot Password?
                     </h1>
                     <p className="text-slate-600 dark:text-slate-400 font-medium">
@@ -430,8 +422,7 @@ export default function ForgotPasswordPage() {
                 </Link>
               </form>
             </div>
-          </CardContent>
-        </Card>
+        
       </div>
     </div>
   );
