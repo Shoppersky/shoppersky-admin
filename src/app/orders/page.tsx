@@ -515,42 +515,41 @@ export default function OrdersPage() {
                     title: "Total Orders",
                     value: stats.totalOrders,
                     icon: ShoppingBag,
-                    color: "from-blue-500 to-cyan-500",
-                    bgColor:
-                      "from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20",
+                    color: "text-blue-500",
+                    bgColor:'from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30'
+                    
                   },
                   {
                     title: "Total Revenue",
                     value: `$${(stats.totalRevenue || 0).toLocaleString()}`,
                     icon: DollarSign,
-                    color: "from-green-500 to-emerald-500",
-                    bgColor:
-                      "from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20",
+                    color: "text-red-500",
+                    bgColor:'from-red-100 to-rose-100 dark:from-red-900/30 dark:to-rose-900/30'
+                    
                   },
                   {
                     title: "Pending Orders",
                     value: stats.pendingOrders,
                     icon: Clock,
-                    color: "from-yellow-500 to-orange-500",
-                    bgColor:
-                      "from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20",
+                    color: "text-yellow-500",
+                    bgColor:'from-yellow-100 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30'
+
+                    
                   },
                   {
                     title: "Delivered",
                     value: stats.completedOrders,
                     icon: CheckCircle,
-                    color: "from-purple-500 to-pink-500",
+                    color: "text-green-500",
                     bgColor:
-                      "from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20",
+                      "from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30",
                   },
                 ].map((stat, index) => (
                   <Card
                     key={index}
                     className="group relative overflow-hidden bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer"
                   >
-                    <div
-                      className={`absolute inset-0 bg-gradient-to-br ${stat.bgColor} opacity-50`}
-                    ></div>
+                   
                     <CardContent className="relative p-4 lg:p-6">
                       <div className="flex items-center justify-between">
                         <div className="space-y-1">
@@ -562,9 +561,9 @@ export default function OrdersPage() {
                           </p>
                         </div>
                         <div
-                          className={`p-2.5 lg:p-3 bg-gradient-to-br ${stat.color} rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300`}
+                          className={`p-2.5 lg:p-3 bg-gradient-to-br ${stat.bgColor} rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300`}
                         >
-                          <stat.icon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-white" />
+                          <stat.icon className={`w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6  ${stat.color}`} />
                         </div>
                       </div>
                     </CardContent>

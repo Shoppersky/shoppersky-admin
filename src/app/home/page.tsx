@@ -494,7 +494,7 @@ const AdminDashboard = () => {
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'confirmed':
-        return 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400';
+        return 'bg-green-100 text-green-700 dark:bg-yellow-900/30 dark:text-yellow-400';
       case 'shipped':
         return 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400';
       case 'delivered':
@@ -504,7 +504,7 @@ const AdminDashboard = () => {
       case 'cancelled':
         return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400';
       case 'verified':
-        return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400';
+        return 'bg-blue-100 text-blue-700 dark:bg-green-900/30 dark:text-green-400';
       default:
         return 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400';
     }
@@ -648,17 +648,18 @@ const AdminDashboard = () => {
           <div className="space-y-4 sm:space-y-6">
             {/* Recent Orders Table */}
             <Card className="backdrop-blur-xl bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20 shadow-xl rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/20">
-              <CardHeader className="pb-2 px-3 sm:px-6 pt-4 sm:pt-6 flex flex-row items-center justify-between">
-                <CardTitle className="text-base sm:text-lg font-semibold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
-                  Recent Orders
-                </CardTitle>
-                <Link
-      href="/orders"
-      className="inline-flex items-center text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 text-xs sm:text-sm px-2 sm:px-3"
-    >
-      View All <ChevronRight className="ml-1 h-3 w-3 sm:h-4 sm:w-4" />
-    </Link>
-              </CardHeader>
+<CardHeader className="pb-2 px-3 sm:px-6 pt-4 sm:pt-6 flex flex-row items-center justify-between">
+  <CardTitle className="text-base sm:text-lg font-semibold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
+    Recent Orders
+  </CardTitle>
+  <Link
+    href="/orders"
+    className="inline-flex items-center whitespace-nowrap   font-medium text-gray-500 hover:text-purple-700 dark:text-gray-400 dark:hover:text-gray-300 text-xs sm:text-sm px-2 sm:px-3"
+  >
+    View all
+    <ChevronRight className="ml-1 h-3 w-3 sm:h-4 sm:w-4" />
+  </Link>
+</CardHeader>
               <CardContent className="px-3 sm:px-6 pb-4 sm:pb-6">
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs sm:text-sm">

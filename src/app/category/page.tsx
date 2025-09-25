@@ -113,7 +113,7 @@ function StatCard({
 
   return (
     <Card
-      className={`group relative overflow-hidden backdrop-blur-xl bg-gradient-to-br ${colorClasses[color]} border shadow-lg hover:shadow-xl transition-all duration-500 hover:scale-[1.02] cursor-pointer`}
+      className={`group relative overflow-hidden backdrop-blur-xl  border shadow-lg hover:shadow-xl transition-all duration-500 hover:scale-[1.02] cursor-pointer`}
     >
       <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       <CardContent className="p-6 relative">
@@ -150,7 +150,7 @@ function StatCard({
             )}
           </div>
           <div
-            className={`p-3 rounded-2xl bg-white/80 dark:bg-gray-800/80 shadow-lg group-hover:shadow-xl transition-all duration-500 group-hover:scale-110 ${iconColors[color]}`}
+            className={`p-3 rounded-2xl bg-white/80 dark:bg-gray-800/80 bg-gradient-to-br ${colorClasses[color]} shadow-lg group-hover:shadow-xl transition-all duration-500 group-hover:scale-110 ${iconColors[color]}`}
           >
             {icon}
           </div>
@@ -1045,7 +1045,7 @@ export default function CategoriesPage() {
               color="purple"
               trend="up"
               trendValue="+8%"
-              description="All categories in system"
+              
             />
             <StatCard
               title="Active Categories"
@@ -1054,7 +1054,7 @@ export default function CategoriesPage() {
               color="green"
               trend="up"
               trendValue="+12%"
-              description="Currently visible categories"
+              
             />
             <StatCard
               title="Total Subcategories"
@@ -1063,7 +1063,7 @@ export default function CategoriesPage() {
               color="blue"
               trend="up"
               trendValue="+10%"
-              description="Subcategories across all categories"
+          
             />
           </div>
 
