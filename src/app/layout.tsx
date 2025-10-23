@@ -5,6 +5,7 @@ import { SidebarProvider } from "@/components/ui/sidebarprovider";
 import { LayoutContent } from "@/components/layout-content";
 import { Toaster } from 'sonner'
 import AuthGuard from "@/lib/AuthGuard";
+import Script from "next/script";
 
 
 const geistSans = Geist({
@@ -29,6 +30,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+       <head>
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-K4E1P09Z9D"
+        />
+        <Script id="ga-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-K4E1P09Z9D');
+          `}
+        </Script>
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
