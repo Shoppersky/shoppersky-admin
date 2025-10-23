@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import MobileRestriction from "./MobileRestriction"; // client component
 import { SidebarProvider } from "@/components/ui/sidebarprovider";
 import { LayoutContent } from "@/components/layout-content";
-import { Toaster } from 'sonner'
+import { Toaster } from "sonner";
 import AuthGuard from "@/lib/AuthGuard";
 import Script from "next/script";
-
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,9 +25,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
        <head>
@@ -44,18 +44,16 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <SidebarProvider>
-          <LayoutContent>
-             <AuthGuard>
-            
-            {children}
-            </AuthGuard>
-             <Toaster />
-          </LayoutContent>
-        </SidebarProvider>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        {/* Wrap all layout content in MobileRestriction */}
+        <MobileRestriction>
+          <SidebarProvider>
+            <LayoutContent>
+              <AuthGuard>{children}</AuthGuard>
+              <Toaster />
+            </LayoutContent>
+          </SidebarProvider>
+        </MobileRestriction>
       </body>
     </html>
   );

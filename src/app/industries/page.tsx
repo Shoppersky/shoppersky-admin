@@ -69,17 +69,18 @@ function StatCard({
   title: string;
   value: string;
   icon: React.ReactNode;
-  color?: "blue" | "indigo" | "purple" | "green";
+  color?: "blue" | "indigo" | "purple" | "green"|"yellow"|"red";
 }) {
   const colorClasses = {
     blue: "text-blue-600 dark:text-blue-400",
-    indigo: "text-indigo-600 dark:text-indigo-400",
-    purple: "text-purple-600 dark:text-purple-400",
     green: "text-green-600 dark:text-green-400",
+    yellow: "text-yellow-600 dark:text-yellow-400",
+    red: "text-red-600 dark:text-red-400",
+    purple: "text-purple-600 dark:text-purple-400",
   };
 
   return (
-    <Card className="bg-white/80 dark:bg-slate-900/80 border-0 shadow-lg rounded-2xl hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+    <Card className="bg-purple/80 dark:bg-slate-900/80 border-0 shadow-lg rounded-2xl hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
       <CardContent className="p-4 sm:p-6">
         <div className="flex items-center justify-between">
           <div className="space-y-1 sm:space-y-2">
@@ -90,10 +91,20 @@ function StatCard({
               {value}
             </p>
           </div>
-          <div
-            className={`p-2 sm:p-3 bg-slate-100/80 dark:bg-slate-800/80 rounded-xl sm:rounded-2xl shadow-lg ${colorClasses[color]}`}
+           <div
+            className={`p-1.5 sm:p-2 lg:p-3 bg-gradient-to-br rounded-lg sm:rounded-xl group-hover:scale-110 transition-transform duration-300 flex-shrink-0 ${
+              color === "blue"
+                ? "from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30"
+                : color === "green"
+                ? "from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30"
+                : color === "yellow"
+                ? "from-yellow-100 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30"
+                : color === "red"
+                ? "from-red-100 to-rose-100 dark:from-red-900/30 dark:to-rose-900/30"
+                : "from-purple-100 to-violet-100 dark:from-purple-900/30 dark:to-violet-900/30"
+            }`}
           >
-            {icon}
+           <div className={colorClasses[color]}>{icon}</div>
           </div>
         </div>
       </CardContent>
@@ -718,6 +729,7 @@ export default function IndustriesPage() {
             value={stats.total.toString()}
             icon={<Building2 className="w-6 h-6" />}
             color="blue"
+            
           />
           <StatCard
             title="Active Industries"
@@ -727,6 +739,7 @@ export default function IndustriesPage() {
           />
           <StatCard
             title="Inactive Industries"
+            
             value={stats.inactive.toString()}
             icon={<XCircle className="w-6 h-6" />}
             color="purple"

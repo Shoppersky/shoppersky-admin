@@ -59,22 +59,17 @@ function StatCard({
   title: string
   value: string
   icon: React.ReactNode
-  color?: "slate" | "emerald" | "red" | "blue" | "amber" | "violet" | "cyan"
+  color?: "slate" | "yellow" | "red" | "blue" | "green" | "violet" | "cyan"
   trend?: "up" | "down"
   trendValue?: string
 }) {
   const colorClasses = {
-    slate: "from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 border-slate-200 dark:border-slate-700",
-    emerald:
-      "from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20 border-emerald-200 dark:border-emerald-700",
-    red: "from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 border-red-200 dark:border-red-700",
-    blue: "from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue-200 dark:border-blue-700",
-    amber:
-      "from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20 border-amber-200 dark:border-amber-700",
-    violet:
-      "from-violet-50 to-violet-100 dark:from-violet-900/20 dark:to-violet-800/20 border-violet-200 dark:border-violet-700",
-    cyan: "from-cyan-50 to-cyan-100 dark:from-cyan-900/20 dark:to-cyan-800/20 border-cyan-200 dark:border-cyan-700",
-  }
+    blue: "text-blue-600 dark:text-blue-400",
+    green: "text-green-600 dark:text-green-400",
+    yellow: "text-yellow-600 dark:text-yellow-400",
+    red: "text-red-600 dark:text-red-400",
+    purple: "text-purple-600 dark:text-purple-400",
+  };
 
   const iconColors = {
     slate: "text-slate-600 dark:text-slate-400",
@@ -88,7 +83,7 @@ function StatCard({
 
   return (
     <Card
-      className={`bg-gradient-to-br ${colorClasses[color]} border transition-all duration-300 hover:shadow-lg hover:scale-[1.02] group`}
+      className={`bg-gradient-to-br  border transition-all duration-300 hover:shadow-lg hover:scale-[1.02] group`}
     >
       <CardContent className="p-3 sm:p-4 lg:p-6">
         <div className="flex items-center justify-between">
@@ -108,12 +103,20 @@ function StatCard({
               )}
             </div>
           </div>
-          <div
-            className={`p-2 sm:p-3 rounded-lg sm:rounded-xl ${iconColors[color]} group-hover:scale-110 transition-transform duration-300 flex-shrink-0`}
+                <div
+            className={`p-1.5 sm:p-2 lg:p-3 bg-gradient-to-br rounded-lg sm:rounded-xl group-hover:scale-110 transition-transform duration-300 flex-shrink-0 ${
+              color === "blue"
+                ? "from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30"
+                : color === "green"
+                ? "from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30"
+                : color === "yellow"
+                ? "from-yellow-100 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30"
+                : color === "red"
+                ? "from-red-100 to-rose-100 dark:from-red-900/30 dark:to-rose-900/30"
+                : "from-purple-100 to-violet-100 dark:from-purple-900/30 dark:to-violet-900/30"
+            }`}
           >
-            <div className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6">
-              {icon}
-            </div>
+            <div className={colorClasses[color]}>{icon}</div>
           </div>
         </div>
       </CardContent>
@@ -434,17 +437,16 @@ export default function UsersPage() {
             title="Total Users"
             value={stats.total.toString()}
             icon={<Users />}
-            color="cyan"
-            trend="up"
-            trendValue="+12%"
+            color="green"
+           
+            
           />
           <StatCard
             title="Active Users"
             value={stats.active.toString()}
             icon={<UserCheck />}
-            color="emerald"
-            trend="up"
-            trendValue="+5%"
+            color="yellow"
+            
           />
           <StatCard
             title="Inactive Users"

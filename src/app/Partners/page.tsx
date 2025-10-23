@@ -58,50 +58,50 @@ import {
 import { Partner } from "./types";
 
 // Enhanced StatCard Component
-function StatCard({
-  title,
-  value,
-  icon,
-  color = "slate",
-}: {
-  title: string;
-  value: string;
-  icon: React.ReactNode;
-  color?: string;
-}) {
-  const colorClasses = {
-    slate:
-      "from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 border-slate-200 dark:border-slate-700",
-    emerald:
-      "from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20 border-emerald-200 dark:border-emerald-700",
-  };
-  const iconColors = {
-    slate: "text-slate-600 dark:text-slate-400",
-    emerald: "text-emerald-600 hard:text-emerald-400",
-  };
+// function StatCard({
+//   title,
+//   value,
+//   icon,
+//   color = "slate",
+// }: {
+//   title: string;
+//   value: string;
+//   icon: React.ReactNode;
+//   color?: string;
+// }) {
+//   const colorClasses = {
+//     slate:
+//       "from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 border-slate-200 dark:border-slate-700",
+//     emerald:
+//       "from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20 border-emerald-200 dark:border-emerald-700",
+//   };
+//   const iconColors = {
+//     slate: "text-slate-600 dark:text-slate-400",
+//     emerald: "text-emerald-600 hard:text-emerald-400",
+//   };
 
-  return (
-    <Card
-      className={`bg-gradient-to-br ${colorClasses[color]} border transition-all duration-300 hover:shadow-lg hover:scale-[1.02] group`}
-    >
-      <CardContent>
-        <div className="flex items-center justify-between">
-          <div className="space-y-1 flex-1 min-w-0">
-            <p className="text-xs sm:text-sm font-medium text-muted-foreground truncate">
-              {title}
-            </p>
-            <p className="text-lg sm:text-2xl lg:text-3xl font-bold">{value}</p>
-          </div>
-          <div
-            className={`p-2 sm:p-3 rounded-lg sm:rounded-xl ${iconColors[color]} group-hover:scale-110 transition-transform duration-300 flex-shrink-0`}
-          >
-            <div className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6">{icon}</div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
+//   return (
+//     <Card
+//       className={`bg-gradient-to-br ${colorClasses[color]} border transition-all duration-300 hover:shadow-lg hover:scale-[1.02] group`}
+//     >
+//       <CardContent>
+//         <div className="flex items-center justify-between">
+//           <div className="space-y-1 flex-1 min-w-0">
+//             <p className="text-xs sm:text-sm font-medium text-muted-foreground truncate">
+//               {title}
+//             </p>
+//             <p className="text-lg sm:text-2xl lg:text-3xl font-bold">{value}</p>
+//           </div>
+//           <div
+//             className={`p-2 sm:p-3 rounded-lg sm:rounded-xl ${iconColors[color]} group-hover:scale-110 transition-transform duration-300 flex-shrink-0`}
+//           >
+//             <div className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6">{icon}</div>
+//           </div>
+//         </div>
+//       </CardContent>
+//     </Card>
+//   );
+// }
 
 function PartnerActions({
   partner,
@@ -283,7 +283,7 @@ export default function PartnersPage() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4 sm:gap-6">
+        {/* <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4 sm:gap-6">
           {Object.entries(stats).map(([key, value]) => (
             <StatCard
               key={key}
@@ -293,7 +293,7 @@ export default function PartnersPage() {
               color="emerald"
             />
           ))}
-        </div>
+        </div> */}
 
         {/* Search and Filters */}
         <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
