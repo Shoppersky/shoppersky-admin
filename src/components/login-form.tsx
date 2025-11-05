@@ -376,6 +376,7 @@ import useStore from "@/lib/Zustand"
 import { toast } from "sonner"
 import Link from "next/link"
 import { jwtDecode } from "jwt-decode"
+import Image from 'next/image';
 
 interface LoginFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -456,94 +457,77 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
   }
 
   return (
-    <div
-      className={cn(
-        "min-h-screen",
-        className,
-      )}
-      {...props}
-    >
-      
-
-      <div className="grid lg:grid-cols-2 min-h-screen w-full relative z-10">
+     <div className="min-h-screen  flex items-center justify-center p-4">
+    
+      <div className="w-full max-w-6xl mx-auto relative z-10 grid lg:grid-cols-2 p-0 min-h-[600px]">
         {/* Left Side - Feature Showcase */}
         <div className="bg-gradient-to-br from-blue-500/10 via-indigo-500/10 to-purple-500/10 dark:from-blue-950/30 dark:via-indigo-950/30 dark:to-purple-950/30 p-6 sm:p-8 lg:p-12 xl:p-16 flex flex-col justify-center relative overflow-hidden">
           {/* Background Pattern */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.1),transparent_70%)] dark:bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.05),transparent_70%)]" />
 
-          <div className="relative z-10 max-w-lg mx-auto lg:max-w-none">
-            {/* Main Feature */}
-            <div className="text-center lg:text-left mb-8 lg:mb-12">
-              <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl sm:rounded-3xl shadow-2xl mb-4 sm:mb-6">
-                <Shield className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
-              </div>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-3 sm:mb-4">
-                Secure & Powerful
-              </h2>
-              <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
-                Access your comprehensive business management platform with enterprise-grade security.
-              </p>
-            </div>
+          <div className="flex justify-center items-center w-full">
+  <div className="relative z-10 max-w-lg mx-auto lg:max-w-none text-center">
+    {/* Main Feature */}
+    <div className="mb-8 lg:mb-12">
+      <div className="mb-8 flex justify-center">
+        <Image 
+          src="/128-128.png" 
+          alt="Shopping Cart Logo" 
+          width={128} 
+          height={128} 
+        />
+      </div>
+      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-3 sm:mb-4">
+        Secure & Powerful
+      </h2>
+      <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
+        Access your comprehensive business management platform with enterprise-grade security.
+      </p>
+    </div>
 
-            {/* Feature List */}
-            <div className="space-y-4 sm:space-y-6 mb-8 lg:mb-12">
-              <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-white/60 dark:bg-slate-800/60 rounded-xl sm:rounded-2xl backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
-                <div className="p-2 sm:p-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg sm:rounded-xl shadow-lg flex-shrink-0">
-                  <Users className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                </div>
-                <div className="min-w-0">
-                  <h3 className="font-semibold text-slate-800 dark:text-slate-100 text-sm sm:text-base">
-                    Vendor Management
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-                    Manage all your business partners
-                  </p>
-                </div>
-              </div>
+    {/* Feature List */}
+    <div className="space-y-4 sm:space-y-6 mb-8 lg:mb-12">
+      <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-white/60 dark:bg-slate-800/60 rounded-xl sm:rounded-2xl backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
+        <div className="p-2 sm:p-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg sm:rounded-xl shadow-lg flex-shrink-0">
+          <Users className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+        </div>
+        <div className="min-w-0 text-left">
+          <h3 className="font-semibold text-slate-800 dark:text-slate-100 text-sm sm:text-base">
+            Vendor Management
+          </h3>
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+            Manage all your business partners
+          </p>
+        </div>
+      </div>
 
-              <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-white/60 dark:bg-slate-800/60 rounded-xl sm:rounded-2xl backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
-                <div className="p-2 sm:p-3 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg sm:rounded-xl shadow-lg flex-shrink-0">
-                  <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                </div>
-                <div className="min-w-0">
-                  <h3 className="font-semibold text-slate-800 dark:text-slate-100 text-sm sm:text-base">
-                    Category Studio
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Design & organize categories</p>
-                </div>
-              </div>
+      <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-white/60 dark:bg-slate-800/60 rounded-xl sm:rounded-2xl backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
+        <div className="p-2 sm:p-3 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg sm:rounded-xl shadow-lg flex-shrink-0">
+          <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+        </div>
+        <div className="min-w-0 text-left">
+          <h3 className="font-semibold text-slate-800 dark:text-slate-100 text-sm sm:text-base">
+            Category Studio
+          </h3>
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Design & organize categories</p>
+        </div>
+      </div>
 
-              <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-white/60 dark:bg-slate-800/60 rounded-xl sm:rounded-2xl backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
-                <div className="p-2 sm:p-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg sm:rounded-xl shadow-lg flex-shrink-0">
-                  <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                </div>
-                <div className="min-w-0">
-                  <h3 className="font-semibold text-slate-800 dark:text-slate-100 text-sm sm:text-base">
-                    Industry Analytics
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Real-time business insights</p>
-                </div>
-              </div>
-            </div>
+      <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-white/60 dark:bg-slate-800/60 rounded-xl sm:rounded-2xl backdrop-blur-sm border border-white/20 dark:border-slate-700/50">
+        <div className="p-2 sm:p-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg sm:rounded-xl shadow-lg flex-shrink-0">
+          <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+        </div>
+        <div className="min-w-0 text-left">
+          <h3 className="font-semibold text-slate-800 dark:text-slate-100 text-sm sm:text-base">
+            Industry Analytics
+          </h3>
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Real-time business insights</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-            {/* Trust Indicators */}
-            <div className="pt-6 sm:pt-8 border-t border-white/20 dark:border-slate-700/50">
-              <div className="flex items-center justify-center lg:justify-start gap-6 sm:gap-8 text-slate-500 dark:text-slate-400">
-                <div className="text-center">
-                  <div className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100">99.9%</div>
-                  <div className="text-xs">Uptime</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100">256-bit</div>
-                  <div className="text-xs">Encryption</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100">24/7</div>
-                  <div className="text-xs">Support</div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Right Side - Login Form */}

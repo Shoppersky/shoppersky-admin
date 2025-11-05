@@ -24,6 +24,7 @@ import {
 import axiosInstance from "@/lib/axiosInstance";
 import SuspenseSearchParamsWrapper from "@/components/SuspenseSearchParamsWrapper";
 import { toast } from "sonner";
+import Image from 'next/image';
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -173,25 +174,25 @@ export default function ResetPasswordPage() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
     <SuspenseSearchParamsWrapper onParamsFetch={handleParamsFetch}>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950 flex items-center justify-center p-4">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent_50%)] dark:bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.05),transparent_50%)] pointer-events-none" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(147,51,234,0.1),transparent_50%)] dark:bg-[radial-gradient(circle_at_70%_80%,rgba(147,51,234,0.05),transparent_50%)] pointer-events-none" />
-
+       <div className="min-h-screen  flex items-center justify-center p-4">
+    
+      <div className="w-full max-w-6xl mx-auto relative z-10 grid lg:grid-cols-2 p-0 min-h-[600px]">
         <div className="w-full max-w-6xl mx-auto relative z-10">
-          <Card className="backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border-0 shadow-2xl rounded-3xl overflow-hidden">
-            <CardContent className="grid lg:grid-cols-2 p-0 min-h-[600px]">
-              {/* Left Side - Reset Password Form */}
-              <div className="bg-gradient-to-br from-blue-500/10 via-indigo-500/10 to-purple-500/10 dark:from-blue-950/30 dark:via-indigo-950/30 dark:to-purple-950/30 p-8 lg:p-12 flex flex-col justify-center relative overflow-hidden">
-                {/* Background Pattern */}
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.1),transparent_70%)] dark:bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.05),transparent_70%)]" />
+           <div className="bg-gradient-to-br from-purple-500/10 via-blue-500/10 to-purple-500/10 dark:from-purple-950/30 dark:via-blue-950/30 dark:to-purple-950/30 p-8 lg:p-12 flex flex-col justify-center relative overflow-hidden">
+              {/* Background Pattern */}
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.1),transparent_70%)] dark:bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.05),transparent_70%)]" />
 
                 <div className="relative z-10">
                   {/* Main Feature */}
                   <div className="text-center mb-12">
-                    <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-3xl shadow-2xl mb-6">
-                      <Shield className="w-10 h-10 text-white" />
-                    </div>
+                    <div className="mb-8 flex justify-center">
+                                             <Image 
+                                               src="/128-128.png" 
+                                               alt="Shopping Cart Logo" 
+                                               width={128} 
+                                               height={128} 
+                                             />
+                                           </div>
                     <h2 className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">Secure Your Account</h2>
                     <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
                       Create a strong password to protect your account and data.
@@ -232,7 +233,7 @@ export default function ResetPasswordPage() {
                   </div>
 
                   {/* Trust Indicators */}
-                  <div className="mt-12 pt-8 border-t border-white/20 dark:border-slate-700/50">
+                  {/* <div className="mt-12 pt-8 border-t border-white/20 dark:border-slate-700/50">
                     <div className="flex items-center justify-center gap-8 text-slate-500 dark:text-slate-400">
                       <div className="text-center">
                         <div className="text-2xl font-bold text-slate-800 dark:text-slate-100">256-bit</div>
@@ -247,10 +248,10 @@ export default function ResetPasswordPage() {
                         <div className="text-xs">Support</div>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
-
+</div>
               {/* Right Side - Security Information */}
               <div className="flex flex-col justify-center p-8 lg:p-12">
                 {/* Header */}
@@ -455,9 +456,8 @@ export default function ResetPasswordPage() {
                   </Button>
                 </form>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+           
+           </div>
       </div>
     </SuspenseSearchParamsWrapper>
     </Suspense>

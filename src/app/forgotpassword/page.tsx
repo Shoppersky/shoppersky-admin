@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import axiosInstance from "@/lib/axiosInstance";
-
+import Image from 'next/image';
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
@@ -235,9 +235,14 @@ export default function ForgotPasswordPage() {
               <div className="relative z-10">
                 {/* Main Feature */}
                 <div className="text-center mb-12">
-                  <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-purple-500 to-blue-500 rounded-3xl shadow-2xl mb-6">
-                    <Shield className="w-10 h-10 text-white" />
-                  </div>
+                  <div className="mb-8 flex justify-center">
+                         <Image 
+                           src="/128-128.png" 
+                           alt="Shopping Cart Logo" 
+                           width={128} 
+                           height={128} 
+                         />
+                       </div>
                   <h2 className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">
                     Secure Reset
                   </h2>
@@ -293,7 +298,7 @@ export default function ForgotPasswordPage() {
                 </div>
 
                 {/* Trust Indicators */}
-                <div className="mt-12 pt-8 border-t border-white/20 dark:border-slate-700/50">
+                {/* <div className="mt-12 pt-8 border-t border-white/20 dark:border-slate-700/50">
                   <div className="flex items-center justify-center gap-8 text-slate-500 dark:text-slate-400">
                     <div className="text-center">
                       <div className="text-2xl font-bold text-slate-800 dark:text-slate-100">
@@ -314,7 +319,7 @@ export default function ForgotPasswordPage() {
                       <div className="text-xs">Support</div>
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
 
