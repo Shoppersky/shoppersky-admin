@@ -71,6 +71,117 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
+// Pagination component (extracted from OrdersPage)
+const Pagination = ({
+  currentPage,
+  totalPages,
+  onPageChange,
+  totalItems,
+  itemsPerPage,
+  onItemsPerPageChange
+}: {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  totalItems: number;
+  itemsPerPage: number;
+  onItemsPerPageChange: (itemsPerPage: number) => void;
+}) => {
+  // Generate page numbers to display
+  const getVisiblePages = () => {
+    const delta = 2; // Number of pages to show on each side of current page
+    const range: number[] = [];
+    const rangeWithDots: (number | string)[] = [];
+    let l: number | undefined;
+
+    for (let i = 1; i <= totalPages; i++) {
+      if (i === 1 || i === totalPages || (i >= currentPage - delta && i <= currentPage + delta)) {
+        range.push(i);
+      }
+    }
+
+    range.forEach((i) => {
+      if (l) {
+        if (i - l === 2) {
+          rangeWithDots.push(l + 1);
+        } else if (i - l !== 1) {
+          rangeWithDots.push('...');
+        }
+      }
+      rangeWithDots.push(i);
+      l = i;
+    });
+
+    return rangeWithDots;
+  };
+
+  const visiblePages = getVisiblePages();
+  const showingFrom = ((currentPage - 1) * itemsPerPage) + 1;
+  const showingTo = Math.min(currentPage * itemsPerPage, totalItems);
+
+  return (
+    <div className="flex items-center justify-between w-full">
+      <div className="flex items-center gap-2">
+        <span className="text-sm text-muted-foreground">Rows Per Page</span>
+        <Select value={itemsPerPage.toString()} onValueChange={(value) => onItemsPerPageChange(Number(value))}>
+          <SelectTrigger className="w-20 h-8 text-sm">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="3">3</SelectItem>
+            <SelectItem value="6">6</SelectItem>
+            <SelectItem value="9">9</SelectItem>
+            <SelectItem value="12">12</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <span className="text-sm text-muted-foreground ml-4">
+          page {currentPage} of {totalPages} 
+        </span>
+      </div>
+      <div className="flex items-center space-x-1">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="h-8 w-8 p-0"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
+
+        {visiblePages.map((page, index) => (
+          page === '...' ? (
+            <div key={`ellipsis-${index}`} className="px-2 text-sm text-muted-foreground">
+              ...
+            </div>
+          ) : (
+            <Button
+              key={page}
+              variant={currentPage === page ? "default" : "outline"}
+              size="sm"
+              onClick={() => onPageChange(page as number)}
+              className="h-8 w-8 p-0"
+            >
+              {page}
+            </Button>
+          )
+        ))}
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="h-8 w-8 p-0"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 // Enhanced StatCard Component
 function StatCard({
   title,
@@ -1000,169 +1111,6 @@ export default function CategoriesPage() {
     </div>
   );
 
-  // Pagination component
-  const PaginationControls = () => {
-    if (totalPages <= 1) return null;
-
-    const handlePageChange = (page: number) => {
-      if (page >= 1 && page <= totalPages) {
-        setCurrentPage(page);
-      }
-    };
-
-    const renderPageNumbers = () => {
-      const pages = [];
-      const maxVisiblePages = 5;
-      
-      if (totalPages <= maxVisiblePages) {
-        for (let i = 1; i <= totalPages; i++) {
-          pages.push(
-            <Button
-              key={i}
-              variant={currentPage === i ? "default" : "outline"}
-              size="sm"
-              onClick={() => handlePageChange(i)}
-              className={`w-8 h-8 p-0 ${
-                currentPage === i
-                  ? "bg-indigo-600 hover:bg-indigo-700"
-                  : "border-indigo-200 dark:border-indigo-800"
-              }`}
-            >
-              {i}
-            </Button>
-          );
-        }
-      } else {
-        // Always show first page
-        pages.push(
-          <Button
-            key={1}
-            variant={currentPage === 1 ? "default" : "outline"}
-            size="sm"
-            onClick={() => handlePageChange(1)}
-            className={`w-8 h-8 p-0 ${
-              currentPage === 1
-                ? "bg-indigo-600 hover:bg-indigo-700"
-                : "border-indigo-200 dark:border-indigo-800"
-            }`}
-          >
-            1
-          </Button>
-        );
-
-        // Show ellipsis if current page is far from start
-        if (currentPage > 3) {
-          pages.push(
-            <span key="start-ellipsis" className="px-2">
-              ...
-            </span>
-          );
-        }
-
-        // Show pages around current page
-        const startPage = Math.max(2, currentPage - 1);
-        const endPage = Math.min(totalPages - 1, currentPage + 1);
-
-        for (let i = startPage; i <= endPage; i++) {
-          pages.push(
-            <Button
-              key={i}
-              variant={currentPage === i ? "default" : "outline"}
-              size="sm"
-              onClick={() => handlePageChange(i)}
-              className={`w-8 h-8 p-0 ${
-                currentPage === i
-                  ? "bg-indigo-600 hover:bg-indigo-700"
-                  : "border-indigo-200 dark:border-indigo-800"
-              }`}
-            >
-              {i}
-            </Button>
-          );
-        }
-
-        // Show ellipsis if current page is far from end
-        if (currentPage < totalPages - 2) {
-          pages.push(
-            <span key="end-ellipsis" className="px-2">
-              ...
-            </span>
-          );
-        }
-
-        // Always show last page
-        pages.push(
-          <Button
-            key={totalPages}
-            variant={currentPage === totalPages ? "default" : "outline"}
-            size="sm"
-            onClick={() => handlePageChange(totalPages)}
-            className={`w-8 h-8 p-0 ${
-              currentPage === totalPages
-                ? "bg-indigo-600 hover:bg-indigo-700"
-                : "border-indigo-200 dark:border-indigo-800"
-            }`}
-          >
-            {totalPages}
-          </Button>
-        );
-      }
-
-      return pages;
-    };
-
-    return (
-      <div className="flex items-center justify-between mt-6 px-4">
-        <div className="text-sm text-gray-700 dark:text-gray-300">
-          Showing {startIndex + 1} to {Math.min(endIndex, allFilteredCategories.length)} of{" "}
-          {allFilteredCategories.length} categories
-        </div>
-        <div className="flex items-end gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="h-8 px-2 border-indigo-200 dark:border-indigo-800"
-          >
-            <ChevronLeft className="w-4 h-4" />
-            Previous
-          </Button>
-          <div className="flex items-center gap-1">
-            {renderPageNumbers()}
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="h-8 px-2 border-indigo-200 dark:border-indigo-800"
-          >
-            Next
-            <ChevronRight className="w-4 h-4" />
-          </Button>
-        </div>
-        <div className="flex items-start gap-2">
-          <span className="text-sm text-gray-700 dark:text-gray-300">Items per page:</span>
-          <Select
-            value={itemsPerPage.toString()}
-            onValueChange={(value) => setItemsPerPage(Number(value))}
-          >
-            <SelectTrigger className="w-16 h-8">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="3">3</SelectItem>
-              <SelectItem value="6">6</SelectItem>
-              <SelectItem value="9">9</SelectItem>
-              <SelectItem value="12">12</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-    );
-  };
-
   return (
     <div className="min-h-screen">
       <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 lg:py-6 space-y-4 sm:space-y-6">
@@ -1560,8 +1508,19 @@ export default function CategoriesPage() {
           </Card>
         )}
 
-        {/* Add pagination controls */}
-        <PaginationControls />
+        {/* Add pagination controls using the new Pagination component */}
+        {totalPages > 1 && (
+          <div className="p-4 border-t border-slate-200/50 dark:border-slate-700/50">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              totalItems={allFilteredCategories.length}
+              itemsPerPage={itemsPerPage}
+              onItemsPerPageChange={setItemsPerPage}
+            />
+          </div>
+        )}
 
         <Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden p-0 border-0 shadow-2xl backdrop-blur-2xl">
