@@ -1,4 +1,3 @@
-
 "use client"
 
 import type React from "react"
@@ -44,6 +43,8 @@ import {
   TrendingUp,
   Loader2,
   MoreHorizontal,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react"
 import axiosInstance from "@/lib/axiosInstance"
 
@@ -124,12 +125,128 @@ function StatCard({
   )
 }
 
+// Pagination component
+const Pagination = ({
+  currentPage,
+  totalPages,
+  onPageChange,
+  totalItems,
+  itemsPerPage,
+  onItemsPerPageChange
+}: {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  totalItems: number;
+  itemsPerPage: number;
+  onItemsPerPageChange: (itemsPerPage: number) => void;
+}) => {
+  // Generate page numbers to display
+  const getVisiblePages = () => {
+    const delta = 2; // Number of pages to show on each side of current page
+    const range: number[] = [];
+    const rangeWithDots: (number | string)[] = [];
+    let l: number | undefined;
+
+    for (let i = 1; i <= totalPages; i++) {
+      if (i === 1 || i === totalPages || (i >= currentPage - delta && i <= currentPage + delta)) {
+        range.push(i);
+      }
+    }
+
+    range.forEach((i) => {
+      if (l) {
+        if (i - l === 2) {
+          rangeWithDots.push(l + 1);
+        } else if (i - l !== 1) {
+          rangeWithDots.push('...');
+        }
+      }
+      rangeWithDots.push(i);
+      l = i;
+    });
+
+    return rangeWithDots;
+  };
+
+  const visiblePages = getVisiblePages();
+  const showingFrom = ((currentPage - 1) * itemsPerPage) + 1;
+  const showingTo = Math.min(currentPage * itemsPerPage, totalItems);
+
+  return (
+    <div className="flex items-center justify-between w-full">
+      <div className="flex items-center gap-2">
+        <span className="text-sm text-muted-foreground">Rows Per Page</span>
+        <Select value={itemsPerPage.toString()} onValueChange={(value) => onItemsPerPageChange(Number(value))}>
+          <SelectTrigger className="w-20 h-8 text-sm">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="5">5</SelectItem>
+            <SelectItem value="10">10</SelectItem>
+            <SelectItem value="20">20</SelectItem>
+            <SelectItem value="50">50</SelectItem>
+          </SelectContent>
+        </Select>
+        <span className="text-sm text-muted-foreground ml-4">
+          page {currentPage} of {totalPages} 
+        </span>
+      </div>
+      <div className="flex items-center space-x-1">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="h-8 w-8 p-0"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
+
+        {visiblePages.map((page, index) => (
+          page === '...' ? (
+            <div key={`ellipsis-${index}`} className="px-2 text-sm text-muted-foreground">
+              ...
+            </div>
+          ) : (
+            <Button
+              key={page}
+              variant={currentPage === page ? "default" : "outline"}
+              size="sm"
+              onClick={() => onPageChange(page as number)}
+              className="h-8 w-8 p-0"
+            >
+              {page}
+            </Button>
+          )
+        ))}
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="h-8 w-8 p-0"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 // Mobile User Card Component
 function UserCard({
   user,
   onDeactivate,
   onReactivate,
-}: { user: any; onDeactivate: (userId: string) => void; onReactivate: (userId: string) => void }) {
+  index,
+}: { 
+  user: any; 
+  onDeactivate: (userId: string) => void; 
+  onReactivate: (userId: string) => void;
+  index: number;
+}) {
   const [showDeactivateDialog, setShowDeactivateDialog] = useState(false)
   const [showReactivateDialog, setShowReactivateDialog] = useState(false)
 
@@ -155,6 +272,9 @@ function UserCard({
         <CardContent className="p-3 sm:p-4">
           <div className="flex items-start justify-between mb-2 sm:mb-3">
             <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-violet-400 to-blue-400 flex items-center justify-center text-white font-semibold text-xs sm:text-sm flex-shrink-0">
+                {index + 1}
+              </div>
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-violet-400 to-blue-400 flex items-center justify-center text-white font-semibold text-xs sm:text-sm flex-shrink-0">
                 {user.name
                   .split(" ")
@@ -271,6 +391,10 @@ export default function UsersPage() {
   const [error, setError] = useState<string | null>(null)
   const [showDeactivateDialog, setShowDeactivateDialog] = useState<string | null>(null)
   const [showReactivateDialog, setShowReactivateDialog] = useState<string | null>(null)
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage, setItemsPerPage] = useState(10)
 
   // Fetch users from API
   useEffect(() => {
@@ -300,6 +424,11 @@ export default function UsersPage() {
     fetchUsers()
   }, [])
 
+  // Reset current page when filters change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [searchTerm, statusFilter, itemsPerPage])
+
   // Filtered users based on search and filters
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
@@ -310,6 +439,17 @@ export default function UsersPage() {
       return matchesSearch && matchesStatus
     })
   }, [users, searchTerm, statusFilter])
+
+  // Paginated users
+  const paginatedUsers = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage
+    return filteredUsers.slice(startIndex, startIndex + itemsPerPage)
+  }, [filteredUsers, currentPage, itemsPerPage])
+
+  // Total pages
+  const totalPages = useMemo(() => {
+    return Math.ceil(filteredUsers.length / itemsPerPage)
+  }, [filteredUsers, itemsPerPage])
 
   // Enhanced statistics with trends
   const stats = useMemo(() => {
@@ -381,8 +521,9 @@ export default function UsersPage() {
 
   const handleExportUsers = () => {
     const csvContent = [
-      ["Name", "Email", "Phone", "Role", "Status", "Join Date", "Last Active"],
-      ...filteredUsers.map((user) => [
+      ["S.No", "Name", "Email", "Phone", "Role", "Status", "Join Date", "Last Active"],
+      ...filteredUsers.map((user, index) => [
+        index + 1,
         user.name,
         user.email,
         user.phone_number || "",
@@ -422,7 +563,7 @@ export default function UsersPage() {
             <Button
               variant="outline"
               onClick={handleExportUsers}
-              className="flex items-center gap-1 sm:gapORN:2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-300 bg-transparent px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm"
+              className="flex items-center gap-1 sm:gap-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-300 bg-transparent px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm"
             >
               <Download className="w-3 h-3 sm:w-4 sm:h-4" />
               <span className="hidden sm:inline">Export</span>
@@ -593,34 +734,53 @@ export default function UsersPage() {
   ) : viewMode === "grid" ? (
     <div className="p-3 sm:p-4 lg:p-6">
       <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-3 sm:gap-4">
-        {filteredUsers.map((user) => (
+        {paginatedUsers.map((user, index) => (
           <UserCard
             key={user.user_id}
             user={user}
+            index={(currentPage - 1) * itemsPerPage + index}
             onDeactivate={handleDeactivateUser}
             onReactivate={handleReactivateUser}
           />
         ))}
       </div>
+      
+      {/* Pagination for Grid View */}
+      {totalPages > 1 && (
+        <div className="p-4 border-t">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            totalItems={filteredUsers.length}
+            itemsPerPage={itemsPerPage}
+            onItemsPerPageChange={setItemsPerPage}
+          />
+        </div>
+      )}
     </div>
   ) : (
     <div className="overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="text-sm font-semibold">User</TableHead>
-            <TableHead className="text-sm font-semibold">Contact</TableHead>
-            <TableHead className="text-sm font-semibold">Role</TableHead>
-            <TableHead className="text-sm font-semibold">Status</TableHead>
-            <TableHead className="text-right text-sm font-semibold">Actions</TableHead>
+            <TableHead className="text-sm font-semibold whitespace-nowrap">S.No</TableHead>
+            <TableHead className="text-sm font-semibold whitespace-nowrap">User</TableHead>
+            <TableHead className="text-sm font-semibold whitespace-nowrap">Contact</TableHead>
+            <TableHead className="text-sm font-semibold whitespace-nowrap">Role</TableHead>
+            <TableHead className="text-sm font-semibold whitespace-nowrap">Status</TableHead>
+            <TableHead className="text-right text-sm font-semibold whitespace-nowrap">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredUsers.map((user) => (
+          {paginatedUsers.map((user, index) => (
             <TableRow
               key={user.user_id}
               className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
             >
+              <TableCell className="py-3 whitespace-nowrap">
+                {(currentPage - 1) * itemsPerPage + (index + 1)}
+              </TableCell>
               <TableCell className="py-3">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-full bg-gradient-to-br from-violet-400 to-blue-400 flex items-center justify-center text-white font-semibold text-xs lg:text-sm flex-shrink-0">
@@ -697,6 +857,20 @@ export default function UsersPage() {
           ))}
         </TableBody>
       </Table>
+      
+      {/* Pagination for Table View */}
+      {totalPages > 1 && (
+        <div className="p-4 border-t">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            totalItems={filteredUsers.length}
+            itemsPerPage={itemsPerPage}
+            onItemsPerPageChange={setItemsPerPage}
+          />
+        </div>
+      )}
     </div>
   )}
   {filteredUsers.length === 0 && !isLoading && !error && (

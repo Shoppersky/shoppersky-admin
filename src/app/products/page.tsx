@@ -24,7 +24,8 @@ import {
   BarChart3,
   Users,
   MoreHorizontal,
-  icons,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Table as TableComponent, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -70,6 +71,117 @@ interface ApiResponse {
   total_pages: number
 }
 
+// Pagination Component
+function Pagination({
+  currentPage,
+  totalPages,
+  onPageChange,
+  totalItems,
+  itemsPerPage,
+  onItemsPerPageChange
+}: {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  totalItems: number;
+  itemsPerPage: number;
+  onItemsPerPageChange: (itemsPerPage: number) => void;
+}) {
+  // Generate page numbers to display
+  const getVisiblePages = () => {
+    const delta = 2; // Number of pages to show on each side of current page
+    const range: number[] = [];
+    const rangeWithDots: (number | string)[] = [];
+    let l: number | undefined;
+
+    for (let i = 1; i <= totalPages; i++) {
+      if (i === 1 || i === totalPages || (i >= currentPage - delta && i <= currentPage + delta)) {
+        range.push(i);
+      }
+    }
+
+    range.forEach((i) => {
+      if (l) {
+        if (i - l === 2) {
+          rangeWithDots.push(l + 1);
+        } else if (i - l !== 1) {
+          rangeWithDots.push('...');
+        }
+      }
+      rangeWithDots.push(i);
+      l = i;
+    });
+
+    return rangeWithDots;
+  };
+
+  const visiblePages = getVisiblePages();
+  const showingFrom = ((currentPage - 1) * itemsPerPage) + 1;
+  const showingTo = Math.min(currentPage * itemsPerPage, totalItems);
+
+  return (
+    <div className="flex items-center justify-between w-full">
+      <div className="flex items-center gap-2">
+        <span className="text-sm text-muted-foreground">Rows Per Page</span>
+        <Select value={itemsPerPage.toString()} onValueChange={(value) => onItemsPerPageChange(Number(value))}>
+          <SelectTrigger className="w-20 h-8 text-sm">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="5">5</SelectItem>
+            <SelectItem value="10">10</SelectItem>
+            <SelectItem value="20">20</SelectItem>
+            <SelectItem value="50">50</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <span className="text-sm text-muted-foreground ml-4">
+          page {currentPage} of {totalPages}
+        </span>
+      </div>
+      <div className="flex items-center space-x-1">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+          disabled={currentPage === 1}
+          className="h-8 w-8 p-0"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
+
+        {visiblePages.map((page, index) => (
+          page === '...' ? (
+            <div key={`ellipsis-${index}`} className="px-2 text-sm text-muted-foreground">
+              ...
+            </div>
+          ) : (
+            <Button
+              key={page}
+              variant={currentPage === page ? "default" : "outline"}
+              size="sm"
+              onClick={() => onPageChange(page as number)}
+              className="h-8 w-8 p-0"
+            >
+              {page}
+            </Button>
+          )
+        ))}
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+          disabled={currentPage === totalPages}
+          className="h-8 w-8 p-0"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 // Enhanced StatCard Component
 function StatCard({
   title,
@@ -106,7 +218,6 @@ function StatCard({
   return (
     <Card
       className={cn(
-        
         "border transition-all duration-300 hover:shadow-lg hover:scale-[1.02] group w-full",
       )}
     >
@@ -154,104 +265,63 @@ function StatCard({
 }
 
 // Enhanced Vendor Table Row Component
-function VendorTableRow({ vendor, onClick }: { vendor: Vendor; onClick: () => void }) {
+function VendorTableRow({ vendor, onClick, index }: { vendor: Vendor; onClick: () => void; index: number }) {
   return (
-    // <TableRow
-    //   className="cursor-pointer transition-all duration-200 hover:bg-slate-50/80 dark:hover:bg-slate-800/50 group"
-    //   onClick={onClick}
-    // >
-    //  <TableCell className="px-2">
-    //     <div className="flex items-center gap-2">
-    //       <div className="p-2 rounded-lg bg-gradient-to-br from-violet-500 to-blue-500 text-white group-hover:scale-105 transition-transform duration-200">
-    //         <Store className="h-5 w-5" />
-    //       </div>
-    //       <div>
-    //         <div className="font-semibold text-slate-900 dark:text-slate-100 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
-    //           {vendor.storeName || "Unnamed Store"}
-    //         </div>
-           
-    //       </div>
-    //     </div>
-    //   </TableCell>
-    //   <TableCell className="text-center">
-    //     <Badge variant="secondary" className="bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400">
-    //       {vendor.productCount}
-    //     </Badge>
-    //   </TableCell>
-
-    //   <TableCell>
-    //     <DropdownMenu>
-    //       <DropdownMenuTrigger asChild>
-    //         <Button
-    //           variant="ghost"
-    //           size="icon"
-    //           className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
-    //           onClick={(e) => e.stopPropagation()}
-    //         >
-    //           <MoreHorizontal className="h-4 w-4" />
-    //         </Button>
-    //       </DropdownMenuTrigger>
-    //       <DropdownMenuContent align="end" className="w-40">
-    //         <DropdownMenuItem>
-    //           <Eye className="w-4 h-4 mr-2" />
-    //           View Details
-    //         </DropdownMenuItem>
-    //       </DropdownMenuContent>
-    //     </DropdownMenu>
-    //   </TableCell>
-    // </TableRow>
-
     <TableRow
-  className="cursor-pointer transition-all duration-200 hover:bg-slate-50/80 dark:hover:bg-slate-800/50 group"
-  onClick={onClick}
->
-  {/* Store Info */}
-  <TableCell className="px-2 w-[40%]">
-    <div className="flex items-center gap-2 ">
-      <div className="p-2 rounded-lg bg-gradient-to-br from-violet-500 to-blue-500 text-white group-hover:scale-105 transition-transform duration-200">
-        <Store className="h-5 w-5" />
-      </div>
-      <div>
-        <div className="font-semibold text-slate-900 dark:text-slate-100 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
-          {vendor.storeName || "Unnamed Store"}
-        </div>
-      </div>
-    </div>
-  </TableCell>
-
-  {/* Product Count */}
-  <TableCell className="text-center w-[30%]">
-    <Badge
-      variant="secondary"
-      className="bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400"
+      className="cursor-pointer transition-all duration-200 hover:bg-slate-50/80 dark:hover:bg-slate-800/50 group"
+      onClick={onClick}
     >
-      {vendor.productCount}
-    </Badge>
-  </TableCell>
+      {/* S.No */}
+      <TableCell className="font-medium w-12">
+        {index + 1}
+      </TableCell>
+      
+      {/* Store Info */}
+      <TableCell className="px-2 w-[40%]">
+        <div className="flex items-center gap-2 ">
+          <div className="p-2 rounded-lg bg-gradient-to-br from-violet-500 to-blue-500 text-white group-hover:scale-105 transition-transform duration-200">
+            <Store className="h-5 w-5" />
+          </div>
+          <div>
+            <div className="font-semibold text-slate-900 dark:text-slate-100 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
+              {vendor.storeName || "Unnamed Store"}
+            </div>
+          </div>
+        </div>
+      </TableCell>
 
-  {/* Actions */}
-  <TableCell >
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8  group-hover:opacity-100 transition-opacity"
-          onClick={(e) => e.stopPropagation()}
+      {/* Product Count */}
+      <TableCell className="text-center w-[30%]">
+        <Badge
+          variant="secondary"
+          className="bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400"
         >
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-40">
-        <DropdownMenuItem>
-          <Eye className="w-4 h-4 mr-2" />
-          View Details
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  </TableCell>
-</TableRow>
+          {vendor.productCount}
+        </Badge>
+      </TableCell>
 
+      {/* Actions */}
+      <TableCell >
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8  group-hover:opacity-100 transition-opacity"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-40">
+            <DropdownMenuItem>
+              <Eye className="w-4 h-4 mr-2" />
+              View Details
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </TableCell>
+    </TableRow>
   )
 }
 
@@ -268,21 +338,6 @@ function ProductCard({ product }: { product: Product }) {
           className="w-full h-40 sm:h-48 object-cover transition-transform duration-500 group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        {/* <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex gap-1 sm:gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <Button size="icon" variant="secondary" className="h-6 w-6 sm:h-8 sm:w-8 bg-white/90 hover:bg-white">
-            <Heart className="h-3 w-3 sm:h-4 sm:w-4" />
-          </Button>
-          <Button size="icon" variant="secondary" className="h-6 w-6 sm:h-8 sm:w-8 bg-white/90 hover:bg-white">
-            <Share2 className="h-3 w-3 sm:h-4 sm:w-4" />
-          </Button>
-        </div> */}
-        {/* <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <Button size="sm" className="bg-white text-slate-900 hover:bg-slate-100 h-7 sm:h-8 px-2 sm:px-3 text-xs sm:text-sm">
-            <Eye className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-            <span className="hidden xs:inline">View Details</span>
-            <span className="xs:hidden">View</span>
-          </Button>
-        </div> */}
       </div>
       <CardContent className="p-3 sm:p-4">
         <div className="space-y-2 sm:space-y-3">
@@ -310,10 +365,6 @@ function ProductCard({ product }: { product: Product }) {
               <Building2 className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
               <span className="truncate">{product.storeName || "Unknown Store"}</span>
             </div>
-            {/* <div className="flex items-center gap-1 flex-shrink-0">
-              <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-amber-400 text-amber-400" />
-              <span className="text-xs sm:text-sm font-medium">4.5</span>
-            </div> */}
           </div>
         </div>
       </CardContent>
@@ -378,6 +429,12 @@ export default function ProductsView() {
   const [selectedVendor, setSelectedVendor] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("all")
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [vendorCurrentPage, setVendorCurrentPage] = useState(1);
+  const [vendorItemsPerPage, setVendorItemsPerPage] = useState(10);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -434,14 +491,21 @@ export default function ProductsView() {
     fetchProducts()
   }, [])
 
+  // Reset current page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, categoryFilter, itemsPerPage]);
+
   const handleVendorClick = (vendorId: string) => {
     setSelectedVendor(vendorId)
+    setCurrentPage(1) // Reset pagination when changing vendor
   }
 
   const handleBackClick = () => {
     setSelectedVendor(null)
     setSearchTerm("")
     setCategoryFilter("all")
+    setCurrentPage(1) // Reset pagination when going back
   }
 
   const filteredProducts = useMemo(() => {
@@ -464,6 +528,24 @@ export default function ProductsView() {
     return filtered
   }, [selectedVendor, products, searchTerm, categoryFilter])
 
+  // Paginated products
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredProducts.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredProducts, currentPage, itemsPerPage]);
+
+  // Total pages for products (Option 1: always at least 1)
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / itemsPerPage));
+  
+  // Paginated vendors
+  const paginatedVendors = useMemo(() => {
+    const startIndex = (vendorCurrentPage - 1) * vendorItemsPerPage;
+    return vendors.slice(startIndex, startIndex + vendorItemsPerPage);
+  }, [vendors, vendorCurrentPage, vendorItemsPerPage]);
+
+  // Total pages for vendors (Option 1: always at least 1)
+  const totalVendorPages = Math.max(1, Math.ceil(vendors.length / vendorItemsPerPage));
+
   const categories = useMemo(() => {
     const cats = new Set(products.map((p) => p.category))
     return Array.from(cats).filter(Boolean)
@@ -475,7 +557,7 @@ export default function ProductsView() {
     const avgProductsPerVendor = totalVendors > 0 ? Math.round(totalProducts / totalVendors) : 0
     const topVendor = vendors.reduce(
       (max, vendor) => (vendor.productCount > max.productCount ? vendor : max),
-      vendors[0],
+      vendors[0] || { id: "", storeName: "N/A", productCount: 0 },
     )
 
     return {
@@ -589,12 +671,6 @@ export default function ProductsView() {
               icon={<BarChart3 className="w-6 h-6" />}
               color="yellow"
             />
-            {/* <StatCard
-              title="Top Vendor"
-              value={stats.topVendor}
-              icon={<Star className="w-6 h-6" />}
-              color="amber"
-            /> */}
           </div>
         )}
 
@@ -614,7 +690,7 @@ export default function ProductsView() {
                 </div>
                 <div className="flex flex-col lg:flex-row gap-3 sm:gap-4 items-center">
                   <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                    <SelectTrigger className="w-50 he">
+                    <SelectTrigger className="w-[180px] h-8">
                       <SelectValue placeholder="All Categories" />
                     </SelectTrigger>
                     <SelectContent>
@@ -652,21 +728,34 @@ export default function ProductsView() {
                   <TableComponent>
                     <TableHeader>
                       <TableRow>
+                        <TableHead className="w-12">S.No</TableHead>
                         <TableHead className="min-w-[80px]">Vendor</TableHead>
-<TableHead className="text-center w-16">Products</TableHead>
-<TableHead className="w-12">Actions</TableHead>
-
-                        
-                        {/* <TableHead className="hidden md:table-cell min-w-[150px]">Performance</TableHead> */}
-                     
+                        <TableHead className="text-center w-16">Products</TableHead>
+                        <TableHead className="w-12">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {vendors.map((vendor) => (
-                        <VendorTableRow key={vendor.id} vendor={vendor} onClick={() => handleVendorClick(vendor.id)} />
+                      {paginatedVendors.map((vendor, index) => (
+                        <VendorTableRow 
+                          key={vendor.id} 
+                          vendor={vendor} 
+                          onClick={() => handleVendorClick(vendor.id)}
+                          index={(vendorCurrentPage - 1) * vendorItemsPerPage + index}
+                        />
                       ))}
                     </TableBody>
                   </TableComponent>
+                </div>
+                {/* Pagination for Vendors Table (Option 1: always show) */}
+                <div className="p-4 border-t border-slate-200/50 dark:border-slate-700/50">
+                  <Pagination
+                    currentPage={vendorCurrentPage}
+                    totalPages={totalVendorPages}
+                    onPageChange={setVendorCurrentPage}
+                    totalItems={vendors.length}
+                    itemsPerPage={vendorItemsPerPage}
+                    onItemsPerPageChange={setVendorItemsPerPage}
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -680,9 +769,20 @@ export default function ProductsView() {
               </Badge>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-              {filteredProducts.map((product) => (
+              {paginatedProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
+            </div>
+            {/* Pagination for Cards View (Option 1: always show) */}
+            <div className="p-4 border-t border-slate-200/50 dark:border-slate-700/50">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                totalItems={filteredProducts.length}
+                itemsPerPage={itemsPerPage}
+                onItemsPerPageChange={setItemsPerPage}
+              />
             </div>
           </div>
         ) : (
@@ -700,17 +800,20 @@ export default function ProductsView() {
                 <TableComponent>
                   <TableHeader>
                     <TableRow>
+                      <TableHead className="w-12">S.No</TableHead>
                       <TableHead className="w-16 sm:w-20">Image</TableHead>
                       <TableHead className="min-w-[150px]">Name</TableHead>
-
                       <TableHead className="min-w-[120px]">Category</TableHead>
                       <TableHead className="hidden md:table-cell min-w-[120px]">Subcategory</TableHead>
                       <TableHead className="hidden lg:table-cell min-w-[120px]">Store</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredProducts.map((product) => (
+                    {paginatedProducts.map((product, index) => (
                       <TableRow key={product.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
+                        <TableCell className="font-medium">
+                          {(currentPage - 1) * itemsPerPage + index + 1}
+                        </TableCell>
                         <TableCell>
                           <Image
                             src={product.image || "/placeholder.svg"}
@@ -725,7 +828,6 @@ export default function ProductsView() {
                             <div className="truncate">{product.name}</div>
                           </div>
                         </TableCell>
-
                         <TableCell>
                           <Badge variant="outline" className="text-xs">
                             {product.category || "Uncategorized"}
@@ -754,6 +856,17 @@ export default function ProductsView() {
                     ))}
                   </TableBody>
                 </TableComponent>
+              </div>
+              {/* Pagination for Table View (Option 1: always show) */}
+              <div className="p-4 border-t border-slate-200/50 dark:border-slate-700/50">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={setCurrentPage}
+                  totalItems={filteredProducts.length}
+                  itemsPerPage={itemsPerPage}
+                  onItemsPerPageChange={setItemsPerPage}
+                />
               </div>
             </CardContent>
           </Card>

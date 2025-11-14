@@ -1,5 +1,3 @@
-
-
 "use client";
 
 import type React from "react";
@@ -25,6 +23,8 @@ import {
   FileText,
   RotateCcw,
   ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -84,6 +84,117 @@ interface Vendor {
   isEmailVerified: boolean; // Added email verification status
   avatar?: string;
 }
+
+// Pagination component
+const Pagination = ({
+  currentPage,
+  totalPages,
+  onPageChange,
+  totalItems,
+  itemsPerPage,
+  onItemsPerPageChange
+}: {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  totalItems: number;
+  itemsPerPage: number;
+  onItemsPerPageChange: (itemsPerPage: number) => void;
+}) => {
+  // Generate page numbers to display
+  const getVisiblePages = () => {
+    const delta = 2; // Number of pages to show on each side of current page
+    const range: number[] = [];
+    const rangeWithDots: (number | string)[] = [];
+    let l: number | undefined;
+
+    for (let i = 1; i <= totalPages; i++) {
+      if (i === 1 || i === totalPages || (i >= currentPage - delta && i <= currentPage + delta)) {
+        range.push(i);
+      }
+    }
+
+    range.forEach((i) => {
+      if (l) {
+        if (i - l === 2) {
+          rangeWithDots.push(l + 1);
+        } else if (i - l !== 1) {
+          rangeWithDots.push('...');
+        }
+      }
+      rangeWithDots.push(i);
+      l = i;
+    });
+
+    return rangeWithDots;
+  };
+
+  const visiblePages = getVisiblePages();
+  const showingFrom = ((currentPage - 1) * itemsPerPage) + 1;
+  const showingTo = Math.min(currentPage * itemsPerPage, totalItems);
+
+  return (
+    <div className="flex items-center justify-between w-full">
+      <div className="flex items-center gap-2">
+        <span className="text-sm text-muted-foreground">Rows Per Page</span>
+        <Select value={itemsPerPage.toString()} onValueChange={(value) => onItemsPerPageChange(Number(value))}>
+          <SelectTrigger className="w-20 h-8 text-sm">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="5">5</SelectItem>
+            <SelectItem value="10">10</SelectItem>
+            <SelectItem value="20">20</SelectItem>
+            <SelectItem value="50">50</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <span className="text-sm text-muted-foreground ml-4">
+          page {currentPage} of {totalPages} 
+        </span>
+      </div>
+      <div className="flex items-center space-x-1">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="h-8 w-8 p-0"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
+
+        {visiblePages.map((page, index) => (
+          page === '...' ? (
+            <div key={`ellipsis-${index}`} className="px-2 text-sm text-muted-foreground">
+              ...
+            </div>
+          ) : (
+            <Button
+              key={page}
+              variant={currentPage === page ? "default" : "outline"}
+              size="sm"
+              onClick={() => onPageChange(page as number)}
+              className="h-8 w-8 p-0"
+            >
+              {page}
+            </Button>
+          )
+        ))}
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="h-8 w-8 p-0"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      </div>
+    </div>
+  );
+};
 
 // Simplified StatCard Component
 function StatCard({
@@ -156,6 +267,12 @@ const VendorManagement = () => {
   const [rejectionComment, setRejectionComment] = useState("");
   const [holdDialogOpen, setHoldDialogOpen] = useState(false);
   const [vendorToHold, setVendorToHold] = useState<Vendor | null>(null);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [onboardedCurrentPage, setOnboardedCurrentPage] = useState(1);
+  const [registeredCurrentPage, setRegisteredCurrentPage] = useState(1);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -223,8 +340,7 @@ const VendorManagement = () => {
                   .map((p: string) => p.replace(/["[\]]/g, ""))
                   .join(", ")
               : business_profile.profile_details?.paymentPreference?.replace(
-                  /["[\]]/g,
-                  ""
+                  /["[\]]/g, ""
                 ) || "Bank Transfer",
             abnDetails: {
               entityName: business_profile.profile_details?.entity_name || "",
@@ -279,6 +395,13 @@ const VendorManagement = () => {
 
     fetchData();
   }, []);
+
+  // Reset current page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+    setOnboardedCurrentPage(1);
+    setRegisteredCurrentPage(1);
+  }, [searchTerm, statusFilter, roleFilter, itemsPerPage]);
 
   const getVendorStatus = (isActive: boolean) =>
     isActive ? "Inactive" : "Active";
@@ -337,6 +460,23 @@ const VendorManagement = () => {
       return matchesSearch && matchesStatus && matchesRole;
     });
   }, [registeredVendors, searchTerm, statusFilter, roleFilter]);
+
+  // Paginated vendors
+  const paginatedOnboardedVendors = useMemo(() => {
+    const startIndex = (onboardedCurrentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredOnboardedVendors.slice(startIndex, endIndex);
+  }, [filteredOnboardedVendors, onboardedCurrentPage, itemsPerPage]);
+
+  const paginatedRegisteredVendors = useMemo(() => {
+    const startIndex = (registeredCurrentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredRegisteredVendors.slice(startIndex, endIndex);
+  }, [filteredRegisteredVendors, registeredCurrentPage, itemsPerPage]);
+
+  // Total pages
+  const onboardedTotalPages = Math.ceil(filteredOnboardedVendors.length / itemsPerPage);
+  const registeredTotalPages = Math.ceil(filteredRegisteredVendors.length / itemsPerPage);
 
   // Statistics
   const stats = useMemo(() => {
@@ -679,6 +819,7 @@ const VendorManagement = () => {
   const handleExportVendors = (vendorList: Vendor[]) => {
     const csvContent = [
       [
+        "S.No",
         "Email",
         "Role",
         "Store Name",
@@ -694,7 +835,8 @@ const VendorManagement = () => {
         "Registration Date",
         "Status",
       ],
-      ...vendorList.map((vendor) => [
+      ...vendorList.map((vendor, index) => [
+        index + 1,
         vendor.email,
         vendor.role,
         vendor.storeName,
@@ -725,46 +867,49 @@ const VendorManagement = () => {
   };
 
   // Render vendor table
-  const renderVendorTable = (vendorList: Vendor[], isOnboarded: boolean) => (
+  const renderVendorTable = (vendorList: Vendor[], isOnboarded: boolean, currentPage: number) => (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[700px]">
         <thead className="bg-slate-50/80 dark:bg-slate-800/80 border-b border-slate-200/50 dark:border-slate-700/50">
           <tr>
+            <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm whitespace-nowrap">
+              S.No
+            </th>
             {!isOnboarded ? (
               <>
                 {/* Registered Vendors - Simplified columns */}
-                <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
-                  Vendor's Email
+                <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm whitespace-nowrap">
+                  Vendor Email
                 </th>
-                <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
-                  Onboarding Status
+                <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm whitespace-nowrap">
+                  Status
                 </th>
-                <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
+                <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm whitespace-nowrap">
                   Email Verification
                 </th>
               </>
             ) : (
               <>
                 {/* Onboarded Vendors - Full columns */}
-                <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
-                  Vendor's Email
+                <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm whitespace-nowrap">
+                  Vendor Email
                 </th>
-                <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
-                  Vendor's Store
+                <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm whitespace-nowrap hidden sm:table-cell">
+                  Store Name
                 </th>
-                <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 hidden sm:table-cell text-xs sm:text-sm">
+                <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm whitespace-nowrap hidden sm:table-cell">
                   Location
                 </th>
-                <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 hidden md:table-cell text-xs sm:text-sm">
+                <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm whitespace-nowrap hidden md:table-cell">
                   Industry
                 </th>
-                <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
+                <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm whitespace-nowrap">
                   Approval Status
                 </th>
-                <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
+                <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm whitespace-nowrap">
                   Active Status
                 </th>
-                <th className="text-left p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
+                <th className="text-center p-2 sm:p-3 lg:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm whitespace-nowrap">
                   Actions
                 </th>
               </>
@@ -773,11 +918,14 @@ const VendorManagement = () => {
         </thead>
 
         <tbody>
-          {vendorList.map((vendor) => (
+          {vendorList.map((vendor, index) => (
             <tr
               key={vendor.id}
               className="border-b border-slate-200/50 dark:border-slate-700/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/50"
             >
+              <td className="p-2 sm:p-3 lg:p-4 whitespace-nowrap">
+                {(currentPage - 1) * itemsPerPage + (index + 1)}
+              </td>
               {!isOnboarded ? (
                 <>
                   {/* Registered Vendors - Simplified row */}
@@ -801,10 +949,10 @@ const VendorManagement = () => {
                       </div>
                     </div>
                   </td>
-                  <td className="p-2 sm:p-3 lg:p-4">
+                  <td className="p-2 sm:p-3 lg:p-4 whitespace-nowrap">
                     {getStatusBadge(vendor.status)}
                   </td>
-                  <td className="p-2 sm:p-3 lg:p-4">
+                  <td className="p-2 sm:p-3 lg:p-4 whitespace-nowrap">
                     {getEmailVerificationBadge(vendor.isEmailVerified)}
                   </td>
                 </>
@@ -836,33 +984,33 @@ const VendorManagement = () => {
                       </div>
                     </div>
                   </td>
-                  <td className="p-2 sm:p-3 lg:p-4 hidden sm:table-cell">
+                  <td className="p-2 sm:p-3 lg:p-4 hidden sm:table-cell whitespace-nowrap">
                     <p className="font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm">
                       {vendor.storeName || "N/A"}
                     </p>
                   </td>
-                  <td className="p-2 sm:p-3 lg:p-4 hidden sm:table-cell">
+                  <td className="p-2 sm:p-3 lg:p-4 hidden sm:table-cell whitespace-nowrap">
                     <p className="font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm">
                       {vendor.location}
                     </p>
                   </td>
-                  <td className="p-2 sm:p-3 lg:p-4 hidden md:table-cell">
-                    <p className="text-slate-900 dark:text-slate-100 text-xs sm:text-sm">
+                  <td className="p-2 sm:p-3 lg:p-4 hidden md:table-cell whitespace-nowrap">
+                    <p className="text-slate-900 dark:text-slate-100 text-xs sm:text-sm truncate">
                       {vendor.industryName}
                     </p>
                   </td>
-                  <td className="p-2 sm:p-3 lg:p-4">
+                  <td className="p-2 sm:p-3 lg:p-4 whitespace-nowrap">
                     {getStatusBadge(vendor.status)}
                   </td>
-                  <td>
+                  <td className="p-2 sm:p-3 lg:p-4 whitespace-nowrap">
                     <Badge
                       variant={vendor.isActive ? "destructive" : "success"}
                     >
                       {getVendorStatus(vendor.isActive)}
                     </Badge>
                   </td>
-                  <td className="p-2 sm:p-3 lg:p-4">
-                    <div className="flex items-center gap-1 sm:gap-2">
+                  <td className="p-2 sm:p-3 lg:p-4 whitespace-nowrap">
+                    <div className="flex items-center justify-center gap-1 sm:gap-2">
                       <Button
                         variant="ghost"
                         size="sm"
@@ -1449,1297 +1597,7 @@ const VendorManagement = () => {
                               Account Created
                             </h3>
                             <p className="text-slate-600 dark:text-slate-400">
-                              Vendor successfully registered on the platform
-                            </p>
-                            <p className="text-sm text-slate-500 dark:text-slate-500 font-medium">
-                              {new Date(
-                                selectedVendor.registrationDate
-                              ).toLocaleDateString("en-US", {
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="relative flex items-start gap-4 p-6 border-l-4 border-blue-500 bg-gradient-to-r from-blue-50/80 to-indigo-50/40 dark:from-blue-950/20 dark:to-indigo-950/10 rounded-r-xl shadow-sm hover:shadow-md transition-shadow duration-200">
-                          <div className="absolute -left-2 top-6 w-4 h-4 bg-blue-500 rounded-full border-4 border-white dark:border-slate-800"></div>
-                          <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl shadow-sm">
-                            <FileText className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                          </div>
-                          <div className="flex-1 space-y-2">
-                            <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-lg">
-                              Profile Updated
-                            </h3>
-                            <p className="text-slate-600 dark:text-slate-400">
-                              Business information and profile details were
-                              updated
-                            </p>
-                            <p className="text-sm text-slate-500 dark:text-slate-500 font-medium">
-                              {new Date(
-                                selectedVendor.lastActivity
-                              ).toLocaleDateString("en-US", {
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              </div>
-            </Tabs>
-          </div>
-
-          <div className="sticky bottom-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm border-t border-slate-200/50 dark:border-slate-700/50 p-4 sm:p-6 rounded-t-2xl shadow-2xl">
-            <div className="flex flex-col sm:flex-row gap-3 justify-center sm:justify-end max-w-md sm:max-w-none mx-auto">
-              {selectedVendor.storeName &&
-                (selectedVendor.status === "pending" ||
-                  selectedVendor.status === "onhold") && (
-                  <>
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="flex items-center justify-center gap-2 hover:bg-red-50 hover:border-red-200 dark:hover:bg-red-950/50 bg-transparent transition-all duration-200 hover:scale-105 shadow-sm"
-                      onClick={() => handleRejectVendor(selectedVendor)}
-                    >
-                      <XCircle className="w-5 h-5" />
-                      Reject Application
-                    </Button>
-                    <Button
-                      size="lg"
-                      className="flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
-                      onClick={() => handleApproveVendor(selectedVendor)}
-                    >
-                      <CheckCircle className="w-5 h-5" />
-                      Approve Vendor
-                    </Button>
-                  </>
-                )}
-              {selectedVendor.storeName &&
-                selectedVendor.status === "rejected" && (
-                  <Button
-                    size="lg"
-                    className="flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
-                    onClick={() => handleApproveVendor(selectedVendor)}
-                  >
-                    <CheckCircle className="w-5 h-5" />
-                    Approve Vendor
-                  </Button>
-                )}
-              {selectedVendor.storeName &&
-                selectedVendor.status === "approved" && (
-                  <>
-                    {selectedVendor.isActive ? (
-                      <Button
-                        variant="outline"
-                        size="lg"
-                        className="flex items-center justify-center gap-2 hover:bg-green-50 hover:border-green-200 dark:hover:bg-green-950/50 bg-transparent transition-all duration-200 hover:scale-105 shadow-sm"
-                        onClick={() => handleRestoreVendor(selectedVendor)}
-                      >
-                        <RotateCcw className="w-5 h-5" />
-                        Restore Vendor
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="outline"
-                        size="lg"
-                        className="flex items-center justify-center gap-2 hover:bg-red-50 hover:border-red-200 dark:hover:bg-red-950/50 bg-transparent transition-all duration-200 hover:scale-105 shadow-sm"
-                        onClick={() => handleDeleteVendor(selectedVendor)}
-                      >
-                        <Trash2 className="w-5 h-5" />
-                        Deactivate Vendor
-                      </Button>
-                    )}
-                  </>
-                )}
-              {!selectedVendor.storeName &&
-                (selectedVendor.status === "pending" ||
-                  selectedVendor.status === "rejected" ||
-                  selectedVendor.status === "onhold") && (
-                  <Button
-                    size="lg"
-                    className="flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
-                    onClick={() => handleApproveVendor(selectedVendor)}
-                  >
-                    <CheckCircle className="w-5 h-5" />
-                    Approve Vendor
-                  </Button>
-                )}
-              {!selectedVendor.storeName &&
-                (selectedVendor.status === "pending" ||
-                  selectedVendor.status === "onhold") && (
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="flex items-center justify-center gap-2 hover:bg-red-50 hover:border-red-200 dark:hover:bg-red-950/50 bg-transparent transition-all duration-200 hover:scale-105 shadow-sm"
-                    onClick={() => handleRejectVendor(selectedVendor)}
-                  >
-                    <XCircle className="w-5 h-5" />
-                    Reject Application
-                  </Button>
-                )}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen">
-        <div className="container mx-auto px-2 sm:px-4 lg:px-6 py-3 sm:py-4 lg:py-6 space-y-3 sm:space-y-4 lg:space-y-6">
-          <div className="flex items-center justify-center py-12 sm:py-16 lg:py-20">
-            <div className="relative">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 border-3 sm:border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
-              <div className="absolute inset-0 w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 border-3 sm:border-4 border-transparent border-t-blue-600 rounded-full animate-spin animation-delay-150"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (selectedVendor) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-        <div className="sticky top-0 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm border-b border-slate-200/50 dark:border-slate-700/50">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div className="flex items-center justify-between">
-              <Button
-                variant="ghost"
-                onClick={() => setSelectedVendor(null)}
-                className="text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 hover:scale-105"
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                <span className="hidden sm:inline">Back to Vendors</span>
-                <span className="sm:hidden">Back</span>
-              </Button>
-
-              <div className="flex items-center gap-2">
-                {selectedVendor.status === "pending" && (
-                  <>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="hidden sm:flex items-center gap-2 hover:bg-red-50 hover:border-red-200 dark:hover:bg-red-950/50 bg-transparent"
-                      onClick={() => handleRejectVendor(selectedVendor)}
-                    >
-                      <XCircle className="w-4 h-4" />
-                      Reject
-                    </Button>
-                    <Button
-                      size="sm"
-                      className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-200"
-                      onClick={() => handleApproveVendor(selectedVendor)}
-                    >
-                      <CheckCircle className="w-4 h-4" />
-                      <span className="hidden sm:inline">Approve</span>
-                    </Button>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500/10 via-indigo-500/10 to-purple-500/10 border border-slate-200/50 dark:border-slate-700/50 shadow-xl">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5" />
-            <div className="relative p-6 sm:p-8">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
-                <Avatar className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 border-4 border-white/30 shadow-2xl ring-4 ring-white/10 flex-shrink-0">
-                  <AvatarImage
-                    src={selectedVendor.avatar || "/placeholder.svg"}
-                    className="object-cover"
-                  />
-                  <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white text-lg sm:text-xl lg:text-2xl font-bold">
-                    {selectedVendor.storeName
-                      ? selectedVendor.storeName
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")
-                      : selectedVendor.email[0].toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-
-                <div className="flex-1 min-w-0 space-y-3">
-                  <div>
-                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-2">
-                      {selectedVendor.storeName || selectedVendor.email}
-                    </h1>
-                    <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300">
-                      {selectedVendor.industryName || "Registered Vendor"}
-                    </p>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                    {getStatusBadge(selectedVendor.status)}
-                    {getRoleBadge(selectedVendor.role)}
-                    {getEmailVerificationBadge(selectedVendor.isEmailVerified)}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-xl overflow-hidden">
-            <Tabs
-              value={activeTab}
-              onValueChange={setActiveTab}
-              className="w-full"
-            >
-              <div className="border-b border-slate-200/50 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-900/50">
-                <TabsList className="w-full h-auto p-1 bg-transparent grid grid-cols-2 sm:grid-cols-4 gap-1">
-                  <TabsTrigger
-                    value="overview"
-                    className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-3 px-4 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:shadow-md rounded-lg transition-all duration-200 text-xs sm:text-sm font-medium"
-                  >
-                    <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
-                    <span>Overview</span>
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="business"
-                    className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-3 px-4 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:shadow-md rounded-lg transition-all duration-200 text-xs sm:text-sm font-medium"
-                  >
-                    <Building className="w-4 h-4 sm:w-5 sm:h-5" />
-                    <span>Business</span>
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="abn"
-                    className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-3 px-4 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:shadow-md rounded-lg transition-all duration-200 text-xs sm:text-sm font-medium"
-                  >
-                    <Shield className="w-4 h-4 sm:w-5 sm:h-5" />
-                    <span>ABN</span>
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="activity"
-                    className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-3 px-4 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:shadow-md rounded-lg transition-all duration-200 text-xs sm:text-sm font-medium"
-                  >
-                    <History className="w-4 h-4 sm:w-5 sm:h-5" />
-                    <span>Activity</span>
-                  </TabsTrigger>
-                </TabsList>
-              </div>
-
-              <div className="p-6 sm:p-8">
-                <TabsContent value="overview" className="space-y-6">
-                  <Card className="bg-gradient-to-br from-white to-slate-50/50 dark:from-slate-800 dark:to-slate-800/50 border-slate-200/50 dark:border-slate-700/50">
-                    <CardContent className="p-6">
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {/* Contact Information */}
-                        <div className="space-y-4">
-                          <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                              <Mail className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                            </div>
-                            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">
-                              Contact
-                            </h3>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Email Address
-                            </label>
-                            <p className="text-sm text-slate-900 dark:text-slate-100 mt-2 font-medium break-all">
-                              {selectedVendor.email}
-                            </p>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Verification Status
-                            </label>
-                            <div className="mt-2">
-                              {getEmailVerificationBadge(
-                                selectedVendor.isEmailVerified
-                              )}
-                            </div>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Location
-                            </label>
-                            <p className="text-sm text-slate-900 dark:text-slate-100 mt-2 font-medium">
-                              {selectedVendor.location || "Not specified"}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Store Details */}
-                        <div className="space-y-4">
-                          <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
-                              <Globe className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-                            </div>
-                            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">
-                              Store
-                            </h3>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Store Name
-                            </label>
-                            <p className="text-sm text-slate-900 dark:text-slate-100 mt-2 font-medium">
-                              {selectedVendor.storeName || "Not specified"}
-                            </p>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Store URL
-                            </label>
-                            <p className="text-sm font-mono text-slate-900 dark:text-slate-100 mt-2 break-all bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">
-                              {selectedVendor.storeUrl || "Not specified"}
-                            </p>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Industry
-                            </label>
-                            <p className="text-sm text-slate-900 dark:text-slate-100 mt-2 font-medium">
-                              {selectedVendor.industryName || "Not specified"}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Status & Role */}
-                        <div className="space-y-4">
-                          <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                              <FileText className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                            </div>
-                            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">
-                              Status
-                            </h3>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              User Role
-                            </label>
-                            <div className="mt-2">
-                              {getRoleBadge(selectedVendor.role)}
-                            </div>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Onboarding Status
-                            </label>
-                            <div className="mt-2">
-                              {getStatusBadge(selectedVendor.status)}
-                            </div>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Payment Preference
-                            </label>
-                            <p className="text-sm text-slate-900 dark:text-slate-100 mt-2 font-medium">
-                              {selectedVendor.paymentPreference ||
-                                "Not specified"}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Business Purpose */}
-                      <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
-                        <div className="flex items-center gap-3 mb-4">
-                          <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
-                            <FileText className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                          </div>
-                          <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">
-                            Business Purpose
-                          </h3>
-                        </div>
-                        <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4 border-l-4 border-emerald-500">
-                          <p className="text-base text-slate-900 dark:text-slate-100 leading-relaxed">
-                            {selectedVendor.purpose ||
-                              "No business purpose specified"}
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-
-                <TabsContent value="business" className="space-y-6">
-                  <Card className="bg-gradient-to-br from-white to-slate-50/50 dark:from-slate-800 dark:to-slate-800/50 border-slate-200/50 dark:border-slate-700/50">
-                    <CardContent className="p-6">
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {/* Contact Information */}
-                        <div className="space-y-4">
-                          <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                              <Mail className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                            </div>
-                            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">
-                              Contact
-                            </h3>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Email Address
-                            </label>
-                            <p className="text-sm text-slate-900 dark:text-slate-100 mt-2 font-medium break-all">
-                              {selectedVendor.email}
-                            </p>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Verification Status
-                            </label>
-                            <div className="mt-2">
-                              {getEmailVerificationBadge(
-                                selectedVendor.isEmailVerified
-                              )}
-                            </div>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Location
-                            </label>
-                            <p className="text-sm text-slate-900 dark:text-slate-100 mt-2 font-medium">
-                              {selectedVendor.location || "Not specified"}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Store Details */}
-                        <div className="space-y-4">
-                          <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
-                              <Globe className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-                            </div>
-                            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">
-                              Store
-                            </h3>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Store Name
-                            </label>
-                            <p className="text-sm text-slate-900 dark:text-slate-100 mt-2 font-medium">
-                              {selectedVendor.storeName || "Not specified"}
-                            </p>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Store URL
-                            </label>
-                            <p className="text-sm font-mono text-slate-900 dark:text-slate-100 mt-2 break-all bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">
-                              {selectedVendor.storeUrl || "Not specified"}
-                            </p>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Industry
-                            </label>
-                            <p className="text-sm text-slate-900 dark:text-slate-100 mt-2 font-medium">
-                              {selectedVendor.industryName || "Not specified"}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Status & Role */}
-                        <div className="space-y-4">
-                          <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                              <FileText className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                            </div>
-                            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">
-                              Status
-                            </h3>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              User Role
-                            </label>
-                            <div className="mt-2">
-                              {getRoleBadge(selectedVendor.role)}
-                            </div>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Onboarding Status
-                            </label>
-                            <div className="mt-2">
-                              {getStatusBadge(selectedVendor.status)}
-                            </div>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Payment Preference
-                            </label>
-                            <p className="text-sm text-slate-900 dark:text-slate-100 mt-2 font-medium">
-                              {selectedVendor.paymentPreference ||
-                                "Not specified"}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Business Purpose */}
-                      <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
-                        <div className="flex items-center gap-3 mb-4">
-                          <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
-                            <FileText className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                          </div>
-                          <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">
-                            Business Purpose
-                          </h3>
-                        </div>
-                        <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4 border-l-4 border-emerald-500">
-                          <p className="text-base text-slate-900 dark:text-slate-100 leading-relaxed">
-                            {selectedVendor.purpose ||
-                              "No business purpose specified"}
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-
-                <TabsContent value="abn" className="mt-0">
-                  <Card className="group hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-white to-slate-50/50 dark:from-slate-800 dark:to-slate-800/50 border-slate-200/50 dark:border-slate-700/50">
-                    <CardHeader className="pb-6">
-                      <CardTitle className="text-xl font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-3">
-                        <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-xl">
-                          <Shield className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                        </div>
-                        ABN Details
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div className="space-y-6">
-                          <div className="group">
-                            <label className="text-sm font-semibold text-slate-600 dark:text-slate-400 mb-3 block">
-                              Entity Name
-                            </label>
-                            <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4 border-l-4 border-purple-500">
-                              <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                                {selectedVendor.abnDetails.entityName ||
-                                  "Not specified"}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="group">
-                            <label className="text-sm font-semibold text-slate-600 dark:text-slate-400 mb-3 block">
-                              Business Type
-                            </label>
-                            <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4 border-l-4 border-indigo-500">
-                              <p className="text-lg text-slate-900 dark:text-slate-100">
-                                {selectedVendor.abnDetails.type ||
-                                  "Not specified"}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="space-y-6">
-                          <div className="group">
-                            <label className="text-sm font-semibold text-slate-600 dark:text-slate-400 mb-3 block">
-                              ABN Status
-                            </label>
-                            <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4 border-l-4 border-emerald-500">
-                              <div className="flex items-center">
-                                {getAbnStatusBadge(
-                                  selectedVendor.abnDetails.status
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="group">
-                            <label className="text-sm font-semibold text-slate-600 dark:text-slate-400 mb-3 block">
-                              Business Location
-                            </label>
-                            <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4 border-l-4 border-orange-500">
-                              <p className="text-lg text-slate-900 dark:text-slate-100">
-                                {selectedVendor.abnDetails.businessLocation ||
-                                  "Not specified"}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-
-                <TabsContent value="activity" className="mt-0">
-                  <Card className="group hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-white to-slate-50/50 dark:from-slate-800 dark:to-slate-800/50 border-slate-200/50 dark:border-slate-700/50">
-                    <CardHeader className="pb-6">
-                      <CardTitle className="text-xl font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-3">
-                        <div className="p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl">
-                          <History className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
-                        </div>
-                        Recent Activity
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-6">
-                        <div className="relative flex items-start gap-4 p-6 border-l-4 border-green-500 bg-gradient-to-r from-green-50/80 to-emerald-50/40 dark:from-green-950/20 dark:to-emerald-950/10 rounded-r-xl shadow-sm hover:shadow-md transition-shadow duration-200">
-                          <div className="absolute -left-2 top-6 w-4 h-4 bg-green-500 rounded-full border-4 border-white dark:border-slate-800"></div>
-                          <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-xl shadow-sm">
-                            <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-400" />
-                          </div>
-                          <div className="flex-1 space-y-2">
-                            <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-lg">
-                              Account Created
-                            </h3>
-                            <p className="text-slate-600 dark:text-slate-400">
-                              Vendor successfully registered on the platform
-                            </p>
-                            <p className="text-sm text-slate-500 dark:text-slate-500 font-medium">
-                              {new Date(
-                                selectedVendor.registrationDate
-                              ).toLocaleDateString("en-US", {
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="relative flex items-start gap-4 p-6 border-l-4 border-blue-500 bg-gradient-to-r from-blue-50/80 to-indigo-50/40 dark:from-blue-950/20 dark:to-indigo-950/10 rounded-r-xl shadow-sm hover:shadow-md transition-shadow duration-200">
-                          <div className="absolute -left-2 top-6 w-4 h-4 bg-blue-500 rounded-full border-4 border-white dark:border-slate-800"></div>
-                          <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl shadow-sm">
-                            <FileText className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                          </div>
-                          <div className="flex-1 space-y-2">
-                            <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-lg">
-                              Profile Updated
-                            </h3>
-                            <p className="text-slate-600 dark:text-slate-400">
-                              Business information and profile details were
-                              updated
-                            </p>
-                            <p className="text-sm text-slate-500 dark:text-slate-500 font-medium">
-                              {new Date(
-                                selectedVendor.lastActivity
-                              ).toLocaleDateString("en-US", {
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              </div>
-            </Tabs>
-          </div>
-
-          <div className="sticky bottom-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm border-t border-slate-200/50 dark:border-slate-700/50 p-4 sm:p-6 rounded-t-2xl shadow-2xl">
-            <div className="flex flex-col sm:flex-row gap-3 justify-center sm:justify-end max-w-md sm:max-w-none mx-auto">
-              {selectedVendor.storeName &&
-                (selectedVendor.status === "pending" ||
-                  selectedVendor.status === "onhold") && (
-                  <>
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="flex items-center justify-center gap-2 hover:bg-red-50 hover:border-red-200 dark:hover:bg-red-950/50 bg-transparent transition-all duration-200 hover:scale-105 shadow-sm"
-                      onClick={() => handleRejectVendor(selectedVendor)}
-                    >
-                      <XCircle className="w-5 h-5" />
-                      Reject Application
-                    </Button>
-                    <Button
-                      size="lg"
-                      className="flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
-                      onClick={() => handleApproveVendor(selectedVendor)}
-                    >
-                      <CheckCircle className="w-5 h-5" />
-                      Approve Vendor
-                    </Button>
-                  </>
-                )}
-              {selectedVendor.storeName &&
-                selectedVendor.status === "rejected" && (
-                  <Button
-                    size="lg"
-                    className="flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
-                    onClick={() => handleApproveVendor(selectedVendor)}
-                  >
-                    <CheckCircle className="w-5 h-5" />
-                    Approve Vendor
-                  </Button>
-                )}
-              {selectedVendor.storeName &&
-                selectedVendor.status === "approved" && (
-                  <>
-                    {selectedVendor.isActive ? (
-                      <Button
-                        variant="outline"
-                        size="lg"
-                        className="flex items-center justify-center gap-2 hover:bg-green-50 hover:border-green-200 dark:hover:bg-green-950/50 bg-transparent transition-all duration-200 hover:scale-105 shadow-sm"
-                        onClick={() => handleRestoreVendor(selectedVendor)}
-                      >
-                        <RotateCcw className="w-5 h-5" />
-                        Restore Vendor
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="outline"
-                        size="lg"
-                        className="flex items-center justify-center gap-2 hover:bg-red-50 hover:border-red-200 dark:hover:bg-red-950/50 bg-transparent transition-all duration-200 hover:scale-105 shadow-sm"
-                        onClick={() => handleDeleteVendor(selectedVendor)}
-                      >
-                        <Trash2 className="w-5 h-5" />
-                        Deactivate Vendor
-                      </Button>
-                    )}
-                  </>
-                )}
-              {!selectedVendor.storeName &&
-                (selectedVendor.status === "pending" ||
-                  selectedVendor.status === "rejected" ||
-                  selectedVendor.status === "onhold") && (
-                  <Button
-                    size="lg"
-                    className="flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
-                    onClick={() => handleApproveVendor(selectedVendor)}
-                  >
-                    <CheckCircle className="w-5 h-5" />
-                    Approve Vendor
-                  </Button>
-                )}
-              {!selectedVendor.storeName &&
-                (selectedVendor.status === "pending" ||
-                  selectedVendor.status === "onhold") && (
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="flex items-center justify-center gap-2 hover:bg-red-50 hover:border-red-200 dark:hover:bg-red-950/50 bg-transparent transition-all duration-200 hover:scale-105 shadow-sm"
-                    onClick={() => handleRejectVendor(selectedVendor)}
-                  >
-                    <XCircle className="w-5 h-5" />
-                    Reject Application
-                  </Button>
-                )}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen">
-        <div className="container mx-auto px-2 sm:px-4 lg:px-6 py-3 sm:py-4 lg:py-6 space-y-3 sm:space-y-4 lg:space-y-6">
-          <div className="flex items-center justify-center py-12 sm:py-16 lg:py-20">
-            <div className="relative">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 border-3 sm:border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
-              <div className="absolute inset-0 w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 border-3 sm:border-4 border-transparent border-t-blue-600 rounded-full animate-spin animation-delay-150"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (selectedVendor) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-        <div className="sticky top-0 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm border-b border-slate-200/50 dark:border-slate-700/50">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div className="flex items-center justify-between">
-              <Button
-                variant="ghost"
-                onClick={() => setSelectedVendor(null)}
-                className="text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200 hover:scale-105"
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                <span className="hidden sm:inline">Back to Vendors</span>
-                <span className="sm:hidden">Back</span>
-              </Button>
-
-              <div className="flex items-center gap-2">
-                {selectedVendor.status === "pending" && (
-                  <>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="hidden sm:flex items-center gap-2 hover:bg-red-50 hover:border-red-200 dark:hover:bg-red-950/50 bg-transparent"
-                      onClick={() => handleRejectVendor(selectedVendor)}
-                    >
-                      <XCircle className="w-4 h-4" />
-                      Reject
-                    </Button>
-                    <Button
-                      size="sm"
-                      className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-200"
-                      onClick={() => handleApproveVendor(selectedVendor)}
-                    >
-                      <CheckCircle className="w-4 h-4" />
-                      <span className="hidden sm:inline">Approve</span>
-                    </Button>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500/10 via-indigo-500/10 to-purple-500/10 border border-slate-200/50 dark:border-slate-700/50 shadow-xl">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5" />
-            <div className="relative p-6 sm:p-8">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
-                <Avatar className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 border-4 border-white/30 shadow-2xl ring-4 ring-white/10 flex-shrink-0">
-                  <AvatarImage
-                    src={selectedVendor.avatar || "/placeholder.svg"}
-                    className="object-cover"
-                  />
-                  <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white text-lg sm:text-xl lg:text-2xl font-bold">
-                    {selectedVendor.storeName
-                      ? selectedVendor.storeName
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")
-                      : selectedVendor.email[0].toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-
-                <div className="flex-1 min-w-0 space-y-3">
-                  <div>
-                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white mb-2">
-                      {selectedVendor.storeName || selectedVendor.email}
-                    </h1>
-                    <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300">
-                      {selectedVendor.industryName || "Registered Vendor"}
-                    </p>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                    {getStatusBadge(selectedVendor.status)}
-                    {getRoleBadge(selectedVendor.role)}
-                    {getEmailVerificationBadge(selectedVendor.isEmailVerified)}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-xl overflow-hidden">
-            <Tabs
-              value={activeTab}
-              onValueChange={setActiveTab}
-              className="w-full"
-            >
-              <div className="border-b border-slate-200/50 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-900/50">
-                <TabsList className="w-full h-auto p-1 bg-transparent grid grid-cols-2 sm:grid-cols-4 gap-1">
-                  <TabsTrigger
-                    value="overview"
-                    className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-3 px-4 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:shadow-md rounded-lg transition-all duration-200 text-xs sm:text-sm font-medium"
-                  >
-                    <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
-                    <span>Overview</span>
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="business"
-                    className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-3 px-4 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:shadow-md rounded-lg transition-all duration-200 text-xs sm:text-sm font-medium"
-                  >
-                    <Building className="w-4 h-4 sm:w-5 sm:h-5" />
-                    <span>Business</span>
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="abn"
-                    className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-3 px-4 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:shadow-md rounded-lg transition-all duration-200 text-xs sm:text-sm font-medium"
-                  >
-                    <Shield className="w-4 h-4 sm:w-5 sm:h-5" />
-                    <span>ABN</span>
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="activity"
-                    className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-3 px-4 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:shadow-md rounded-lg transition-all duration-200 text-xs sm:text-sm font-medium"
-                  >
-                    <History className="w-4 h-4 sm:w-5 sm:h-5" />
-                    <span>Activity</span>
-                  </TabsTrigger>
-                </TabsList>
-              </div>
-
-              <div className="p-6 sm:p-8">
-                <TabsContent value="overview" className="space-y-6">
-                  <Card className="bg-gradient-to-br from-white to-slate-50/50 dark:from-slate-800 dark:to-slate-800/50 border-slate-200/50 dark:border-slate-700/50">
-                    <CardContent className="p-6">
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {/* Contact Information */}
-                        <div className="space-y-4">
-                          <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                              <Mail className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                            </div>
-                            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">
-                              Contact
-                            </h3>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Email Address
-                            </label>
-                            <p className="text-sm text-slate-900 dark:text-slate-100 mt-2 font-medium break-all">
-                              {selectedVendor.email}
-                            </p>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Verification Status
-                            </label>
-                            <div className="mt-2">
-                              {getEmailVerificationBadge(
-                                selectedVendor.isEmailVerified
-                              )}
-                            </div>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Location
-                            </label>
-                            <p className="text-sm text-slate-900 dark:text-slate-100 mt-2 font-medium">
-                              {selectedVendor.location || "Not specified"}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Store Details */}
-                        <div className="space-y-4">
-                          <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
-                              <Globe className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-                            </div>
-                            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">
-                              Store
-                            </h3>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Store Name
-                            </label>
-                            <p className="text-sm text-slate-900 dark:text-slate-100 mt-2 font-medium">
-                              {selectedVendor.storeName || "Not specified"}
-                            </p>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Store URL
-                            </label>
-                            <p className="text-sm font-mono text-slate-900 dark:text-slate-100 mt-2 break-all bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">
-                              {selectedVendor.storeUrl || "Not specified"}
-                            </p>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Industry
-                            </label>
-                            <p className="text-sm text-slate-900 dark:text-slate-100 mt-2 font-medium">
-                              {selectedVendor.industryName || "Not specified"}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Status & Role */}
-                        <div className="space-y-4">
-                          <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                              <FileText className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                            </div>
-                            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">
-                              Status
-                            </h3>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              User Role
-                            </label>
-                            <div className="mt-2">
-                              {getRoleBadge(selectedVendor.role)}
-                            </div>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Onboarding Status
-                            </label>
-                            <div className="mt-2">
-                              {getStatusBadge(selectedVendor.status)}
-                            </div>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Payment Preference
-                            </label>
-                            <p className="text-sm text-slate-900 dark:text-slate-100 mt-2 font-medium">
-                              {selectedVendor.paymentPreference ||
-                                "Not specified"}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Business Purpose */}
-                      <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
-                        <div className="flex items-center gap-3 mb-4">
-                          <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
-                            <FileText className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                          </div>
-                          <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">
-                            Business Purpose
-                          </h3>
-                        </div>
-                        <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4 border-l-4 border-emerald-500">
-                          <p className="text-base text-slate-900 dark:text-slate-100 leading-relaxed">
-                            {selectedVendor.purpose ||
-                              "No business purpose specified"}
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-
-                <TabsContent value="business" className="space-y-6">
-                  <Card className="bg-gradient-to-br from-white to-slate-50/50 dark:from-slate-800 dark:to-slate-800/50 border-slate-200/50 dark:border-slate-700/50">
-                    <CardContent className="p-6">
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {/* Contact Information */}
-                        <div className="space-y-4">
-                          <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                              <Mail className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                            </div>
-                            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">
-                              Contact
-                            </h3>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Email Address
-                            </label>
-                            <p className="text-sm text-slate-900 dark:text-slate-100 mt-2 font-medium break-all">
-                              {selectedVendor.email}
-                            </p>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Verification Status
-                            </label>
-                            <div className="mt-2">
-                              {getEmailVerificationBadge(
-                                selectedVendor.isEmailVerified
-                              )}
-                            </div>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Location
-                            </label>
-                            <p className="text-sm text-slate-900 dark:text-slate-100 mt-2 font-medium">
-                              {selectedVendor.location || "Not specified"}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Store Details */}
-                        <div className="space-y-4">
-                          <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
-                              <Globe className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-                            </div>
-                            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">
-                              Store
-                            </h3>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Store Name
-                            </label>
-                            <p className="text-sm text-slate-900 dark:text-slate-100 mt-2 font-medium">
-                              {selectedVendor.storeName || "Not specified"}
-                            </p>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Store URL
-                            </label>
-                            <p className="text-sm font-mono text-slate-900 dark:text-slate-100 mt-2 break-all bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">
-                              {selectedVendor.storeUrl || "Not specified"}
-                            </p>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Industry
-                            </label>
-                            <p className="text-sm text-slate-900 dark:text-slate-100 mt-2 font-medium">
-                              {selectedVendor.industryName || "Not specified"}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Status & Role */}
-                        <div className="space-y-4">
-                          <div className="flex items-center gap-3 mb-4">
-                            <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                              <FileText className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                            </div>
-                            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">
-                              Status
-                            </h3>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              User Role
-                            </label>
-                            <div className="mt-2">
-                              {getRoleBadge(selectedVendor.role)}
-                            </div>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Onboarding Status
-                            </label>
-                            <div className="mt-2">
-                              {getStatusBadge(selectedVendor.status)}
-                            </div>
-                          </div>
-                          <div>
-                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                              Payment Preference
-                            </label>
-                            <p className="text-sm text-slate-900 dark:text-slate-100 mt-2 font-medium">
-                              {selectedVendor.paymentPreference ||
-                                "Not specified"}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Business Purpose */}
-                      <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
-                        <div className="flex items-center gap-3 mb-4">
-                          <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
-                            <FileText className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                          </div>
-                          <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">
-                            Business Purpose
-                          </h3>
-                        </div>
-                        <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4 border-l-4 border-emerald-500">
-                          <p className="text-base text-slate-900 dark:text-slate-100 leading-relaxed">
-                            {selectedVendor.purpose ||
-                              "No business purpose specified"}
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-
-                <TabsContent value="abn" className="mt-0">
-                  <Card className="group hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-white to-slate-50/50 dark:from-slate-800 dark:to-slate-800/50 border-slate-200/50 dark:border-slate-700/50">
-                    <CardHeader className="pb-6">
-                      <CardTitle className="text-xl font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-3">
-                        <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-xl">
-                          <Shield className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                        </div>
-                        ABN Details
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div className="space-y-6">
-                          <div className="group">
-                            <label className="text-sm font-semibold text-slate-600 dark:text-slate-400 mb-3 block">
-                              Entity Name
-                            </label>
-                            <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4 border-l-4 border-purple-500">
-                              <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                                {selectedVendor.abnDetails.entityName ||
-                                  "Not specified"}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="group">
-                            <label className="text-sm font-semibold text-slate-600 dark:text-slate-400 mb-3 block">
-                              Business Type
-                            </label>
-                            <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4 border-l-4 border-indigo-500">
-                              <p className="text-lg text-slate-900 dark:text-slate-100">
-                                {selectedVendor.abnDetails.type ||
-                                  "Not specified"}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="space-y-6">
-                          <div className="group">
-                            <label className="text-sm font-semibold text-slate-600 dark:text-slate-400 mb-3 block">
-                              ABN Status
-                            </label>
-                            <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4 border-l-4 border-emerald-500">
-                              <div className="flex items-center">
-                                {getAbnStatusBadge(
-                                  selectedVendor.abnDetails.status
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="group">
-                            <label className="text-sm font-semibold text-slate-600 dark:text-slate-400 mb-3 block">
-                              Business Location
-                            </label>
-                            <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4 border-l-4 border-orange-500">
-                              <p className="text-lg text-slate-900 dark:text-slate-100">
-                                {selectedVendor.abnDetails.businessLocation ||
-                                  "Not specified"}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-
-                <TabsContent value="activity" className="mt-0">
-                  <Card className="group hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-white to-slate-50/50 dark:from-slate-800 dark:to-slate-800/50 border-slate-200/50 dark:border-slate-700/50">
-                    <CardHeader className="pb-6">
-                      <CardTitle className="text-xl font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-3">
-                        <div className="p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl">
-                          <History className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
-                        </div>
-                        Recent Activity
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-6">
-                        <div className="relative flex items-start gap-4 p-6 border-l-4 border-green-500 bg-gradient-to-r from-green-50/80 to-emerald-50/40 dark:from-green-950/20 dark:to-emerald-950/10 rounded-r-xl shadow-sm hover:shadow-md transition-shadow duration-200">
-                          <div className="absolute -left-2 top-6 w-4 h-4 bg-green-500 rounded-full border-4 border-white dark:border-slate-800"></div>
-                          <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-xl shadow-sm">
-                            <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-400" />
-                          </div>
-                          <div className="flex-1 space-y-2">
-                            <h3 className="font-semibold text-slate-900 dark:text-slate-100 text-lg">
-                              Account Created
-                            </h3>
-                            <p className="text-slate-600 dark:text-slate-400">
-                              Vendor successfully registered on the platform
+                              Vendor successfully registered on platform
                             </p>
                             <p className="text-sm text-slate-500 dark:text-slate-500 font-medium">
                               {new Date(
@@ -2991,6 +1849,18 @@ const VendorManagement = () => {
                       <SelectItem value="onhold">On Hold</SelectItem>
                     </SelectContent>
                   </Select>
+                  {/* <Select value={roleFilter} onValueChange={setRoleFilter}>
+                    <SelectTrigger className="w-full xs:w-36 sm:w-40 h-9 sm:h-10 lg:h-12 bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 rounded-lg sm:rounded-xl text-xs sm:text-sm">
+                      <Filter className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                      <SelectValue placeholder="Role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Roles</SelectItem>
+                      <SelectItem value="Vendor">Vendor</SelectItem>
+                      <SelectItem value="Premium Vendor">Premium Vendor</SelectItem>
+                      <SelectItem value="Partner">Partner</SelectItem>
+                    </SelectContent>
+                  </Select> */}
                 </div>
                 <span className="text-slate-500 text-xs sm:text-sm">
                   {filteredOnboardedVendors.length +
@@ -3046,7 +1916,22 @@ const VendorManagement = () => {
                     </CardContent>
                   </Card>
                 ) : (
-                  renderVendorTable(filteredOnboardedVendors, true)
+                  <>
+                    {renderVendorTable(paginatedOnboardedVendors, true, onboardedCurrentPage)}
+                    {/* Pagination for Onboarded Vendors */}
+                    {onboardedTotalPages > 1 && (
+                      <div className="p-4 border-t border-slate-200/50 dark:border-slate-700/50">
+                        <Pagination
+                          currentPage={onboardedCurrentPage}
+                          totalPages={onboardedTotalPages}
+                          onPageChange={setOnboardedCurrentPage}
+                          totalItems={filteredOnboardedVendors.length}
+                          itemsPerPage={itemsPerPage}
+                          onItemsPerPageChange={setItemsPerPage}
+                        />
+                      </div>
+                    )}
+                  </>
                 )}
               </TabsContent>
 
@@ -3068,7 +1953,22 @@ const VendorManagement = () => {
                     </CardContent>
                   </Card>
                 ) : (
-                  renderVendorTable(filteredRegisteredVendors, false)
+                  <>
+                    {renderVendorTable(paginatedRegisteredVendors, false, registeredCurrentPage)}
+                    {/* Pagination for Registered Vendors */}
+                    {registeredTotalPages > 1 && (
+                      <div className="p-4 border-t border-slate-200/50 dark:border-slate-700/50">
+                        <Pagination
+                          currentPage={registeredCurrentPage}
+                          totalPages={registeredTotalPages}
+                          onPageChange={setRegisteredCurrentPage}
+                          totalItems={filteredRegisteredVendors.length}
+                          itemsPerPage={itemsPerPage}
+                          onItemsPerPageChange={setItemsPerPage}
+                        />
+                      </div>
+                    )}
+                  </>
                 )}
               </TabsContent>
             </Tabs>
@@ -3088,7 +1988,7 @@ const VendorManagement = () => {
                   </AlertDialogTitle>
                   <AlertDialogDescription className="text-slate-600 dark:text-slate-400 mt-1">
                     Are you sure you want to reject this vendor? This action
-                    will mark the vendor as rejected and deactivate their
+                    will mark vendor as rejected and deactivate their
                     account.
                   </AlertDialogDescription>
                 </div>
@@ -3153,7 +2053,7 @@ const VendorManagement = () => {
                   </AlertDialogTitle>
                   <AlertDialogDescription className="text-slate-600 dark:text-slate-400 mt-1">
                     Are you sure you want to place this vendor on hold? This
-                    action will mark the vendor as on hold and deactivate their
+                    action will mark vendor as on hold and deactivate their
                     account.
                   </AlertDialogDescription>
                 </div>
@@ -3258,7 +2158,7 @@ const VendorManagement = () => {
                   </AlertDialogTitle>
                   <AlertDialogDescription className="text-slate-600 dark:text-slate-400 mt-1">
                     Are you sure you want to deactivate this vendor? This will
-                    mark the vendor as rejected and deactivate their account.
+                    mark the vendor as inactive.
                   </AlertDialogDescription>
                 </div>
               </div>

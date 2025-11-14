@@ -1,5 +1,5 @@
 "use client";
-
+import React from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,8 @@ import {
   Trash2,
   Users,
   Loader2,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import {
   usePartners,
@@ -40,6 +42,13 @@ import {
   AlertDialogTitle,
   AlertDialogFooter,
 } from "@/components/ui/alert-dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import Image from "next/image";
 import { PartnerFormDialog } from "./components/PartnerFormDialog";
 
@@ -56,52 +65,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Partner } from "./types";
-
-// Enhanced StatCard Component
-// function StatCard({
-//   title,
-//   value,
-//   icon,
-//   color = "slate",
-// }: {
-//   title: string;
-//   value: string;
-//   icon: React.ReactNode;
-//   color?: string;
-// }) {
-//   const colorClasses = {
-//     slate:
-//       "from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 border-slate-200 dark:border-slate-700",
-//     emerald:
-//       "from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20 border-emerald-200 dark:border-emerald-700",
-//   };
-//   const iconColors = {
-//     slate: "text-slate-600 dark:text-slate-400",
-//     emerald: "text-emerald-600 hard:text-emerald-400",
-//   };
-
-//   return (
-//     <Card
-//       className={`bg-gradient-to-br ${colorClasses[color]} border transition-all duration-300 hover:shadow-lg hover:scale-[1.02] group`}
-//     >
-//       <CardContent>
-//         <div className="flex items-center justify-between">
-//           <div className="space-y-1 flex-1 min-w-0">
-//             <p className="text-xs sm:text-sm font-medium text-muted-foreground truncate">
-//               {title}
-//             </p>
-//             <p className="text-lg sm:text-2xl lg:text-3xl font-bold">{value}</p>
-//           </div>
-//           <div
-//             className={`p-2 sm:p-3 rounded-lg sm:rounded-xl ${iconColors[color]} group-hover:scale-110 transition-transform duration-300 flex-shrink-0`}
-//           >
-//             <div className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6">{icon}</div>
-//           </div>
-//         </div>
-//       </CardContent>
-//     </Card>
-//   );
-// }
 
 function PartnerActions({
   partner,
@@ -162,6 +125,10 @@ export default function PartnersPage() {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [selectedPartner, setSelectedPartner] = useState<Partner | null>(null);
+  
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Hooks
   const { partners, setPartners, loading, error, refetch } = usePartners();
@@ -170,6 +137,18 @@ export default function PartnersPage() {
   const stats = usePartnerStats(partners);
   const { handleAddPartner, handleUpdatePartner, handleDeletePartner } =
     usePartnerActions(setPartners);
+
+  // Calculate pagination values
+  const totalItems = filteredPartners.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedPartners = filteredPartners.slice(startIndex, endIndex);
+
+  // Reset to page 1 when filters change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [filters.searchTerm]);
 
   // Open Edit dialog
   const handleEdit = (partner: Partner) => {
@@ -282,19 +261,6 @@ export default function PartnersPage() {
           </div>
         </div>
 
-        {/* Stats */}
-        {/* <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4 sm:gap-6">
-          {Object.entries(stats).map(([key, value]) => (
-            <StatCard
-              key={key}
-              title={key.charAt(0).toUpperCase() + key.slice(1)}
-              value={value.toString()}
-              icon={<Users className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />}
-              color="emerald"
-            />
-          ))}
-        </div> */}
-
         {/* Search and Filters */}
         <Card className="shadow-lg border-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
           <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-violet-50 dark:from-slate-800 dark:to-violet-900/20 p-3 sm:p-4 lg:p-6">
@@ -356,111 +322,191 @@ export default function PartnersPage() {
                 )}
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="text-sm font-semibold">
-                        S.No
-                      </TableHead>
-                      <TableHead className="text-sm font-semibold">
-                        Logo
-                      </TableHead>
-                      <TableHead className="text-sm font-semibold">
-                        Website URL
-                      </TableHead>
-                      <TableHead className="text-sm font-semibold">
-                        Created Date
-                      </TableHead>
-                      <TableHead className="text-sm font-semibold">
-                        Status
-                      </TableHead>
-                      <TableHead className="text-sm font-semibold text-right">
-                        Actions
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredPartners.map((partner) => (
-                      <TableRow
-                        key={partner.partner_id}
-                        className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
-                      >
-                        <TableCell className="py-3 w-12">
-                          {filteredPartners.indexOf(partner) + 1}
-                        </TableCell>
-                        <TableCell className="py-3">
-                          <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
-                            <Image
-                              src={partner.logo || "/placeholder-logo.svg"}
-                              alt="Partner Logo"
-                              fill
-                              className="object-contain"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.src = "/placeholder-logo.svg";
-                              }}
-                            />
-                          </div>
-                        </TableCell>
-                        <TableCell className="py-3">
-                          <a
-                            href={partner.website_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:underline flex items-center gap-1 text-sm lg:text-base truncate max-w-[150px] lg:max-w-[200px]"
-                          >
-                            {partner.website_url
-                              .replace(/^https?:\/\//, "")
-                              .replace(/\/$/, "")}
-                            <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4" />
-                          </a>
-                        </TableCell>
-                        <TableCell className="py-3 text-sm lg:text-base">
-                          {partner.created_at
-                            ? new Date(partner.created_at).toLocaleDateString()
-                            : "-"}
-                        </TableCell>
-                        <TableCell className="py-3">
-                          <div className="flex items-center space-x-2">
-                            <Switch
-                              checked={!partner.partner_status}
-                              onCheckedChange={() =>
-                                handleStatusToggle(
-                                  partner.partner_id,
-                                  partner.partner_status
-                                )
-                              }
-                              className="h-4 w-7 sm:h-5 sm:w-9"
-                            />
-                            <Badge
-                              variant={
-                                !partner.partner_status
-                                  ? "default"
-                                  : "secondary"
-                              }
-                              className={`text-xs ${
-                                !partner.partner_status
-                                  ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400"
-                                  : "bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400"
-                              }`}
-                            >
-                              {partner.partner_status ? "Inactive" : "Active"}
-                            </Badge>
-                          </div>
-                        </TableCell>
-                        <TableCell className="py-3 text-right">
-                          <PartnerActions
-                            partner={partner}
-                            onEdit={handleEdit}
-                            onDelete={handleDelete}
-                          />
-                        </TableCell>
+              <>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="text-sm font-semibold w-12">
+                          S.No
+                        </TableHead>
+                        <TableHead className="text-sm font-semibold">
+                          Logo
+                        </TableHead>
+                        <TableHead className="text-sm font-semibold">
+                          Website URL
+                        </TableHead>
+                        <TableHead className="text-sm font-semibold">
+                          Created Date
+                        </TableHead>
+                        <TableHead className="text-sm font-semibold">
+                          Status
+                        </TableHead>
+                        <TableHead className="text-sm font-semibold text-right">
+                          Actions
+                        </TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+                    </TableHeader>
+                    <TableBody>
+                      {paginatedPartners.map((partner, index) => (
+                        <TableRow
+                          key={partner.partner_id}
+                          className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
+                        >
+                          <TableCell className="py-3 w-12">
+                            {startIndex + index + 1}
+                          </TableCell>
+                          <TableCell className="py-3">
+                            <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
+                              <Image
+                                src={partner.logo || "/placeholder-logo.svg"}
+                                alt="Partner Logo"
+                                fill
+                                className="object-contain"
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.src = "/placeholder-logo.svg";
+                                }}
+                              />
+                            </div>
+                          </TableCell>
+                          <TableCell className="py-3">
+                            <a
+                              href={partner.website_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:underline flex items-center gap-1 text-sm lg:text-base truncate max-w-[150px] lg:max-w-[200px]"
+                            >
+                              {partner.website_url
+                                .replace(/^https?:\/\//, "")
+                                .replace(/\/$/, "")}
+                              <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4" />
+                            </a>
+                          </TableCell>
+                          <TableCell className="py-3 text-sm lg:text-base">
+                            {partner.created_at
+                              ? new Date(partner.created_at).toLocaleDateString()
+                              : "-"}
+                          </TableCell>
+                          <TableCell className="py-3">
+                            <div className="flex items-center space-x-2">
+                              <Switch
+                                checked={!partner.partner_status}
+                                onCheckedChange={() =>
+                                  handleStatusToggle(
+                                    partner.partner_id,
+                                    partner.partner_status
+                                  )
+                                }
+                                className="h-4 w-7 sm:h-5 sm:w-9"
+                              />
+                              <Badge
+                                variant={
+                                  !partner.partner_status
+                                    ? "default"
+                                    : "secondary"
+                                }
+                                className={`text-xs ${
+                                  !partner.partner_status
+                                    ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400"
+                                    : "bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400"
+                                }`}
+                              >
+                                {partner.partner_status ? "Inactive" : "Active"}
+                              </Badge>
+                            </div>
+                          </TableCell>
+                          <TableCell className="py-3 text-right">
+                            <PartnerActions
+                              partner={partner}
+                              onEdit={handleEdit}
+                              onDelete={handleDelete}
+                            />
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+                
+                {/* Pagination Controls */}
+                <div className="flex flex-col sm:flex-row items-center justify-between p-4 border-t border-slate-200/50 dark:border-slate-700/50">
+                  <div className="flex items-center gap-2 mb-4 sm:mb-0">
+                    <span className="text-sm text-slate-600 dark:text-slate-400">
+                      Rows Per Page:
+                    </span>
+                    <Select
+                      value={itemsPerPage.toString()}
+                      onValueChange={(value) => {
+                        setItemsPerPage(Number(value));
+                        setCurrentPage(1);
+                      }}
+                    >
+                      <SelectTrigger className="w-20 h-8">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="5">5</SelectItem>
+                        <SelectItem value="10">10</SelectItem>
+                        <SelectItem value="20">20</SelectItem>
+                        <SelectItem value="50">50</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <span className="text-sm text-slate-600 dark:text-slate-400">
+                      Page {currentPage} of {totalPages}
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center gap-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="h-8 w-8 p-0"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                        let pageNumber;
+                        if (totalPages <= 5) {
+                          pageNumber = i + 1;
+                        } else if (currentPage <= 3) {
+                          pageNumber = i + 1;
+                        } else if (currentPage >= totalPages - 2) {
+                          pageNumber = totalPages - 4 + i;
+                        } else {
+                          pageNumber = currentPage - 2 + i;
+                        }
+                        
+                        return (
+                          <Button
+                            key={pageNumber}
+                            variant={currentPage === pageNumber ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => setCurrentPage(pageNumber)}
+                            className="h-8 w-8 p-0"
+                          >
+                            {pageNumber}
+                          </Button>
+                        );
+                      })}
+                    </div>
+                    
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="h-8 w-8 p-0"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </>
             )}
           </CardContent>
         </Card>

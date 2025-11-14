@@ -42,9 +42,10 @@ import {
   Download,
   Edit,
   ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import axiosInstance from "@/lib/axiosInstance";
-
 
 // types/order.ts
 export interface OrderItem {
@@ -78,6 +79,116 @@ export interface OrderDetails {
   category: string;
 }
 
+// Pagination component
+const Pagination = ({
+  currentPage,
+  totalPages,
+  onPageChange,
+  totalItems,
+  itemsPerPage,
+  onItemsPerPageChange
+}: {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  totalItems: number;
+  itemsPerPage: number;
+  onItemsPerPageChange: (itemsPerPage: number) => void;
+}) => {
+  // Generate page numbers to display
+  const getVisiblePages = () => {
+    const delta = 2; // Number of pages to show on each side of current page
+    const range: number[] = [];
+    const rangeWithDots: (number | string)[] = [];
+    let l: number | undefined;
+
+    for (let i = 1; i <= totalPages; i++) {
+      if (i === 1 || i === totalPages || (i >= currentPage - delta && i <= currentPage + delta)) {
+        range.push(i);
+      }
+    }
+
+    range.forEach((i) => {
+      if (l) {
+        if (i - l === 2) {
+          rangeWithDots.push(l + 1);
+        } else if (i - l !== 1) {
+          rangeWithDots.push('...');
+        }
+      }
+      rangeWithDots.push(i);
+      l = i;
+    });
+
+    return rangeWithDots;
+  };
+
+  const visiblePages = getVisiblePages();
+  const showingFrom = ((currentPage - 1) * itemsPerPage) + 1;
+  const showingTo = Math.min(currentPage * itemsPerPage, totalItems);
+
+  return (
+    <div className="flex items-center justify-between w-full">
+      <div className="flex items-center gap-2">
+        <span className="text-sm text-muted-foreground">Rows Per Page</span>
+        <Select value={itemsPerPage.toString()} onValueChange={(value) => onItemsPerPageChange(Number(value))}>
+          <SelectTrigger className="w-20 h-8 text-sm">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="5">5</SelectItem>
+            <SelectItem value="10">10</SelectItem>
+            <SelectItem value="20">20</SelectItem>
+            <SelectItem value="50">50</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <span className="text-sm text-muted-foreground ml-4">
+          page {currentPage} of {totalPages} 
+        </span>
+      </div>
+      <div className="flex items-center space-x-1">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="h-8 w-8 p-0"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
+
+        {visiblePages.map((page, index) => (
+          page === '...' ? (
+            <div key={`ellipsis-${index}`} className="px-2 text-sm text-muted-foreground">
+              ...
+            </div>
+          ) : (
+            <Button
+              key={page}
+              variant={currentPage === page ? "default" : "outline"}
+              size="sm"
+              onClick={() => onPageChange(page as number)}
+              className="h-8 w-8 p-0"
+            >
+              {page}
+            </Button>
+          )
+        ))}
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="h-8 w-8 p-0"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      </div>
+    </div>
+  );
+};
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<OrderDetails[]>([]);
@@ -88,6 +199,10 @@ export default function OrdersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [storeNames, setStoreNames] = useState([]);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   function formatDate(date) {
     const d = new Date(date);
@@ -96,6 +211,7 @@ export default function OrdersPage() {
     const year = d.getFullYear();
     return `${day}/${month}/${year}`;
   }
+  
   // Fetch orders from the API
   useEffect(() => {
     const fetchOrders = async () => {
@@ -155,6 +271,11 @@ export default function OrdersPage() {
     fetchStoreNames();
   }, []);
 
+  // Reset current page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter, storeFilter, itemsPerPage]);
+
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
       order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -168,6 +289,15 @@ export default function OrdersPage() {
 
     return matchesSearch && matchesStatus && matchesStore;
   });
+
+  // Paginated orders
+  const paginatedOrders = filteredOrders.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Total pages
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
 
   const getStatusBadge = (status) => {
     const statusConfig = {
@@ -509,9 +639,8 @@ export default function OrdersPage() {
             </div>
 
             <div className="space-y-6 lg:space-y-8">
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-                {[
-                  {
+              <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4 sm:gap-6">
+                {[{
                     title: "Total Orders",
                     value: stats.totalOrders,
                     icon: ShoppingBag,
@@ -645,10 +774,10 @@ export default function OrdersPage() {
                   </div>
                 </CardHeader>
                 <CardContent className="p-0">
-                  {/* Mobile Cards View */}
+                  {/* Mobile Cards View */} 
                   <div className="block lg:hidden">
                     <div className="space-y-4 p-4">
-                      {filteredOrders.map((order) => (
+                      {paginatedOrders.map((order, index) => (
                         <Card
                           key={order.id}
                           className="bg-slate-50/50 dark:bg-slate-900/50 border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]"
@@ -661,7 +790,8 @@ export default function OrdersPage() {
                                 </div>
                                 <div>
                                   <p className="font-semibold text-slate-900 dark:text-slate-100 text-base">
-                                    {order.orderNumber}
+                                    {/* S.No added to mobile card */}
+                                    { (currentPage - 1) * itemsPerPage + (index + 1) }. {order.orderNumber}
                                   </p>
                                   <p className="text-slate-500 dark:text-slate-400 text-sm">
                                     {order.orderDate}
@@ -720,6 +850,20 @@ export default function OrdersPage() {
                         </Card>
                       ))}
                     </div>
+                    
+                    {/* Pagination for Mobile View */}
+                    {totalPages > 1 && (
+                      <div className="p-4 border-t border-slate-200/50 dark:border-slate-700/50">
+                        <Pagination
+                          currentPage={currentPage}
+                          totalPages={totalPages}
+                          onPageChange={setCurrentPage}
+                          totalItems={filteredOrders.length}
+                          itemsPerPage={itemsPerPage}
+                          onItemsPerPageChange={setItemsPerPage}
+                        />
+                      </div>
+                    )}
                   </div>
 
                   {/* Desktop Table View */}
@@ -727,6 +871,12 @@ export default function OrdersPage() {
                     <Table>
                       <TableHeader>
                         <TableRow className="bg-slate-50/50 dark:bg-slate-900/50 hover:bg-slate-50/50 dark:hover:bg-slate-900/50">
+                          
+                          {/* S.No header added (minimal change) */}
+                          <TableHead className="font-semibold text-slate-900 dark:text-slate-100 py-4">
+                            S.No
+                          </TableHead>
+
                           <TableHead className="font-semibold text-slate-900 dark:text-slate-100 py-4">
                             Order ID
                           </TableHead>
@@ -754,11 +904,16 @@ export default function OrdersPage() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {filteredOrders.map((order) => (
+                        {paginatedOrders.map((order, index) => (
                           <TableRow
                             key={order.id}
                             className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-200/50 dark:border-slate-700/50"
                           >
+                            {/* S.No cell added (minimal change) */}
+                            <TableCell className="py-4">
+                              {(currentPage - 1) * itemsPerPage + (index + 1)}
+                            </TableCell>
+
                             <TableCell className="py-4">
                               <div className="flex items-center gap-4">
                                 <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg">
@@ -820,6 +975,20 @@ export default function OrdersPage() {
                       </TableBody>
                     </Table>
                   </div>
+                  
+                  {/* Pagination for Desktop View */}
+                  {totalPages > 1 && (
+                    <div className="p-4 border-t border-slate-200/50 dark:border-slate-700/50">
+                      <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
+                        totalItems={filteredOrders.length}
+                        itemsPerPage={itemsPerPage}
+                        onItemsPerPageChange={setItemsPerPage}
+                      />
+                    </div>
+                  )}
 
                   {/* Empty State */}
                   {filteredOrders.length === 0 && (

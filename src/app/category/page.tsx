@@ -48,6 +48,8 @@ import {
   ArrowUpDown,
   RotateCcw,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import axiosInstance from "@/lib/axiosInstance";
 import { toast } from "sonner";
@@ -273,6 +275,10 @@ export default function CategoriesPage() {
       show_in_menu: true,
       file: null,
     });
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(6);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -352,8 +358,8 @@ export default function CategoriesPage() {
     );
   }, []);
 
-  // Filtered and sorted categories
-  const filteredCategories = useMemo(() => {
+  // Filtered categories (before pagination)
+  const allFilteredCategories = useMemo(() => {
     const filtered = categories.filter((category) => {
       const matchesSearch =
         category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -404,6 +410,21 @@ export default function CategoriesPage() {
 
     return filtered;
   }, [categories, searchTerm, statusFilter, sortBy]);
+
+  // Pagination calculations
+  const totalPages = Math.ceil(allFilteredCategories.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
+  // Paginated categories
+  const filteredCategories = useMemo(() => {
+    return allFilteredCategories.slice(startIndex, endIndex);
+  }, [allFilteredCategories, startIndex, endIndex]);
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter, sortBy, itemsPerPage]);
 
   // Statistics
   const stats = useMemo(() => {
@@ -461,10 +482,10 @@ export default function CategoriesPage() {
   };
 
   const toggleExpand = (id: string) => {
-  setExpandedCategories((prev) =>
-    prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]
-  );
-};
+    setExpandedCategories((prev) =>
+      prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]
+    );
+  };
 
   const handleSaveEditedCategory = async () => {
     if (!editingCategory) return;
@@ -628,7 +649,7 @@ export default function CategoriesPage() {
         "Show in Menu",
         "Subcategories",
       ],
-      ...filteredCategories.map((category) => [
+      ...allFilteredCategories.map((category) => [
         category.slug,
         category.name,
         category.description,
@@ -979,6 +1000,169 @@ export default function CategoriesPage() {
     </div>
   );
 
+  // Pagination component
+  const PaginationControls = () => {
+    if (totalPages <= 1) return null;
+
+    const handlePageChange = (page: number) => {
+      if (page >= 1 && page <= totalPages) {
+        setCurrentPage(page);
+      }
+    };
+
+    const renderPageNumbers = () => {
+      const pages = [];
+      const maxVisiblePages = 5;
+      
+      if (totalPages <= maxVisiblePages) {
+        for (let i = 1; i <= totalPages; i++) {
+          pages.push(
+            <Button
+              key={i}
+              variant={currentPage === i ? "default" : "outline"}
+              size="sm"
+              onClick={() => handlePageChange(i)}
+              className={`w-8 h-8 p-0 ${
+                currentPage === i
+                  ? "bg-indigo-600 hover:bg-indigo-700"
+                  : "border-indigo-200 dark:border-indigo-800"
+              }`}
+            >
+              {i}
+            </Button>
+          );
+        }
+      } else {
+        // Always show first page
+        pages.push(
+          <Button
+            key={1}
+            variant={currentPage === 1 ? "default" : "outline"}
+            size="sm"
+            onClick={() => handlePageChange(1)}
+            className={`w-8 h-8 p-0 ${
+              currentPage === 1
+                ? "bg-indigo-600 hover:bg-indigo-700"
+                : "border-indigo-200 dark:border-indigo-800"
+            }`}
+          >
+            1
+          </Button>
+        );
+
+        // Show ellipsis if current page is far from start
+        if (currentPage > 3) {
+          pages.push(
+            <span key="start-ellipsis" className="px-2">
+              ...
+            </span>
+          );
+        }
+
+        // Show pages around current page
+        const startPage = Math.max(2, currentPage - 1);
+        const endPage = Math.min(totalPages - 1, currentPage + 1);
+
+        for (let i = startPage; i <= endPage; i++) {
+          pages.push(
+            <Button
+              key={i}
+              variant={currentPage === i ? "default" : "outline"}
+              size="sm"
+              onClick={() => handlePageChange(i)}
+              className={`w-8 h-8 p-0 ${
+                currentPage === i
+                  ? "bg-indigo-600 hover:bg-indigo-700"
+                  : "border-indigo-200 dark:border-indigo-800"
+              }`}
+            >
+              {i}
+            </Button>
+          );
+        }
+
+        // Show ellipsis if current page is far from end
+        if (currentPage < totalPages - 2) {
+          pages.push(
+            <span key="end-ellipsis" className="px-2">
+              ...
+            </span>
+          );
+        }
+
+        // Always show last page
+        pages.push(
+          <Button
+            key={totalPages}
+            variant={currentPage === totalPages ? "default" : "outline"}
+            size="sm"
+            onClick={() => handlePageChange(totalPages)}
+            className={`w-8 h-8 p-0 ${
+              currentPage === totalPages
+                ? "bg-indigo-600 hover:bg-indigo-700"
+                : "border-indigo-200 dark:border-indigo-800"
+            }`}
+          >
+            {totalPages}
+          </Button>
+        );
+      }
+
+      return pages;
+    };
+
+    return (
+      <div className="flex items-center justify-between mt-6 px-4">
+        <div className="text-sm text-gray-700 dark:text-gray-300">
+          Showing {startIndex + 1} to {Math.min(endIndex, allFilteredCategories.length)} of{" "}
+          {allFilteredCategories.length} categories
+        </div>
+        <div className="flex items-end gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="h-8 px-2 border-indigo-200 dark:border-indigo-800"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            Previous
+          </Button>
+          <div className="flex items-center gap-1">
+            {renderPageNumbers()}
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="h-8 px-2 border-indigo-200 dark:border-indigo-800"
+          >
+            Next
+            <ChevronRight className="w-4 h-4" />
+          </Button>
+        </div>
+        <div className="flex items-start gap-2">
+          <span className="text-sm text-gray-700 dark:text-gray-300">Items per page:</span>
+          <Select
+            value={itemsPerPage.toString()}
+            onValueChange={(value) => setItemsPerPage(Number(value))}
+          >
+            <SelectTrigger className="w-16 h-8">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="3">3</SelectItem>
+              <SelectItem value="6">6</SelectItem>
+              <SelectItem value="9">9</SelectItem>
+              <SelectItem value="12">12</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen">
       <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 lg:py-6 space-y-4 sm:space-y-6">
@@ -1220,7 +1404,7 @@ export default function CategoriesPage() {
                       <Folder className="w-5 h-5 text-white" />
                     </div>
                     <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200">
-                      Categories ({filteredCategories.length})
+                      Categories ({allFilteredCategories.length})
                     </h3>
                   </div>
                 </div>
@@ -1375,6 +1559,9 @@ export default function CategoriesPage() {
             </CardContent>
           </Card>
         )}
+
+        {/* Add pagination controls */}
+        <PaginationControls />
 
         <Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden p-0 border-0 shadow-2xl backdrop-blur-2xl">

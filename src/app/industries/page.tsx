@@ -23,6 +23,14 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
   Plus,
   Search,
   Download,
@@ -36,6 +44,8 @@ import {
   XCircle,
   Sparkles,
   RotateCcw,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import {
   AlertDialog,
@@ -218,6 +228,10 @@ export default function IndustriesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isSlugManuallyEdited, setIsSlugManuallyEdited] = useState(false);
+  
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const [newIndustry, setNewIndustry] = useState({
     name: "",
@@ -290,6 +304,23 @@ export default function IndustriesPage() {
       return matchesSearch && matchesStatus;
     });
   }, [industries, searchTerm, statusFilter]);
+
+  // Paginated industries
+  const paginatedIndustries = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredIndustries.slice(startIndex, endIndex);
+  }, [filteredIndustries, currentPage, itemsPerPage]);
+
+  // Total pages
+  const totalPages = useMemo(() => {
+    return Math.ceil(filteredIndustries.length / itemsPerPage);
+  }, [filteredIndustries.length, itemsPerPage]);
+
+  // Reset current page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter, itemsPerPage]);
 
   // Statistics
   const stats = useMemo(() => {
@@ -535,8 +566,9 @@ export default function IndustriesPage() {
 
   const handleExportIndustries = () => {
     const csvContent = [
-      ["Name", "Slug", "Status", "Created Date", "Last Updated"],
-      ...filteredIndustries.map((industry) => [
+      ["S.NO", "Name", "Slug", "Status", "Created Date", "Last Updated"],
+      ...filteredIndustries.map((industry, index) => [
+        index + 1,
         industry.name,
         industry.slug,
         industry.status,
@@ -817,115 +849,193 @@ export default function IndustriesPage() {
           ) : (
             <Card className="backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border-0 shadow-xl rounded-2xl overflow-hidden">
               <CardContent className="p-0">
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-slate-50/80 dark:bg-slate-800/80 border-b border-slate-200/50 dark:border-slate-700/50">
-                      <tr>
-                        <th className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
-                          Name
-                        </th>
-                        <th className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm hidden xs:table-cell">
-                          Slug
-                        </th>
-                        <th className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
-                          Status
-                        </th>
-                        <th className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm hidden md:table-cell">
-                          Created
-                        </th>
-                        <th className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm hidden lg:table-cell">
-                          Updated
-                        </th>
-                        <th className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredIndustries.map((industry) => (
-                        <tr
-                          key={industry.id}
-                          className="border-b border-slate-200/50 dark:border-slate-700/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/50"
-                        >
-                          <td className="p-2 sm:p-4">
-                            <div className="font-medium text-slate-900 dark:text-slate-100 text-xs sm:text-sm truncate max-w-[120px] sm:max-w-none">
-                              {industry.name}
-                            </div>
-                           
-                          </td>
-                          <td className="p-2 sm:p-4 hidden xs:table-cell">
-                            <code className="text-xs sm:text-sm bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-slate-700 dark:text-slate-300 truncate block max-w-[120px] sm:max-w-none">
-                              {industry.slug}
-                            </code>
-                          </td>
-                          <td className="p-2 sm:p-4">
-                            <Badge
-                              className={`text-xs border-0 ${
-                                industry.status === "Active"
-                                  ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-                                  : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
-                              }`}
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-slate-50/80 dark:bg-slate-800/80">
+                      <TableHead className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm w-12">
+                        S.NO
+                      </TableHead>
+                      <TableHead className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
+                        Name
+                      </TableHead>
+                      <TableHead className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm hidden xs:table-cell">
+                        Slug
+                      </TableHead>
+                      <TableHead className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
+                        Status
+                      </TableHead>
+                      <TableHead className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm hidden md:table-cell">
+                        Created
+                      </TableHead>
+                      <TableHead className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm hidden lg:table-cell">
+                        Updated
+                      </TableHead>
+                      <TableHead className="text-left p-2 sm:p-4 font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
+                        Actions
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {paginatedIndustries.map((industry, index) => (
+                      <TableRow
+                        key={industry.id}
+                        className="border-b border-slate-200/50 dark:border-slate-700/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/50"
+                      >
+                        <TableCell className="p-2 sm:p-4 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                          {(currentPage - 1) * itemsPerPage + index + 1}
+                        </TableCell>
+                        <TableCell className="p-2 sm:p-4">
+                          <div className="font-medium text-slate-900 dark:text-slate-100 text-xs sm:text-sm truncate max-w-[120px] sm:max-w-none">
+                            {industry.name}
+                          </div>
+                        </TableCell>
+                        <TableCell className="p-2 sm:p-4 hidden xs:table-cell">
+                          <code className="text-xs sm:text-sm bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-slate-700 dark:text-slate-300 truncate block max-w-[120px] sm:max-w-none">
+                            {industry.slug}
+                          </code>
+                        </TableCell>
+                        <TableCell className="p-2 sm:p-4">
+                          <Badge
+                            className={`text-xs border-0 ${
+                              industry.status === "Active"
+                                ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                                : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
+                            }`}
+                          >
+                            {industry.status === "Active" ? (
+                              <CheckCircle className="w-2 h-2 sm:w-3 sm:h-3 mr-1" />
+                            ) : (
+                              <XCircle className="w-2 h-2 sm:w-3 sm:h-3 mr-1" />
+                            )}
+                            <span className="hidden sm:inline">
+                              {industry.status}
+                            </span>
+                            <span className="sm:hidden">
+                              {industry.status === "Active" ? "A" : "I"}
+                            </span>
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="p-2 sm:p-4 text-xs sm:text-sm text-slate-600 dark:text-slate-400 hidden md:table-cell">
+                          {new Date(
+                            industry.createdDate
+                          ).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell className="p-2 sm:p-4 text-xs sm:text-sm text-slate-600 dark:text-slate-400 hidden lg:table-cell">
+                          {new Date(
+                            industry.lastUpdated
+                          ).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell className="p-2 sm:p-4">
+                          <div className="flex items-center gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleEditIndustry(industry)}
+                              className="h-6 w-6 sm:h-8 sm:w-8 p-0 hover:bg-indigo-50 dark:hover:bg-indigo-950/50"
                             >
-                              {industry.status === "Active" ? (
-                                <CheckCircle className="w-2 h-2 sm:w-3 sm:h-3 mr-1" />
-                              ) : (
-                                <XCircle className="w-2 h-2 sm:w-3 sm:h-3 mr-1" />
-                              )}
-                              <span className="hidden sm:inline">
-                                {industry.status}
-                              </span>
-                              <span className="sm:hidden">
-                                {industry.status === "Active" ? "A" : "I"}
-                              </span>
-                            </Badge>
-                          </td>
-                          <td className="p-2 sm:p-4 text-xs sm:text-sm text-slate-600 dark:text-slate-400 hidden md:table-cell">
-                            {new Date(
-                              industry.createdDate
-                            ).toLocaleDateString()}
-                          </td>
-                          <td className="p-2 sm:p-4 text-xs sm:text-sm text-slate-600 dark:text-slate-400 hidden lg:table-cell">
-                            {new Date(
-                              industry.lastUpdated
-                            ).toLocaleDateString()}
-                          </td>
-                          <td className="p-2 sm:p-4">
-                            <div className="flex items-center gap-1">
+                              <Pencil className="w-3 h-3 sm:w-4 sm:h-4" />
+                            </Button>
+                            {industry.status === "Active" ? (
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={() => handleEditIndustry(industry)}
-                                className="h-6 w-6 sm:h-8 sm:w-8 p-0 hover:bg-indigo-50 dark:hover:bg-indigo-950/50"
+                                onClick={() => handleDeleteIndustry(industry)}
+                                className="h-6 w-6 sm:h-8 sm:w-8 p-0 hover:bg-red-50 dark:hover:bg-red-950/50"
                               >
-                                <Pencil className="w-3 h-3 sm:w-4 sm:h-4" />
+                                <Trash2 className="w-3 h-3 sm:w-4 sm:h-4 text-red-600" />
                               </Button>
-                              {industry.status === "Active" ? (
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => handleDeleteIndustry(industry)}
-                                  className="h-6 w-6 sm:h-8 sm:w-8 p-0 hover:bg-red-50 dark:hover:bg-red-950/50"
-                                >
-                                  <Trash2 className="w-3 h-3 sm:w-4 sm:h-4 text-red-600" />
-                                </Button>
-                              ) : (
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() =>
-                                    handleRestoreIndustry(industry)
-                                  }
-                                  className="h-6 w-6 sm:h-8 sm:w-8 p-0 hover:bg-green-50 dark:hover:bg-green-950/50"
-                                >
-                                  <RotateCcw className="w-3 h-3 sm:w-4 sm:h-4 text-green-600" />
-                                </Button>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                            ) : (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() =>
+                                  handleRestoreIndustry(industry)
+                                }
+                                className="h-6 w-6 sm:h-8 sm:w-8 p-0 hover:bg-green-50 dark:hover:bg-green-950/50"
+                              >
+                                <RotateCcw className="w-3 h-3 sm:w-4 sm:h-4 text-green-600" />
+                              </Button>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+                
+                {/* Pagination */}
+                <div className="flex flex-col sm:flex-row items-center justify-between p-4 border-t border-slate-200/50 dark:border-slate-700/50">
+                  <div className="flex items-center gap-2 mb-4 sm:mb-0">
+                    <span className="text-sm text-slate-600 dark:text-slate-400">
+                      Rows Per Page:
+                    </span>
+                    <Select
+                      value={itemsPerPage.toString()}
+                      onValueChange={(value) => setItemsPerPage(Number(value))}
+                    >
+                      <SelectTrigger className="w-20 h-8">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="5">5</SelectItem>
+                        <SelectItem value="10">10</SelectItem>
+                        <SelectItem value="20">20</SelectItem>
+                        <SelectItem value="50">50</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <span className="text-sm text-slate-600 dark:text-slate-400">
+                    Page {currentPage} of {totalPages}
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-center gap-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="h-8 w-8 p-0"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                        let pageNumber;
+                        if (totalPages <= 5) {
+                          pageNumber = i + 1;
+                        } else if (currentPage <= 3) {
+                          pageNumber = i + 1;
+                        } else if (currentPage >= totalPages - 2) {
+                          pageNumber = totalPages - 4 + i;
+                        } else {
+                          pageNumber = currentPage - 2 + i;
+                        }
+                        
+                        return (
+                          <Button
+                            key={pageNumber}
+                            variant={currentPage === pageNumber ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => setCurrentPage(pageNumber)}
+                            className="h-8 w-8 p-0"
+                          >
+                            {pageNumber}
+                          </Button>
+                        );
+                      })}
+                    </div>
+                    
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="h-8 w-8 p-0"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>

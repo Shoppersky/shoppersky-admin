@@ -6,7 +6,34 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Search, MessageSquare, Calendar, Clock, Phone, Mail, User, TrendingUp, CheckCircle2, RefreshCw, Users, AlertCircle, BarChart3, Activity } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from "@/components/ui/table";
+import { 
+  Search, 
+  MessageSquare, 
+  Calendar, 
+  Clock, 
+  Phone, 
+  Mail, 
+  User, 
+  TrendingUp, 
+  CheckCircle2, 
+  RefreshCw, 
+  Users, 
+  AlertCircle, 
+  BarChart3, 
+  Activity,
+  ChevronLeft,
+  ChevronRight,
+  Eye
+} from "lucide-react";
 import axiosInstance from "@/lib/axiosInstance"; // Adjust path as needed
 
 interface Enquiry {
@@ -39,7 +66,7 @@ function StatCard({
   trendValue?: string;
   description?: string;
 }) {
-   const colorClasses = {
+  const colorClasses = {
     blue: "text-blue-600 dark:text-blue-400",
     green: "text-green-600 dark:text-green-400",
     yellow: "text-yellow-600 dark:text-yellow-400",
@@ -73,7 +100,6 @@ function StatCard({
               <p className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-900 dark:text-gray-100 truncate">
                 {value}
               </p>
-             
             </div>
             {description && (
               <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2">
@@ -81,7 +107,7 @@ function StatCard({
               </p>
             )}
           </div>
-                <div
+          <div
             className={`p-1.5 sm:p-2 lg:p-3 bg-gradient-to-br rounded-lg sm:rounded-xl group-hover:scale-110 transition-transform duration-300 flex-shrink-0 ${
               color === "blue"
                 ? "from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30"
@@ -94,7 +120,7 @@ function StatCard({
                 : "from-purple-100 to-violet-100 dark:from-purple-900/30 dark:to-violet-900/30"
             }`}
           >
-         <div className={colorClasses[color]}>{icon}</div>
+            <div className={colorClasses[color]}>{icon}</div>
           </div>
         </div>
       </CardContent>
@@ -102,30 +128,18 @@ function StatCard({
   );
 }
 
-// Skeleton component for enquiry cards
-const EnquirySkeleton = () => (
-  <div className="border-b border-slate-200 dark:border-slate-700 pb-4 sm:pb-6 last:border-b-0">
-    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
-      <div className="flex-1 space-y-3">
-        <div className="flex flex-col xs:flex-row xs:items-center gap-2 xs:gap-3">
-          <Skeleton className="h-5 sm:h-6 w-32 sm:w-48" />
-          <Skeleton className="h-4 sm:h-5 w-16 sm:w-20 self-start xs:self-auto" />
-        </div>
-        <div className="flex flex-col xs:flex-row xs:items-center gap-2 xs:gap-4">
-          <Skeleton className="h-4 sm:h-5 w-12 sm:w-16 self-start xs:self-auto" />
-          <Skeleton className="h-3 sm:h-4 w-28 sm:w-40" />
-        </div>
-        <div className="space-y-2">
-          <Skeleton className="h-3 sm:h-4 w-full" />
-          <Skeleton className="h-3 sm:h-4 w-3/4" />
-        </div>
-        <div className="flex flex-col xs:flex-row xs:items-center gap-2 xs:gap-4">
-          <Skeleton className="h-3 w-24 sm:w-32" />
-          <Skeleton className="h-3 w-24 sm:w-32" />
-        </div>
-      </div>
-    </div>
-  </div>
+// Skeleton component for table rows
+const TableSkeleton = () => (
+  <TableRow>
+    <TableCell><Skeleton className="h-4 w-8" /></TableCell>
+    <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+    <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+    <TableCell><Skeleton className="h-4 w-36" /></TableCell>
+    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+    <TableCell><Skeleton className="h-4 w-28" /></TableCell>
+    <TableCell><Skeleton className="h-4 w-28" /></TableCell>
+    {/* <TableCell><Skeleton className="h-8 w-8" /></TableCell> */}
+  </TableRow>
 );
 
 export default function EndUserQueries() {
@@ -133,6 +147,8 @@ export default function EndUserQueries() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
 
   useEffect(() => {
     const fetchEnquiries = async () => {
@@ -161,6 +177,13 @@ export default function EndUserQueries() {
         .includes(searchTerm.toLowerCase()) ||
       enquiry.message.toLowerCase().includes(searchTerm.toLowerCase()) ||
       enquiry.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
+  const paginatedEnquiries = filteredEnquiries.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
   );
 
   // Calculate enhanced statistics with responsive metrics
@@ -245,7 +268,7 @@ export default function EndUserQueries() {
     <div className="min-h-screen">
       <div className="container mx-auto px-2 xs:px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4 md:py-6 lg:py-8 space-y-4 sm:space-y-6 lg:space-y-8 max-w-7xl">
         {/* Enhanced Responsive Page Header */}
-         <div className="relative z-50 flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2 sm:gap-3 lg:gap-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-slate-800/50 dark:to-slate-700/50 p-2 sm:p-3 lg:p-6 rounded-lg sm:rounded-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20 shadow-lg">
+        <div className="relative z-50 flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2 sm:gap-3 lg:gap-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-slate-800/50 dark:to-slate-700/50 p-2 sm:p-3 lg:p-6 rounded-lg sm:rounded-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20 shadow-lg">
           <div className="flex-1 min-w-0">
             <h1 className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold bg-gradient-to-r from-purple-700 to-blue-600 bg-clip-text text-transparent">
               Customer Enquiries
@@ -254,8 +277,7 @@ export default function EndUserQueries() {
                Manage and respond to customer enquiries with comprehensive analytics
             </p>
           </div>
-          </div>
-       
+        </div>
 
         {/* Enhanced Responsive Statistics */}
         {!isLoading && !error && (
@@ -348,13 +370,29 @@ export default function EndUserQueries() {
               )}
             </div>
 
-            {/* Enquiries List */}
-            <div className="space-y-4 sm:space-y-6">
+            {/* Enquiries Table */}
+            <div className="rounded-md border">
               {isLoading ? (
-                <div className="space-y-4 sm:space-y-6">
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <EnquirySkeleton key={index} />
-                  ))}
+                <div className="w-full overflow-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[50px]">S.No</TableHead>
+                        <TableHead className="w-[80px]">ID</TableHead>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead className="hidden md:table-cell">Phone</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="hidden sm:table-cell">Created</TableHead>
+                        {/* <TableHead className="text-right">Actions</TableHead> */}
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {Array.from({ length: 5 }).map((_, index) => (
+                        <TableSkeleton key={index} />
+                      ))}
+                    </TableBody>
+                  </Table>
                 </div>
               ) : error ? (
                 <div className="p-8 sm:p-12 text-center">
@@ -381,71 +419,122 @@ export default function EndUserQueries() {
                   </p>
                 </div>
               ) : (
-                filteredEnquiries.map((enquiry) => (
-                  <div
-                    key={enquiry.enquiry_id}
-                    className="group border-b border-slate-200 dark:border-slate-700 pb-4 sm:pb-6 last:border-b-0 hover:bg-gradient-to-r hover:from-slate-50/50 hover:to-purple-50/30 dark:hover:from-slate-800/30 dark:hover:to-purple-900/10 rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-6 transition-all duration-300 hover:shadow-md"
-                  >
-                    <div className="flex flex-col gap-3 sm:gap-4">
-                      <div className="flex-1 min-w-0 space-y-3 sm:space-y-4">
-                        {/* Enhanced Header */}
-                        <div className="flex flex-col xs:flex-row xs:items-start xs:justify-between gap-2 xs:gap-3">
-                          <div className="flex flex-col xs:flex-row xs:items-center gap-2 xs:gap-3 flex-1 min-w-0">
-                            <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-slate-800 dark:text-slate-100 truncate group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors duration-200">
-                              {enquiry.firstname} {enquiry.lastname}
-                            </h3>
-                            <Badge className="text-xs font-medium bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-0 self-start xs:self-auto group-hover:bg-purple-100 group-hover:text-purple-700 dark:group-hover:bg-purple-900/30 dark:group-hover:text-purple-300 transition-colors duration-200">
+                <>
+                  <div className="w-full overflow-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="border-b bg-muted/50">
+                          <TableHead className="w-[50px]">S.No</TableHead>
+                          <TableHead className="w-[80px]">ID</TableHead>
+                          <TableHead>Name</TableHead>
+                          <TableHead className="hidden md:table-cell">Email</TableHead>
+                          <TableHead className="hidden lg:table-cell">Phone</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead className="hidden sm:table-cell">Created</TableHead>
+                          {/* <TableHead className="text-right">Actions</TableHead> */}
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {paginatedEnquiries.map((enquiry, index) => (
+                          <TableRow key={enquiry.enquiry_id} className="border-b transition-colors hover:bg-muted/50">
+                            <TableCell className="font-medium">{(currentPage - 1) * itemsPerPage + index + 1}</TableCell>
+                            <TableCell className="font-mono text-xs">
                               ENQ-{enquiry.enquiry_id}
-                            </Badge>
-                          </div>
-                          <Badge
-                            className={`${getStatusConfig(enquiry.enquiry_status).color} border-0 text-xs font-medium self-start xs:self-auto flex-shrink-0`}
-                          >
-                            {enquiry.enquiry_status.charAt(0).toUpperCase() +
-                              enquiry.enquiry_status.slice(1).replace('_', ' ')}
-                          </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <div className="font-medium">{enquiry.firstname} {enquiry.lastname}</div>
+                              <div className="text-xs text-slate-500 md:hidden truncate max-w-[150px]">{enquiry.email}</div>
+                              {enquiry.phone_number && (
+                                <div className="text-xs text-slate-500 lg:hidden">{enquiry.phone_number}</div>
+                              )}
+                            </TableCell>
+                            <TableCell className="hidden md:table-cell">
+                              <div className="truncate max-w-[200px]">{enquiry.email}</div>
+                            </TableCell>
+                            <TableCell className="hidden lg:table-cell">
+                              {enquiry.phone_number || "-"}
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                className={`${getStatusConfig(enquiry.enquiry_status).color} border-0 text-xs font-medium`}
+                              >
+                                {enquiry.enquiry_status.charAt(0).toUpperCase() +
+                                  enquiry.enquiry_status.slice(1).replace('_', ' ')}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="hidden sm:table-cell">
+                              <div className="text-xs text-slate-500">
+                                {formatDate(enquiry.created_at)}
+                              </div>
+                            </TableCell>
+                            {/* <TableCell className="text-right">
+                              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                <Eye className="h-4 w-4" />
+                                <span className="sr-only">View details</span>
+                              </Button>
+                            </TableCell> */}
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                  
+                  {/* Pagination */}
+                  {totalPages > 1 && (
+                    <div className="flex items-center justify-between px-2 py-4">
+                      <div className="text-sm text-slate-500">
+                        Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredEnquiries.length)} of {filteredEnquiries.length} results
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                          disabled={currentPage === 1}
+                          className="h-8 w-8 p-0"
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                          <span className="sr-only">Previous page</span>
+                        </Button>
+                        <div className="flex items-center space-x-1">
+                          {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                            const pageNumber = i + 1;
+                            const isActive = pageNumber === currentPage;
+                            
+                            // Adjust page numbers for better pagination display
+                            let displayPage = pageNumber;
+                            if (totalPages > 5 && currentPage > 3) {
+                              displayPage = currentPage - 3 + pageNumber;
+                              if (displayPage > totalPages) displayPage = totalPages - 5 + pageNumber;
+                            }
+                            
+                            return (
+                              <Button
+                                key={displayPage}
+                                variant={isActive ? "default" : "outline"}
+                                size="sm"
+                                className={`h-8 w-8 p-0 ${isActive ? "bg-purple-600 hover:bg-purple-700" : ""}`}
+                                onClick={() => setCurrentPage(displayPage)}
+                              >
+                                {displayPage}
+                              </Button>
+                            );
+                          })}
                         </div>
-                        
-                        {/* Enhanced Contact Info */}
-                        <div className="flex flex-col xs:flex-row xs:items-center gap-2 xs:gap-4 lg:gap-6">
-                          <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-500 dark:text-slate-400 min-w-0">
-                            <Mail className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0 text-slate-400" />
-                            <span className="truncate font-medium">{enquiry.email}</span>
-                          </div>
-                          {enquiry.phone_number && (
-                            <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-                              <Phone className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0 text-slate-400" />
-                              <span className="font-medium">{enquiry.phone_number}</span>
-                            </div>
-                          )}
-                        </div>
-                        
-                        {/* Enhanced Message */}
-                        <div className="bg-slate-50/50 dark:bg-slate-800/30 rounded-lg sm:rounded-xl p-3 sm:p-4 group-hover:bg-white/50 dark:group-hover:bg-slate-700/30 transition-colors duration-200">
-                          <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base line-clamp-2 sm:line-clamp-3 lg:line-clamp-4 leading-relaxed">
-                            {enquiry.message}
-                          </p>
-                        </div>
-                        
-                        {/* Enhanced Timestamps */}
-                        <div className="flex flex-col xs:flex-row xs:items-center gap-2 xs:gap-4 lg:gap-6 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-                          <div className="flex items-center gap-2">
-                            <Calendar className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0 text-slate-400" />
-                            <span className="font-medium">Created:</span>
-                            <span className="truncate">{formatDate(enquiry.created_at)}</span>
-                          </div>
-                          {enquiry.updated_at !== enquiry.created_at && (
-                            <div className="flex items-center gap-2">
-                              <Clock className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0 text-slate-400" />
-                              <span className="font-medium">Updated:</span>
-                              <span className="truncate">{formatDate(enquiry.updated_at)}</span>
-                            </div>
-                          )}
-                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                          disabled={currentPage === totalPages}
+                          className="h-8 w-8 p-0"
+                        >
+                          <ChevronRight className="h-4 w-4" />
+                          <span className="sr-only">Next page</span>
+                        </Button>
                       </div>
                     </div>
-                  </div>
-                ))
+                  )}
+                </>
               )}
             </div>
           </CardContent>
